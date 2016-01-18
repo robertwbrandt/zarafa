@@ -12,6 +12,8 @@ args['version'] = 0.3
 args['location'] = '/srv/backup/brick-level-backup'
 args['log'] = ''
 args['threads'] = 4
+
+zarafaAdmin = '/usr/sbin/zarafa-admin'
 encoding = "utf-8"
 
 def command_line_args():
@@ -43,15 +45,22 @@ def command_line_args():
                     type=int,
                     action='store')
   args.update(vars(parser.parse_args()))
-  if not os.direxists(args['location'])
+  if not os.direxists(args['location']):
     exit('The path specified (' + str(args['location'] + ') does not exist.')
   if not args['log']: 
     args['log'] = os.path.join(args['location'], 'backup.log')
-
-
 
 
 # Start program
 if __name__ == "__main__":
   command_line_args()
   print args
+
+  p = subprocess.Popen([zarafaAdmin, '-l'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  out, err = p.communicate()
+  rc = p.returncode
+  if err or rc:
+    exit(err)
+
+  users = [ s.strip() for s in str(out).split('\n') ]
+  print users
