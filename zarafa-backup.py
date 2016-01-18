@@ -69,14 +69,7 @@ if __name__ == "__main__":
 
   errors = 0
   f = open(args['log'], 'w')
-  for user in sorted([ str(s.strip().split('\t')[0]).lower() for s in str(out).split('\n')[4:] if s ])[:3]:
-    dateStr = str(datetime.datetime.now().strftime('%a %b %d %H:%M:%S %Y:')).ljust(26)
-
-    logStr = dateStr + str('[zarafa-backup|0x00000000] [info   ]').rjust(36) + ' Starting backup of user ' + user
-    f.write(logStr + '\n')
-    if args['output'] == 'text':
-      print logStr
-
+  for user in sorted([ str(s.strip().split('\t')[0]).lower() for s in str(out).split('\n')[4:] if s ]):
     p = subprocess.Popen([zarafaBackup, '-v', '-t', str(args['threads']), '-o', args['location'] , '-u', user], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = p.communicate()
     rc = p.returncode
