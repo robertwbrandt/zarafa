@@ -71,7 +71,7 @@ if __name__ == "__main__":
 
   errors = 0
   f = open(args['log'], 'a')
-  for user in sorted([ str(s.strip().split('\t')[0]).lower() for s in str(out).split('\n')[4:] if s ]):
+  for user in sorted([ str(s.strip().split('\t')[0]).lower() for s in str(out).split('\n')[4:] if s ])[:3]:
     dateStr = str(datetime.datetime.now().strftime('%a %b %d %H:%M:%S %Y:')).ljust(26)
 
     logStr = dateStr + str('[zarafa-backup] [ notice]').rjust(35) + ' Starting backup of user ' + user
@@ -79,16 +79,24 @@ if __name__ == "__main__":
     if args['output'] == 'text':
       print logStr
 
-    #p = subprocess.Popen([zarafaBackup, '-v', '-t', str(args[threads]), '-o', args['location' , '-u', user], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    #out, err = p.communicate()
-    #rc = p.returncode
+    p = subprocess.Popen([zarafaBackup, '-v', '-t', str(args[threads]), '-o', args['location' , '-u', user], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = p.communicate()
+    rc = p.returncode
+  
+    f.write(out + '\n')
+    if args['output'] == 'text':
+      print logStr
 
+    if err or rc:
+      f.write(err + '\n')
+      errors += 1
+      if args['output'] == 'text':
+        print logStr
 
   dateStr = str(datetime.datetime.now().strftime('%a %b %d %H:%M:%S %Y:')).ljust(26)
   if errors == 0:
     logStr = dateStr + str('[zarafa-backup] [ notice]').rjust(35) + ' Zarafa Backup has completed with no errors.'
   else:
-    errors = 
     logStr = dateStr + str('[zarafa-backup] [  fatal]').rjust(35) + ' Zarafa Backup has completed with ' + str(errors) + " errors."
   f.write(logStr + '\n')
   f.close()
@@ -98,4 +106,5 @@ if __name__ == "__main__":
 
   if errors:
     exit(errors)
+
   exit()
