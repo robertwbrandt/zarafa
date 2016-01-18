@@ -66,5 +66,5 @@ if __name__ == "__main__":
   if err or rc:
     exit(err)
 
-  users = [ s.strip().split('\t')[0] for s in str(out).split('\n')[2:] ]
+  users = [ s.strip().split('\t')[0] for s in str(out).split('\n')[4:] if s ]
   print users
