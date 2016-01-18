@@ -68,14 +68,25 @@ if __name__ == "__main__":
   if err or rc:
     exit(err)
 
+
+  f = open(args['log'], 'w')
   for user in sorted([ str(s.strip().split('\t')[0]).lower() for s in str(out).split('\n')[4:] if s ]):
     dateStr = str(datetime.datetime.now().strftime('%a %b %d %H:%M:%S %Y:')).ljust(26)
 
-    print dateStr + str('[zarafa-backup] [ notice]').rjust(36) + ' Starting backup of user ' + user
-    # p = subprocess.Popen([zarafaBackup, '-t', ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    # out, err = p.communicate()
-    # rc = p.returncode
+    logStr = dateStr + str('[zarafa-backup] [ notice]').rjust(35) + ' Starting backup of user ' + user
+    f.write(logStr + '\n')
+    if args['output'] == 'text':
+      print logStr
+
+    #p = subprocess.Popen([zarafaBackup, '-v', '-t', str(args[threads]), '-o', args['location' , '-u', user], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    #out, err = p.communicate()
+    #rc = p.returncode
 
 
-#    /usr/sbin/zarafa-backup -t $_backupThreads -a -o "$_backupLocation" 2>&1 | tee "$_backupLog" 
-# Mon Jan 18 00:00:06 2016: [ECThreadPool|0x6a01c700] [ notice] Backup of user KENNEDYK with 1/2414 items in 17/17 folders, written 173 KB
+  dateStr = str(datetime.datetime.now().strftime('%a %b %d %H:%M:%S %Y:')).ljust(26)
+  logStr = dateStr + str('[zarafa-backup] [ notice]').rjust(35) + ' Zarafa Backup has completed.'
+  f.write(logStr + '\n')
+  if args['output'] == 'text':
+    print logStr
+  f.close()
+  
