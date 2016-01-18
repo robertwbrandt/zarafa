@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 """
-Class used to control system Deamons, either upstart or SysV.
+Script used to restore Zarafa Mailboxes using brick-level-backup commands.
 """
 import argparse, os, subprocess, sys, datetime, fnmatch
 import xml.etree.ElementTree as ElementTree
+
+
 
 
 msgReadScript = '/usr/share/zarafa-backup/readable-index.pl'
@@ -114,13 +116,13 @@ def restore(username, msgID, msgDateStart = None, msgDateEnd = None):
 
   return 0
 
-  print "Restoring Message", msgID, " from ", username, " mail store."
-  p = subprocess.Popen(restoreCMD, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-  out, err = p.communicate()
-  rc = p.returncode
-  print out
-  if err: print err
-  return rc
+  # print "Restoring Message", msgID, " from ", username, " mail store."
+  # p = subprocess.Popen(restoreCMD, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  # out, err = p.communicate()
+  # rc = p.returncode
+  # print out
+  # if err: print err
+  # return rc
 
 
 
