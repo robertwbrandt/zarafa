@@ -69,7 +69,8 @@ if __name__ == "__main__":
     exit(err)
 
 
-  f = open(args['log'], 'w')
+  errors = 0
+  f = open(args['log'], 'a')
   for user in sorted([ str(s.strip().split('\t')[0]).lower() for s in str(out).split('\n')[4:] if s ]):
     dateStr = str(datetime.datetime.now().strftime('%a %b %d %H:%M:%S %Y:')).ljust(26)
 
@@ -84,9 +85,17 @@ if __name__ == "__main__":
 
 
   dateStr = str(datetime.datetime.now().strftime('%a %b %d %H:%M:%S %Y:')).ljust(26)
-  logStr = dateStr + str('[zarafa-backup] [ notice]').rjust(35) + ' Zarafa Backup has completed.'
+  if errors == 0:
+    logStr = dateStr + str('[zarafa-backup] [ notice]').rjust(35) + ' Zarafa Backup has completed with no errors.'
+  else:
+    errors = 
+    logStr = dateStr + str('[zarafa-backup] [  fatal]').rjust(35) + ' Zarafa Backup has completed with ' + str(errors) + " errors."
   f.write(logStr + '\n')
+  f.close()
+
   if args['output'] == 'text':
     print logStr
-  f.close()
-  
+
+  if errors:
+    exit(errors)
+  exit()
