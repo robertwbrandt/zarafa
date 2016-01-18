@@ -51,6 +51,7 @@ def command_line_args():
   if not os.direxists(args['location']):
     exit('The path specified (' + str(args['location'] + ') does not exist.')
 
+  print args
   if not args['log']:
     args['log'] = os.path.join(args['location'], 'backup.log')
 
