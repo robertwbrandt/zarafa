@@ -79,7 +79,7 @@ if __name__ == "__main__":
     if args['output'] == 'text':
       print logStr
 
-    p = subprocess.Popen([zarafaBackup, '-v', '-t', str(args[threads]), '-o', args['location'] , '-u', user], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.Popen([zarafaBackup, '-v', '-t', str(args['threads']), '-o', args['location'] , '-u', user], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = p.communicate()
     rc = p.returncode
   
