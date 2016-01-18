@@ -36,6 +36,7 @@ def command_line_args():
                     help='Display output type.')
   parser.add_argument('-l', '--location',
                     required=False,
+                    default=args['location'],                    
                     type=str,
                     action='store')  
   parser.add_argument('--log',
@@ -48,7 +49,7 @@ def command_line_args():
                     action='store')
   args.update(vars(parser.parse_args()))
 
-  if not os.path.isdir(args['location']):
+  if not os.path.isdir(str(args['location'])):
     exit('The path specified (' + str(args['location']) + ') does not exist.')
   if not args['log']:
     args['log'] = os.path.join(args['location'], 'backup.log')
