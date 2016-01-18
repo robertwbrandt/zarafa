@@ -65,10 +65,6 @@ def command_line_args():
                     default=args['location'],
                     type=str,
                     action='store')  
-  parser.add_argument('-u', '--user',
-                    required=True,
-                    type=str,
-                    action='store')  
   parser.add_argument('--id',
                     required=False,
                     type=str,
@@ -96,7 +92,11 @@ def command_line_args():
   parser.add_argument('-s', '--subject',
                     required=False,
                     type=str,
-                    action='store')  
+                    action='store') 
+  parser.add_argument('user',
+                    required=True,
+                    type=str,
+                    action='store')    
   args.update(vars(parser.parse_args()))
 
   if not os.path.isdir(str(args['location'])):
