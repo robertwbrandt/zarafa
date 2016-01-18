@@ -128,11 +128,11 @@ def restore(username, msgID, msgDateStart = None, msgDateEnd = None):
 
 
 
-# tmp = find("SYDENHAJ", msgDateStart="2-12-2005")
+tmp = find("SYDENHAJ", msgDateStart="2-12-2005")
 
-# for k in sortDictbyDate(tmp):
-#   print k, tmp[k]['msgUser'], tmp[k]['msgType'], tmp[k]['msgDate'], tmp[k]['msgItem'], tmp[k]['msgExtra'], tmp[k]['msgSubject']
+for k in sortDictbyDate(tmp):
+  print k, tmp[k]['msgUser'], tmp[k]['msgType'], tmp[k]['msgDate'], tmp[k]['msgItem'], tmp[k]['msgExtra'], tmp[k]['msgSubject']
 
 
-restore('SYDENHAJ', '2CA26800', msgDateStart = "1-12-2015", msgDateEnd = "7-12-2015")
+#restore('SYDENHAJ', '2CA26800', msgDateStart = "1-12-2015", msgDateEnd = "7-12-2015")
 
