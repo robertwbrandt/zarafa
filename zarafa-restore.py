@@ -5,12 +5,24 @@ Script used to restore Zarafa Mailboxes using brick-level-backup commands.
 import argparse, os, subprocess, sys, datetime, fnmatch
 import xml.etree.ElementTree as ElementTree
 
+args = {}
+args['output'] = "text"
+args['version'] = 0.3
+args['location'] = '/srv/backup/brick-level-backup'
+args['user'] = ''
+args['id'] = ''
+args['type'] = ''
+args['start'] = ''
+args['end'] = ''
+args['item'] = ''
+args['extra'] = ''
+args['subject'] = ''
 
-
-
-msgReadScript = '/usr/share/zarafa-backup/readable-index.pl'
-msgRestoreScript = '/usr/sbin/zarafa-restore'
+zarafaScript = '/usr/share/zarafa-backup/readable-index.pl'
+zarafaRestore = '/usr/sbin/zarafa-restore'
 msgBackupLocation = '/srv/backup/brick-level-backup/'
+encoding = "utf-8"
+
 
 msgTypeValues = ['folder', 'message']
 msgItemValues = {}
@@ -29,6 +41,74 @@ msgItemValues = {}
 # IPM.Schedule.Meeting.Request
 # IPM.Schedule.Meeting.Resp.Neg
 # IPM.Schedule.Meeting.Resp.Pos
+
+def command_line_args():
+  global args
+
+  parser = argparse.ArgumentParser(description=".",
+                    formatter_class=argparse.RawDescriptionHelpFormatter)
+  parser.add_argument('-v', '--version',
+                    action='version',
+                    version="%(prog)s " + str(args['version']) + """
+  Copyright (C) 2011 Free Software Foundation, Inc.
+  License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+  This is free software: you are free to change and redistribute it.
+  There is NO WARRANTY, to the extent permitted by law.
+  Written by Bob Brandt <projects@brandt.ie>.\n """)
+  parser.add_argument('-o', '--output',
+                    required=False,
+                    default=args['output'],
+                    choices=['text', 'xml'],
+                    help='Display output type.')
+  parser.add_argument('-l', '--location',
+                    required=False,
+                    default=args['location'],
+                    type=str,
+                    action='store')  
+  parser.add_argument('-u', '--user',
+                    required=True,
+                    type=str,
+                    action='store')  
+  parser.add_argument('--id',
+                    required=False,
+                    type=str,
+                    action='store')  
+  parser.add_argument('-t', '--type',
+                    required=False,
+                    type=str,
+                    action='store')  
+  parser.add_argument('--start',
+                    required=False,
+                    type=str,
+                    action='store')  
+  parser.add_argument('--end',
+                    required=False,
+                    type=str,
+                    action='store')  
+  parser.add_argument('-i', '--item',
+                    required=False,
+                    type=str,
+                    action='store')  
+  parser.add_argument('-e', '--extra',
+                    required=False,
+                    type=str,
+                    action='store')  
+  parser.add_argument('-s', '--subject',
+                    required=False,
+                    type=str,
+                    action='store')  
+  args.update(vars(parser.parse_args()))
+
+  if not os.path.isdir(str(args['location'])):
+    exit('The path specified (' + str(args['location']) + ') does not exist.')
+  if args['start']:
+    tmp = args['start'].split('-')
+    if not (len(tmp) == 3 and int(tmp[0]) in range(1,32) and int(tmp[1]) in range(1,13) and int(tmp[1]) > 0):
+      exit('The start date must be in the format DD-MM-YYYY')
+  if args['end']:
+    tmp = args['end'].split('-')
+    if not (len(tmp) == 3 and int(tmp[0]) in range(1,32) and int(tmp[1]) in range(1,13) and int(tmp[1]) > 0):
+      exit('The end date must be in the format DD-MM-YYYY')
 
 def sortDictbyDate(d):
   return sorted(d.keys(), key=lambda x: d[x]['date'])
@@ -67,7 +147,7 @@ def find(username, msgID = None, msgType = None, msgDateStart = None, msgDateEnd
   print "Found index file", filename
 
 
-  p = subprocess.Popen([msgReadScript, filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  p = subprocess.Popen([zarafaScript, filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   out, err = p.communicate()
   rc = p.returncode
 
@@ -109,7 +189,7 @@ def restore(username, msgID, msgDateStart = None, msgDateEnd = None):
   if msgDateEnd and not msgDateStart:
     msgDateStart = "1-1-0001"
 
-  restoreCMD = [msgRestoreScript, '-v', '-r', '-u', username, '-f', os.path.join(msgBackupLocation, username)]
+  restoreCMD = [zarafaRestore, '-v', '-r', '-u', username, '-f', os.path.join(msgBackupLocation, username)]
   if msgDateStart:
     restoreCMD += ['-b', msgDateStart, '-a', msgDateEnd]
   restoreCMD.append(msgID)
@@ -128,11 +208,21 @@ def restore(username, msgID, msgDateStart = None, msgDateEnd = None):
 
 
 
-tmp = find("SYDENHAJ", msgDateStart="2-12-2005")
+# Start program
+if __name__ == "__main__":
+  command_line_args()
 
-for k in sortDictbyDate(tmp):
-  print k, tmp[k]['msgUser'], tmp[k]['msgType'], tmp[k]['msgDate'], tmp[k]['msgItem'], tmp[k]['msgExtra'], tmp[k]['msgSubject']
+  print args
 
 
-#restore('SYDENHAJ', '2CA26800', msgDateStart = "1-12-2015", msgDateEnd = "7-12-2015")
+  # tmp = find("SYDENHAJ", msgDateStart="2-12-2005")
+
+  # for k in sortDictbyDate(tmp):
+  #   print k, tmp[k]['msgUser'], tmp[k]['msgType'], tmp[k]['msgDate'], tmp[k]['msgItem'], tmp[k]['msgExtra'], tmp[k]['msgSubject']
+
+
+  #restore('SYDENHAJ', '2CA26800', msgDateStart = "1-12-2015", msgDateEnd = "7-12-2015")
+
+
+
 
