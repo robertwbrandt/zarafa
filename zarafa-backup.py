@@ -73,7 +73,7 @@ if __name__ == "__main__":
   for user in sorted([ str(s.strip().split('\t')[0]).lower() for s in str(out).split('\n')[4:] if s ])[:1]:
     dateStr = str(datetime.datetime.now().strftime('%a %b %d %H:%M:%S %Y:')).ljust(26)
 
-    logStr = dateStr + str('[zarafa-backup] [info   ]').rjust(36) + ' Starting backup of user ' + user
+    logStr = dateStr + str('[zarafa-backup|0x00000000] [info   ]').rjust(36) + ' Starting backup of user ' + user
     f.write(logStr + '\n')
     if args['output'] == 'text':
       print logStr
@@ -82,21 +82,19 @@ if __name__ == "__main__":
     out, err = p.communicate()
     rc = p.returncode
   
-    f.write(out + '\n')
+    f.write(out)
+    f.write(err)
     if args['output'] == 'text':
       print out
+      print err
 
-    if err or rc:
-      f.write(err + '\n')
-      errors += 1
-      if args['output'] == 'text':
-        print "Error ", rc, "|" + err + "|"
+    if rc: errors += 1
 
   dateStr = str(datetime.datetime.now().strftime('%a %b %d %H:%M:%S %Y:')).ljust(26)
   if errors == 0:
-    logStr = dateStr + str('[zarafa-backup] [ notice]').rjust(36) + ' Zarafa Backup has completed with no errors.'
+    logStr = dateStr + str('[zarafa-backup|0x00000000] [ notice]').rjust(36) + ' Zarafa Backup has completed with no errors.'
   else:
-    logStr = dateStr + str('[zarafa-backup] [  fatal]').rjust(36) + ' Zarafa Backup has completed with ' + str(errors) + " errors."
+    logStr = dateStr + str('[zarafa-backup|0x00000000] [  fatal]').rjust(36) + ' Zarafa Backup has completed with ' + str(errors) + " errors."
   f.write(logStr + '\n')
   f.close()
 
