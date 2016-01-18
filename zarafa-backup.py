@@ -60,7 +60,6 @@ def command_line_args():
 # Start program
 if __name__ == "__main__":
   command_line_args()
-  print args
 
   p = subprocess.Popen([zarafaAdmin, '-l'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   out, err = p.communicate()
@@ -71,7 +70,7 @@ if __name__ == "__main__":
 
   errors = 0
   f = open(args['log'], 'a')
-  for user in sorted([ str(s.strip().split('\t')[0]).lower() for s in str(out).split('\n')[4:] if s ])[:3]:
+  for user in sorted([ str(s.strip().split('\t')[0]).lower() for s in str(out).split('\n')[4:] if s ])[:1]:
     dateStr = str(datetime.datetime.now().strftime('%a %b %d %H:%M:%S %Y:')).ljust(26)
 
     logStr = dateStr + str('[zarafa-backup] [info   ]').rjust(36) + ' Starting backup of user ' + user
@@ -91,7 +90,7 @@ if __name__ == "__main__":
       f.write(err + '\n')
       errors += 1
       if args['output'] == 'text':
-        print "Error ", rc, err
+        print "Error ", rc, "|" + err + "|"
 
   dateStr = str(datetime.datetime.now().strftime('%a %b %d %H:%M:%S %Y:')).ljust(26)
   if errors == 0:
