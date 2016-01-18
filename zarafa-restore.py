@@ -94,7 +94,6 @@ def command_line_args():
                     type=str,
                     action='store') 
   parser.add_argument('user',
-                    required=True,
                     type=str,
                     action='store')    
   args.update(vars(parser.parse_args()))
