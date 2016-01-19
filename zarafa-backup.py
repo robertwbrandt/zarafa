@@ -54,24 +54,15 @@ if __name__ == "__main__":
           if not users.has_key(currentuser):
             users[currentuser] = {}
 
-        print "Current User =", currentuser
-
       elif tmp[0] == "fatal":
         if not users[currentuser].has_key('error'):
           users[currentuser]['error'] = []
         users[currentuser]['error'].append(tmp[1])
 
-        print "Error", currentuser, tmp[1]
-
       elif tmp[0] == "notice":
-        tmp = str(tmp[1]).strip(' ')
-        if len(tmp) > 4 and ' '.join(tmp[:3]) == 'Backup of user':
-          currentuser = str(tmp[3]).lower()
-          users[currentuser]['done'] = ' '.join(tmp)
-
-        print "Done", currentuser, ' '.join(tmp[:3])
-
-
+        tmp = str(tmp[1]).split(' ')
+        if len(tmp) > 4 and tmp[:3] == ['Backup','of','user']:
+          users[str(tmp[3]).lower()]['done'] = ' '.join(tmp)
 
   print users
 
