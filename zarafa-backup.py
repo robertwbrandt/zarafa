@@ -67,7 +67,7 @@ if __name__ == "__main__":
   for user in [ k for k in users.keys() if users[k] == {} ]:
     users[user]['error'] = ['Backup of user ' + user + ' failed!']
 
-  errorUsers = len( [ k for k in users.keys() if users[k].has_key('error') ] )
+  errorUsers = str( len( [ k for k in users.keys() if users[k].has_key('error') ] ) )
 
   xml = ElementTree.Element('zarafa-backup', attrib={'errors':errorUsers})
   for user in sorted(users.keys()):
@@ -75,14 +75,14 @@ if __name__ == "__main__":
     if users[user].has_key('done'):
       attrib['done'] = users[user]['done']
     if users[user].has_key('error'):
-      attrib['errors'] = len( users[user]['error'] )
+      attrib['errors'] = str( len( users[user]['error'] ) )
     u = ElementTree.SubElement(xml, 'user', attrib=attrib)
     if users[user].has_key('error'):
       for error in users[user]['error']:
         e = ElementTree.SubElement(u, 'error')
         e.text = error
 
-  print '<?xml version="1.0" encoding="' + self.__encoding + '"?>'
-  print ElementTree.tostring(xml, encoding=self.__encoding, method="xml")
+  print '<?xml version="1.0" encoding="' + encoding + '"?>'
+  print ElementTree.tostring(xml, encoding=encoding, method="xml")
 
   exit()
