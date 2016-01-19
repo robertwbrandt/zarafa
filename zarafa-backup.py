@@ -65,7 +65,7 @@ if __name__ == "__main__":
 
       elif tmp[0] == "notice":
         tmp = str(tmp[1]).strip(' ')
-        if len(tmp) > 4 and tmp[:3] == ['Backup', 'of', 'user']:
+        if len(tmp) > 4 and ' '.join(tmp[:3]) == 'Backup of user':
           currentuser = str(tmp[3]).lower()
           users[currentuser]['done'] = ' '.join(tmp)
 
