@@ -2,12 +2,12 @@
 """
 Script used to backup Zarafa Mailboxes using brick-level-backup commands.
 """
-import argparse, subprocess, os
+import argparse, textwrap, os
+import subprocess
 import xml.etree.ElementTree as ElementTree
 
+version = 0.3
 args = {}
-args['description'] = 'Script used to backup Zarafa Mailboxes via brick-level-backup.'
-args['version'] = '0.3'
 args['threads'] = 4
 args['location'] = '/srv/backup/brick-level-backup'
 args['log'] = None
@@ -15,19 +15,69 @@ args['xml'] = None
 encoding = "utf-8"
 zarafaBackup = '/usr/sbin/zarafa-backup'
 
-def command_line_args():
-  global args
+class customUsageVersion(argparse.Action):
+  def __init__(self, option_strings, dest, **kwargs):
+    self.__version = str(kwargs.get('version', ''))
+    self.__prog = str(kwargs.get('prog', os.path.basename(__file__)))
+    def ioctl_GWINSZ(fd):
+      try:
+        import fcntl, termios, struct, os
+        cr = struct.unpack('hh', fcntl.ioctl(fd, termios.TIOCGWINSZ, '1234'))
+      except:
+        return
+      return cr
 
-  parser = argparse.ArgumentParser(description = args['description'])
-                    # usage="%(prog)s [options]")
-  parser.add_argument('-v', '--version',
-                    action='version',
-                    version="%(prog)s " + args['version'] + """
-Copyright (C) 2011 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.
-Written by Bob Brandt <projects@brandt.ie>.\n """)  
+    cr = ioctl_GWINSZ(0) or ioctl_GWINSZ(1) or ioctl_GWINSZ(2)
+    if not cr:
+      try:
+        fd = os.open(os.ctermid(), os.O_RDONLY)
+        cr = ioctl_GWINSZ(fd)
+        os.close(fd)
+      except:
+        pass
+    if not cr:
+      cr = (os.environ.get('LINES', 25), os.environ.get('COLUMNS', 80))
+    self.__col  = int(cr[1])
+    self.__row = int(cr[0])
+
+    super(customUsageVersion, self).__init__(option_strings, dest, nargs=0)
+
+  def __call__(self, parser, namespace, values, option_string=None):
+    # print('%r %r %r' % (namespace, values, option_string))
+    if self.__version:
+      print self.__prog + " " + self.__version
+
+      print "Copyright (C) 2013 Free Software Foundation, Inc."
+      version  = "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>. "
+      version += "This is free software: you are free to change and redistribute it. "
+      version += "There is NO WARRANTY, to the extent permitted by law."
+      print textwrap.fill(version, min(80, self.__col))
+      print "\nWritten by Bob Brandt <projects@brandt.ie>."
+    else:
+      print "Usage: " + self.__prog + " [-l LOCATION] [-t THREADS] [--log LOG] [--xml XML]"
+      print "Script used to backup Zarafa Mailboxes via brick-level-backup.\n"
+      print "Options:"
+      options = []
+      options.append(("-h, --help",                     "Show this help message and exit"))
+      options.append(("-v, --version",                 "Show program's version number and exit"))
+      options.append(("-l, --location LOCATION", "Backup location"))
+      options.append(("-t, --threads THREADS",  "Number of threads to use. (Default: 4)"))
+      options.append(("    --log LOG",                 "Log file"))
+      options.append(("    --xml XML",                "XML log file"))
+      length = max( [ len(option[0]) for option in options ] )
+      for option in options:
+        description =  textwrap.wrap(option[1], (self.__col - length - 5))
+        print "  " + option[0].ljust(length) + "   " + description[0]
+        for n in range(1,len(description)): print " " * (length + 5) + description[n]
+    exit()
+
+
+def command_line_args():
+  global args, version
+
+  parser = argparse.ArgumentParser(add_help=False)
+  parser.add_argument('-v', '--version', action=customUsageVersion, version=version)
+  parser.add_argument('-h', '--help', action=customUsageVersion)
   parser.add_argument('-l', '--location',
                     required=False,
                     default=args['location'],
@@ -58,9 +108,6 @@ Written by Bob Brandt <projects@brandt.ie>.\n """)
     args['log'] = os.path.join(args['location'], 'backup.log')
   if not args['xml']:
     args['xml'] = os.path.join(args['location'], 'backup.xml')
-
-
-
 
 # Start program
 if __name__ == "__main__":
