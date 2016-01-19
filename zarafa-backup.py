@@ -2,7 +2,7 @@
 """
 Script used to backup Zarafa Mailboxes using brick-level-backup commands.
 """
-import argparse, os, subprocess, datetime
+import argparse
 import xml.etree.ElementTree as ElementTree
 
 args = {}
@@ -69,7 +69,20 @@ if __name__ == "__main__":
 
   errorUsers = len( [ k for k in users.keys() if users[k].has_key('error') ] )
 
-  print errorUsers
+  xml = ElementTree.Element('zarafa-backup', attrib={'errors':errorUsers})
+  for user in sorted(users.keys()):
+    attrib = {'name':user}
+    if users[user].has_key('done'):
+      attrib['done'] = users[user]['done']
+    if users[user].has_key('error'):
+      attrib['errors'] = len( users[user]['error'] )
+    u = ElementTree.SubElement(xml, 'user', attrib=attrib)
+    if users[user].has_key('error'):
+      for error in users[user]['error']:
+        e = ElementTree.SubElement(u, 'error')
+        e.text = error
 
+  print '<?xml version="1.0" encoding="' + self.__encoding + '"?>'
+  print ElementTree.tostring(xml, encoding=self.__encoding, method="xml")
 
   exit()
