@@ -6,15 +6,8 @@ import argparse, os, subprocess, datetime
 import xml.etree.ElementTree as ElementTree
 
 args = {}
-args['output'] = "text"
 args['version'] = 0.3
-
-args['location'] = '/srv/backup/brick-level-backup'
-args['log'] = ''
-args['threads'] = 4
-
-zarafaAdmin = '/usr/sbin/zarafa-admin'
-zarafaBackup = '/usr/sbin/zarafa-backup'
+args['file'] = '/srv/backup/brick-level-backup/backup.log'
 encoding = "utf-8"
 
 def command_line_args():
@@ -30,70 +23,25 @@ def command_line_args():
   This is free software: you are free to change and redistribute it.
   There is NO WARRANTY, to the extent permitted by law.
   Written by Bob Brandt <projects@brandt.ie>.\n """)
-  parser.add_argument('-o', '--output',
+  parser.add_argument('-f', '--file',
                     required=False,
-                    default=args['output'],
-                    choices=['text', 'xml'],
-                    help='Display output type.')
-  parser.add_argument('-l', '--location',
-                    required=False,
-                    default=args['location'],
+                    default=args['file'],
                     type=str,
-                    action='store')  
-  parser.add_argument('--log',
-                    required=False,
-                    type=str,
-                    action='store')
-  parser.add_argument('-t', '--threads',
-                    required=False,
-                    default=args['threads'],
-                    type=int,
                     action='store')
   args.update(vars(parser.parse_args()))
-
-  if not os.path.isdir(str(args['location'])):
-    exit('The path specified (' + str(args['location']) + ') does not exist.')
-  if not args['log']:
-    args['log'] = os.path.join(args['location'], 'backup.log')
-
 
 # Start program
 if __name__ == "__main__":
   command_line_args()
 
-  p = subprocess.Popen([zarafaAdmin, '-l'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-  out, err = p.communicate()
-  rc = p.returncode
-  if err or rc:
-    exit(err)
+  try:
+    f = open(args['file'], 'r')
+    out = f.read()
+    f.close()
+  except:
+    exit('Unable to read file ' + str(args['file']))
 
-  errors = 0
-  f = open(args['log'], 'w')
-  for user in sorted([ str(s.strip().split('\t')[0]).lower() for s in str(out).split('\n')[4:] if s ]):
-    p = subprocess.Popen([zarafaBackup, '-v', '-t', str(args['threads']), '-o', args['location'] , '-u', user], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    out, err = p.communicate()
-    rc = p.returncode
-  
-    f.write(out)
-    f.write(err)
-    if args['output'] == 'text':
-      print str(out).strip()
-      print str(err).strip()
-
-    if rc: errors += 1
-
-  dateStr = str(datetime.datetime.now().strftime('%a %b %d %H:%M:%S %Y:')).ljust(26)
-  if errors == 0:
-    logStr = dateStr + str('[zarafa-backup|0x00000000] [ notice]').rjust(36) + ' Zarafa Backup has completed with no errors.'
-  else:
-    logStr = dateStr + str('[zarafa-backup|0x00000000] [  fatal]').rjust(36) + ' Zarafa Backup has completed with ' + str(errors) + " errors."
-  f.write(logStr + '\n')
-  f.close()
-
-  if args['output'] == 'text':
-    print logStr
-
-  if errors:
-    exit(errors)
+  for line in out.split('\n'):
+    print line
 
   exit()
