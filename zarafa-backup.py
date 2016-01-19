@@ -64,15 +64,12 @@ if __name__ == "__main__":
         if len(tmp) > 4 and tmp[:3] == ['Backup','of','user']:
           users[str(tmp[3]).lower()]['done'] = ' '.join(tmp)
 
-  print users
+  for user in [ k for k in users.keys() if users[k] == {} ]
+    users[user]['error'] = ['Backup of user ' + user + ' failed!']
 
-    
+  errorUsers = len( [ k for k in users.keys() if users[k].has_key('error') ] )
+
+  print errorUsers
+
 
   exit()
-
-
-
-# [info   ] Starting backup of user brandtb
-# [info   ] Starting incremental backup for user brandtb
-# [info   ] Starting full backup for user BRADYJN
-# ['notice', 'Backup of user mcateera with 0/10 items in 16/16 folders, written 0 KB']
