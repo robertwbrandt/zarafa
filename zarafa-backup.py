@@ -2,13 +2,18 @@
 """
 Script used to backup Zarafa Mailboxes using brick-level-backup commands.
 """
-import argparse
+import argparse, subprocess, os
 import xml.etree.ElementTree as ElementTree
 
 args = {}
 args['version'] = 0.3
-args['file'] = '/srv/backup/brick-level-backup/backup.log'
+args['threads'] = 4
+args['location'] = '/srv/backup/brick-level-backup'
+args['log'] = '/srv/backup/brick-level-backup/backup.log'
+args['xml'] = '/srv/backup/brick-level-backup/backup.log'
+
 encoding = "utf-8"
+zarafaBackup = '/usr/sbin/zarafa-backup'
 
 def command_line_args():
   global args
@@ -23,9 +28,9 @@ def command_line_args():
   This is free software: you are free to change and redistribute it.
   There is NO WARRANTY, to the extent permitted by law.
   Written by Bob Brandt <projects@brandt.ie>.\n """)
-  parser.add_argument('-f', '--file',
+  parser.add_argument('-l', '--location',
                     required=False,
-                    default=args['file'],
+                    default=args['location'],
                     type=str,
                     action='store')
   args.update(vars(parser.parse_args()))
@@ -33,6 +38,37 @@ def command_line_args():
 # Start program
 if __name__ == "__main__":
   command_line_args()
+
+
+
+  # p = subprocess.Popen([zarafaScript, filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  # out, err = p.communicate()
+  # rc = p.returncode
+
+# from subprocess import Popen, PIPE
+# p1 = Popen(["tar", "-cvf", "-", "path_to_archive"], stdout=PIPE)
+# p2 = Popen(["split", "-b", "20m", "-d", "-a", "5", "-", "'archive.tar.split'"], stdin=p1.stdout, stdout=PIPE)
+# output = p2.communicate()[0]
+
+
+# cmd = subprocess.Popen(['path_to_tool', '-option1', 'option2'],
+#                         stdout=file_out, stderr=subprocess.PIPE)
+# tee = subprocess.Popen(['tee', 'log_file'], stdin=cmd.stderr)
+# cmd.stderr.close()
+# tee.communicate()
+
+
+  f = open(args['file'], 'w')
+  cmd = [ 'zarafaBackup', '-t', '-a', '-v', str(args['threads']), '-o', args['location'] ]
+  p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+  for line in p.stdout:
+    print line
+    f.write(line)
+  p.wait()
+  f.close()
+
+
+  exit()
 
   try:
     f = open(args['file'], 'r')
