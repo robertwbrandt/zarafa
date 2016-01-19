@@ -52,7 +52,7 @@ def command_line_args():
   if not args['log']:
     args['log'] = os.path.join(args['location'], 'backup.log')
   if not args['xml']:
-    args['log'] = os.path.join(args['location'], 'backup.xml')
+    args['xml'] = os.path.join(args['location'], 'backup.xml')
 
 
 
