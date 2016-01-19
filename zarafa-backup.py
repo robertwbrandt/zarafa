@@ -17,16 +17,23 @@ zarafaBackup = '/usr/sbin/zarafa-backup'
 def command_line_args():
   global args
 
-  parser = argparse.ArgumentParser(description=".",
-                    formatter_class=argparse.RawDescriptionHelpFormatter)
+  parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+                    usage="""usage: %(prog)s zarafa-backup.py [options]
+optional arguments:
+  -h, --help               Show this help message and exit
+  -v, --version            Show program's version number and exit
+  -l, --location LOCATION  Backup location.
+  --log LOG                Log file
+  --xml XML                XML Log file
+  -t, --threads THREADS    Number of threads to use. (Default: 4)""")
   parser.add_argument('-v', '--version',
                     action='version',
                     version="%(prog)s " + str(args['version']) + """
-  Copyright (C) 2011 Free Software Foundation, Inc.
-  License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
-  This is free software: you are free to change and redistribute it.
-  There is NO WARRANTY, to the extent permitted by law.
-  Written by Bob Brandt <projects@brandt.ie>.\n """)
+Copyright (C) 2011 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Written by Bob Brandt <projects@brandt.ie>.\n """)  
   parser.add_argument('-l', '--location',
                     required=False,
                     default=args['location'],
