@@ -59,10 +59,11 @@ if __name__ == "__main__":
 
 
   f = open(args['log'], 'w')
-  cmd = [ 'zarafaBackup', '-t', '-a', '-v', str(args['threads']), '-o', args['location'] ]
+  cmd = [ zarafaBackup, '-a', '-v', '-t', str(args['threads']), '-o', args['location'] ]
+  print cmd
   p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
   for line in p.stdout:
-    print line
+    print line.stript('\n')
     f.write(line)
   p.wait()
   f.close()
