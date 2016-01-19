@@ -69,11 +69,11 @@ if __name__ == "__main__":
           currentuser = str(tmp[3]).lower()
           users[currentuser]['done'] = ' '.join(tmp)
 
-        print "Done", currentuser, tmp
+        print "Done", currentuser, ' '.join(tmp[:3])
 
 
 
-  # print users
+  print users
 
     
 
