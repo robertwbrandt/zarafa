@@ -64,7 +64,7 @@ if __name__ == "__main__":
         if len(tmp) > 4 and tmp[:3] == ['Backup','of','user']:
           users[str(tmp[3]).lower()]['done'] = ' '.join(tmp)
 
-  for user in [ k for k in users.keys() if users[k] == {} ]
+  for user in [ k for k in users.keys() if users[k] == {} ]:
     users[user]['error'] = ['Backup of user ' + user + ' failed!']
 
   errorUsers = len( [ k for k in users.keys() if users[k].has_key('error') ] )
