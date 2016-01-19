@@ -42,6 +42,17 @@ if __name__ == "__main__":
     exit('Unable to read file ' + str(args['file']))
 
   for line in out.split('\n'):
-    print line
+    tmp = line.split('[')
+    if len(tmp) == 2:
+      tmp = [ str(s).strip() for s in tmp[2].split(']') ]
+      print tmp
+
+    
 
   exit()
+
+
+
+# [info   ] Starting backup of user brandtb
+# [info   ] Starting incremental backup for user brandtb
+# [info   ] Starting full backup for user BRADYJN
