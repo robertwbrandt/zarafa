@@ -11,7 +11,7 @@ _backupThreads=4
 
 echo "Backup Zarafa Mailboxes"
 _start=$( date )
-/usr/sbin/zarafa-backup -t $_backupThreads -a -o "$_backupLocation" 2>&1 | tee "$_backupLog"
+/usr/sbin/zarafa-backup -t $_backupThreads -a -v -o "$_backupLocation" 2>&1 | tee "$_backupLog"
 if grep "fatal" "$_backupLog" >/dev/null 2>&1
 then
         echo "Zarafa Backup (which started at $_start) has failed at $( date )" | tee -a "$_backupLog"
