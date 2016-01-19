@@ -41,11 +41,29 @@ if __name__ == "__main__":
   except:
     exit('Unable to read file ' + str(args['file']))
 
+  users = {}
   for line in out.split('\n'):
     tmp = line.split('[')
-    if len(tmp) == 2:
-      tmp = [ str(s).strip() for s in tmp[2].split(']') ]
-      print tmp
+    if len(tmp) == 3:
+      tmp = [ str(s).strip() for s in tmp[2].split(']',1) ]
+      if tmp[0] == "info":
+        tmp = str(tmp[1]).lower().rsplit(" ",1)
+        if tmp[0] in ['starting backup of user', 'starting incremental backup for user', 'starting full backup for user']
+          currentuser = tmp[1]
+          if not users.has_key(currentuser):
+            users[currentuser] = {}
+      elif tmp[0] == "fatal":
+        if not users[currentuser].has_key('fatal'):
+          users[currentuser]['error'] = []
+        users[currentuser]['error'].append(tmp[1])
+      elif tmp[0] == "notice":
+        tmp = str(tmp[1]).strip(' ')
+        if len(tmp) > 4 and tmp[:3] == ['Backup', 'of', 'user']
+          currentuser = str(tmp[3]).lower()
+          users[currentuser]['done'] = ' '.join(tmp)
+
+
+  print users
 
     
 
@@ -56,3 +74,4 @@ if __name__ == "__main__":
 # [info   ] Starting backup of user brandtb
 # [info   ] Starting incremental backup for user brandtb
 # [info   ] Starting full backup for user BRADYJN
+# ['notice', 'Backup of user mcateera with 0/10 items in 16/16 folders, written 0 KB']
