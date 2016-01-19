@@ -6,7 +6,8 @@ import argparse, subprocess, os
 import xml.etree.ElementTree as ElementTree
 
 args = {}
-args['version'] = 0.3
+args['description'] = 'Script used to backup Zarafa Mailboxes via brick-level-backup.'
+args['version'] = '0.3'
 args['threads'] = 4
 args['location'] = '/srv/backup/brick-level-backup'
 args['log'] = None
@@ -17,18 +18,11 @@ zarafaBackup = '/usr/sbin/zarafa-backup'
 def command_line_args():
   global args
 
-  parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
-                    usage="""usage: %(prog)s zarafa-backup.py [options]
-optional arguments:
-  -h, --help               Show this help message and exit
-  -v, --version            Show program's version number and exit
-  -l, --location LOCATION  Backup location.
-  --log LOG                Log file
-  --xml XML                XML Log file
-  -t, --threads THREADS    Number of threads to use. (Default: 4)""")
+  parser = argparse.ArgumentParser(description = args['description'])
+                    # usage="%(prog)s [options]")
   parser.add_argument('-v', '--version',
                     action='version',
-                    version="%(prog)s " + str(args['version']) + """
+                    version="%(prog)s " + args['version'] + """
 Copyright (C) 2011 Free Software Foundation, Inc.
 License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
 This is free software: you are free to change and redistribute it.
@@ -38,20 +32,24 @@ Written by Bob Brandt <projects@brandt.ie>.\n """)
                     required=False,
                     default=args['location'],
                     type=str,
-                    action='store')
-  parser.add_argument('--log',
-                    required=False,
-                    type=str,
-                    action='store')
-  parser.add_argument('--xml',
-                    required=False,
-                    type=str,
-                    action='store')  
+                    action='store',
+                    help='backup location')
   parser.add_argument('-t', '--threads',
                     required=False,
                     default=args['threads'],
                     type=int,
-                    action='store')  
+                    action='store',
+                    help='Number of threads to use. (Default: ' + str(args['threads']) + ')')
+  parser.add_argument('--log',
+                    required=False,
+                    type=str,
+                    action='store',
+                    help='log file')
+  parser.add_argument('--xml',
+                    required=False,
+                    type=str,
+                    action='store',
+                    help='xml log file')
   args.update(vars(parser.parse_args()))
 
   if not os.path.isdir(str(args['location'])):
