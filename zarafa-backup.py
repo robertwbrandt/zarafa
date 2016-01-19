@@ -58,7 +58,7 @@ if __name__ == "__main__":
 # tee.communicate()
 
 
-  f = open(args['file'], 'w')
+  f = open(args['log'], 'w')
   cmd = [ 'zarafaBackup', '-t', '-a', '-v', str(args['threads']), '-o', args['location'] ]
   p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
   for line in p.stdout:
