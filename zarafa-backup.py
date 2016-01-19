@@ -63,7 +63,7 @@ if __name__ == "__main__":
   print cmd
   p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
   for line in p.stdout:
-    print line.stript('\n')
+    print line.strip('\n')
     f.write(line)
   p.wait()
   f.close()
