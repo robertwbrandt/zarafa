@@ -9,9 +9,8 @@ args = {}
 args['version'] = 0.3
 args['threads'] = 4
 args['location'] = '/srv/backup/brick-level-backup'
-args['log'] = '/srv/backup/brick-level-backup/backup.log'
-args['xml'] = '/srv/backup/brick-level-backup/backup.log'
-
+args['log'] = None
+args['xml'] = None
 encoding = "utf-8"
 zarafaBackup = '/usr/sbin/zarafa-backup'
 
@@ -33,54 +32,44 @@ def command_line_args():
                     default=args['location'],
                     type=str,
                     action='store')
+  parser.add_argument('--log',
+                    required=False,
+                    type=str,
+                    action='store')
+  parser.add_argument('--xml',
+                    required=False,
+                    type=str,
+                    action='store')  
+  parser.add_argument('-t', '--threads',
+                    required=False,
+                    default=args['threads'],
+                    type=int,
+                    action='store')  
   args.update(vars(parser.parse_args()))
+
+  if not os.path.isdir(str(args['location'])):
+    exit('The path specified (' + str(args['location']) + ') does not exist.')
+  if not args['log']:
+    args['log'] = os.path.join(args['location'], 'backup.log')
+  if not args['xml']:
+    args['log'] = os.path.join(args['location'], 'backup.xml')
+
+
+
 
 # Start program
 if __name__ == "__main__":
   command_line_args()
 
-
-
-  # p = subprocess.Popen([zarafaScript, filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-  # out, err = p.communicate()
-  # rc = p.returncode
-
-# from subprocess import Popen, PIPE
-# p1 = Popen(["tar", "-cvf", "-", "path_to_archive"], stdout=PIPE)
-# p2 = Popen(["split", "-b", "20m", "-d", "-a", "5", "-", "'archive.tar.split'"], stdin=p1.stdout, stdout=PIPE)
-# output = p2.communicate()[0]
-
-
-# cmd = subprocess.Popen(['path_to_tool', '-option1', 'option2'],
-#                         stdout=file_out, stderr=subprocess.PIPE)
-# tee = subprocess.Popen(['tee', 'log_file'], stdin=cmd.stderr)
-# cmd.stderr.close()
-# tee.communicate()
-
-
   f = open(args['log'], 'w')
   cmd = [ zarafaBackup, '-a', '-v', '-t', str(args['threads']), '-o', args['location'] ]
-  print cmd
+  users = {}
+  currentuser = ""
   p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
   for line in p.stdout:
     print line.strip('\n')
     f.write(line)
-  p.wait()
-  f.close()
 
-
-  exit()
-
-  try:
-    f = open(args['file'], 'r')
-    out = f.read()
-    f.close()
-  except:
-    exit('Unable to read file ' + str(args['file']))
-
-  users = {}
-  currentuser = ""
-  for line in out.split('\n'):
     tmp = line.split('[')
     if len(tmp) == 3:
       tmp = [ str(s).strip() for s in tmp[2].split(']',1) ]
@@ -119,7 +108,12 @@ if __name__ == "__main__":
         e = ElementTree.SubElement(u, 'error')
         e.text = error
 
-  print '<?xml version="1.0" encoding="' + encoding + '"?>'
-  print ElementTree.tostring(xml, encoding=encoding, method="xml")
+  p.wait()
+  f.close()
+
+  f = open(args['xml'], 'w')
+  f.write( '<?xml version="1.0" encoding="' + encoding + '"?>\n' )
+  f.write( ElementTree.tostring(xml, encoding=encoding, method="xml") )
+  f.close()
 
   exit()
