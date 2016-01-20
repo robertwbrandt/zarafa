@@ -271,9 +271,9 @@ if __name__ == "__main__":
       for k in brandt.sortDictbyField(results,'date'):
         attrib = {'msgID':str(k), 'msgUser':str(results[k]['msgUser']), 'msgType':str(results[k]['msgType']), 'msgDate':str(results[k]['msgDate']), 'msgItem':str(results[k]['msgItem']), 'msgExtra':str(results[k]['msgExtra'])}
         m = ElementTree.SubElement(xml, 'message', attrib=attrib)
-        m.text = str(results[k]['msgSubject'])
-        for s in str(results[k]['msgSubject']):
-          print s, str(s)
+        m.text = results[k]['msgSubject'].encode()
+        # for s in str(results[k]['msgSubject']):
+        #   print s, s.encode()
         # print str(results[k]['msgSubject']).decode()
         print ElementTree.tostring(m, encoding=encoding, method="xml")
         print
