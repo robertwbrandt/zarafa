@@ -67,7 +67,7 @@ def command_line_args():
   global args, version
 
   parser = argparse.ArgumentParser(add_help=False)
-  parser.add_argument('-v', '--version', action=customUsageVersion, version=version)
+  parser.add_argument('-v', '--version', action=customUsageVersion, version=version, max=80)
   parser.add_argument('-h', '--help', action=customUsageVersion)
   parser.add_argument('-l', '--location',
                     required=False,
