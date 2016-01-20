@@ -249,7 +249,7 @@ if __name__ == "__main__":
   command_line_args()
 
   results = find("brandtb", msgDateStart="19-1-2016")
-  print args['cmd']
+
   if args['cmd'] == 'find':
     if args['output'] == 'text':
       length={}
@@ -263,7 +263,24 @@ if __name__ == "__main__":
       for k in brandt.sortDictbyField(results,'date'):
         print k, results[k]['msgUser'].ljust(length['msgUser']), results[k]['msgType'].ljust(length['msgType']), results[k]['msgDate'].center(length['msgDate']), results[k]['msgItem'].title().ljust(length['msgItem']), results[k]['msgExtra'].ljust(length['msgExtra']), results[k]['msgSubject']
     else:
-      print "XML"
+      print args
+
+      # attrib={'name':deamon}
+
+
+      # xml = ElementTree.Element('zarafa-restore')
+      # m = ElementTree.SubElement(xml, 'message', attrib={'name':deamon})
+      # t = ElementTree.SubElement(d, show, attrib={'command':command, 'returncode':str(self.__deamons[deamon][show]["returncode"]), 'name':self.__deamons[deamon][show]['deamon']})
+      # o = ElementTree.SubElement(t, 'output')
+      # o.text = self.__deamons[deamon][show]["output"]
+      # e = ElementTree.SubElement(t, 'error')
+      # e.text = self.__deamons[deamon][show]["error"]
+      # output = '<?xml version="1.0" encoding="' + self.__encoding + '"?>\n' + ElementTree.tostring(xml, encoding=self.__encoding, method="xml")
+
+
+
+
+
   else:
     print "Restore"
 
