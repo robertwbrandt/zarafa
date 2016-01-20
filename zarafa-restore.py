@@ -277,7 +277,9 @@ if __name__ == "__main__":
       attrib=args.copy()
       del attrib['help'], attrib['version'], attrib['cmd'], attrib['output'], attrib['location'] 
       for k in attrib.keys():
-        if not attrib[k]: del attrib[k]
+        if not attrib[k]: 
+          del attrib[k]
+        else:
           attrib[k] = attrib[k].decode('utf-8','replace')
       xml = ElementTree.Element('zarafa-restore', attrib=attrib)
       for k in brandt.sortDictbyField(results,'date'):
