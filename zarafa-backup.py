@@ -2,9 +2,15 @@
 """
 Script used to backup Zarafa Mailboxes using brick-level-backup commands.
 """
-import argparse, textwrap, os
+import argparse, textwrap
 import subprocess
 import xml.etree.ElementTree as ElementTree
+
+# Import Brandt Common Utilities
+import sys, os
+sys.path.append( os.path.realpath( os.path.join( os.path.dirname(__file__), "../common" ) ) )
+import brandt
+sys.path.pop()
 
 version = 0.3
 args = {}
@@ -19,87 +25,67 @@ class customUsageVersion(argparse.Action):
   def __init__(self, option_strings, dest, **kwargs):
     self.__version = str(kwargs.get('version', ''))
     self.__prog = str(kwargs.get('prog', os.path.basename(__file__)))
-    def ioctl_GWINSZ(fd):
-      try:
-        import fcntl, termios, struct, os
-        cr = struct.unpack('hh', fcntl.ioctl(fd, termios.TIOCGWINSZ, '1234'))
-      except:
-        return
-      return cr
-
-    cr = ioctl_GWINSZ(0) or ioctl_GWINSZ(1) or ioctl_GWINSZ(2)
-    if not cr:
-      try:
-        fd = os.open(os.ctermid(), os.O_RDONLY)
-        cr = ioctl_GWINSZ(fd)
-        os.close(fd)
-      except:
-        pass
-    if not cr:
-      cr = (os.environ.get('LINES', 25), os.environ.get('COLUMNS', 80))
-    self.__col  = int(cr[1])
-    self.__row = int(cr[0])
-
+    self.__row = min(int(kwargs.get('max', 80)), brandt.getTerminalSize()[0])
+    self.__exit = int(kwargs.get('exit', 0))
     super(customUsageVersion, self).__init__(option_strings, dest, nargs=0)
-
   def __call__(self, parser, namespace, values, option_string=None):
     # print('%r %r %r' % (namespace, values, option_string))
     if self.__version:
       print self.__prog + " " + self.__version
-
       print "Copyright (C) 2013 Free Software Foundation, Inc."
-      version  = "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>. "
-      version += "This is free software: you are free to change and redistribute it. "
-      version += "There is NO WARRANTY, to the extent permitted by law."
-      print textwrap.fill(version, min(80, self.__col))
+      print "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>."
+      version  = "This program is free software: you can redistribute it and/or modify "
+      version += "it under the terms of the GNU General Public License as published by "
+      version += "the Free Software Foundation, either version 3 of the License, or "
+      version += "(at your option) any later version."
+      print textwrap.fill(version, self.__row)
+      version  = "This program is distributed in the hope that it will be useful, "
+      version += "but WITHOUT ANY WARRANTY; without even the implied warranty of "
+      version += "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
+      version += "GNU General Public License for more details."
+      print textwrap.fill(version, self.__row)
       print "\nWritten by Bob Brandt <projects@brandt.ie>."
     else:
       print "Usage: " + self.__prog + " [-l LOCATION] [-t THREADS] [--log LOG] [--xml XML]"
       print "Script used to backup Zarafa Mailboxes via brick-level-backup.\n"
       print "Options:"
       options = []
-      options.append(("-h, --help",                     "Show this help message and exit"))
-      options.append(("-v, --version",                 "Show program's version number and exit"))
+      options.append(("-h, --help",              "Show this help message and exit"))
+      options.append(("-v, --version",           "Show program's version number and exit"))
       options.append(("-l, --location LOCATION", "Backup location"))
-      options.append(("-t, --threads THREADS",  "Number of threads to use. (Default: 4)"))
-      options.append(("    --log LOG",                 "Log file"))
-      options.append(("    --xml XML",                "XML log file"))
+      options.append(("-t, --threads THREADS",   "Number of threads to use. (Default: 4)"))
+      options.append(("    --log LOG",           "Log file"))
+      options.append(("    --xml XML",           "XML log file"))
       length = max( [ len(option[0]) for option in options ] )
       for option in options:
-        description =  textwrap.wrap(option[1], (self.__col - length - 5))
+        description =  textwrap.wrap(option[1], (self.__row - length - 5))
         print "  " + option[0].ljust(length) + "   " + description[0]
         for n in range(1,len(description)): print " " * (length + 5) + description[n]
-    exit()
-
-
+    exit(self.__exit)
 def command_line_args():
   global args, version
 
   parser = argparse.ArgumentParser(add_help=False)
-  parser.add_argument('-v', '--version', action=customUsageVersion, version=version)
+  parser.add_argument('-v', '--version', action=customUsageVersion, version=version, max=80)
   parser.add_argument('-h', '--help', action=customUsageVersion)
   parser.add_argument('-l', '--location',
                     required=False,
                     default=args['location'],
                     type=str,
-                    action='store',
-                    help='backup location')
+                    action='store')
   parser.add_argument('-t', '--threads',
                     required=False,
                     default=args['threads'],
                     type=int,
-                    action='store',
-                    help='Number of threads to use. (Default: ' + str(args['threads']) + ')')
+                    action='store')
   parser.add_argument('--log',
                     required=False,
                     type=str,
-                    action='store',
-                    help='log file')
+                    action='store')
   parser.add_argument('--xml',
                     required=False,
                     type=str,
-                    action='store',
-                    help='xml log file')
+                    action='store')
   args.update(vars(parser.parse_args()))
 
   if not os.path.isdir(str(args['location'])):
@@ -113,10 +99,14 @@ def command_line_args():
 if __name__ == "__main__":
   command_line_args()
 
-  f = open(args['log'], 'w')
   cmd = [ zarafaBackup, '-a', '-v', '-t', str(args['threads']), '-o', args['location'] ]
   users = {}
   currentuser = ""
+  print 'Running the command: "' + ' '.join(cmd) + '"'
+  print "Log File:", args['log']
+  print "XML File:", args['xml']
+
+  f = open(args['log'], 'w')
   p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
   for line in p.stdout:
     print line.strip('\n')

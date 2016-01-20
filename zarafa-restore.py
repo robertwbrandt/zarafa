@@ -2,13 +2,22 @@
 """
 Script used to restore Zarafa Mailboxes using brick-level-backup commands.
 """
-import argparse, os, subprocess, sys, datetime, fnmatch
+import argparse, textwrap
+import subprocess
+import datetime, fnmatch
 import xml.etree.ElementTree as ElementTree
 
+# Import Brandt Common Utilities
+import sys, os
+sys.path.append( os.path.realpath( os.path.join( os.path.dirname(__file__), "../common" ) ) )
+import brandt
+sys.path.pop()
+
+version = 0.3
 args = {}
 args['output'] = "text"
-args['version'] = 0.3
 args['location'] = '/srv/backup/brick-level-backup'
+args['cmd'] = ''
 args['user'] = ''
 args['id'] = ''
 args['type'] = ''
@@ -23,66 +32,77 @@ zarafaRestore = '/usr/sbin/zarafa-restore'
 msgBackupLocation = '/srv/backup/brick-level-backup/'
 encoding = "utf-8"
 
-
 msgTypeValues = ['folder', 'message']
-msgItemValues = {}
-# IPF.Appointment
-# IPF.Configuration
-# IPF.Contact
-# IPF.Journal
-# IPF.Note
-# IPF.Note.OutlookHomepage
-# IPF.StickyNote
-# IPF.Task
-# IPM.Appointment
-# IPM.Note
-# IPM.Note.StorageQuotaWarning
-# IPM.Schedule.Meeting.Canceled
-# IPM.Schedule.Meeting.Request
-# IPM.Schedule.Meeting.Resp.Neg
-# IPM.Schedule.Meeting.Resp.Pos
+msgItemValues = ['appointment','configuration','contact','distlist','documentlibrary','journal','note','post','recall','schedule','stickynote','task', 'other']
 
+class customUsageVersion(argparse.Action):
+  def __init__(self, option_strings, dest, **kwargs):
+    self.__version = str(kwargs.get('version', ''))
+    self.__prog = str(kwargs.get('prog', os.path.basename(__file__)))
+    self.__row = min(int(kwargs.get('max', 80)), brandt.getTerminalSize()[0])
+    self.__exit = int(kwargs.get('exit', 0))
+    super(customUsageVersion, self).__init__(option_strings, dest, nargs=0)
+  def __call__(self, parser, namespace, values, option_string=None):
+    # print('%r %r %r' % (namespace, values, option_string))
+    if self.__version:
+      print self.__prog + " " + self.__version
+      print "Copyright (C) 2013 Free Software Foundation, Inc."
+      print "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>."
+      version  = "This program is free software: you can redistribute it and/or modify "
+      version += "it under the terms of the GNU General Public License as published by "
+      version += "the Free Software Foundation, either version 3 of the License, or "
+      version += "(at your option) any later version."
+      print textwrap.fill(version, self.__row)
+      version  = "This program is distributed in the hope that it will be useful, "
+      version += "but WITHOUT ANY WARRANTY; without even the implied warranty of "
+      version += "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
+      version += "GNU General Public License for more details."
+      print textwrap.fill(version, self.__row)
+      print "\nWritten by Bob Brandt <projects@brandt.ie>."
+    else:
+      print "Usage: " + self.__prog + " [options] {find | restore} USER"
+      print "Script used to restore items to Zarafa Mailboxes via brick-level-backup.\n"
+      print "Options:"
+      options = []
+      options.append(("-h, --help",              "Show this help message and exit"))
+      options.append(("-v, --version",           "Show program's version number and exit"))
+      options.append(("-o, --output OUTPUT",     "Type of output {text | xml}"))
+      options.append(("-l, --location LOCATION", "Backup location"))
+      options.append(("-t, --type TYPE",         "Type of msg {" + " | ".join(msgTypeValues) + "}"))
+      options.append(("-i, --item ITEM",         "Item ID {" + " | ".join(msgItemValues) + "}"))
+      options.append(("-e, --extra EXTRA",       "Msg extra info"))
+      options.append(("-s, --subject SUBJECT",   "Msg subject"))
+      options.append(("    --id MSGID",          "Msg ID"))
+      options.append(("    --start START",       "Start Date (in format DD-MM-YYYY)"))
+      options.append(("    --end END",           "End Date (in format DD-MM-YYYY)"))
+      length = max( [ len(option[0]) for option in options ] )
+      for option in options:
+        description =  textwrap.wrap(option[1], (self.__row - length - 5))
+        print "  " + option[0].ljust(length) + "   " + description[0]
+        for n in range(1,len(description)): print " " * (length + 5) + description[n]
+    exit(self.__exit)
 def command_line_args():
-  global args
-
-  parser = argparse.ArgumentParser(description=".",
-                    formatter_class=argparse.RawDescriptionHelpFormatter)
-  parser.add_argument('-v', '--version',
-                    action='version',
-                    version="%(prog)s " + str(args['version']) + """
-  Copyright (C) 2011 Free Software Foundation, Inc.
-  License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
-  This is free software: you are free to change and redistribute it.
-  There is NO WARRANTY, to the extent permitted by law.
-  Written by Bob Brandt <projects@brandt.ie>.\n """)
+  global args, version
+  parser = argparse.ArgumentParser(add_help=False)
+  parser.add_argument('-v', '--version', action=customUsageVersion, version=version, max=80)
+  parser.add_argument('-h', '--help', action=customUsageVersion)
   parser.add_argument('-o', '--output',
                     required=False,
                     default=args['output'],
-                    choices=['text', 'xml'],
-                    help='Display output type.')
+                    choices=['text', 'xml'])
   parser.add_argument('-l', '--location',
                     required=False,
                     default=args['location'],
                     type=str,
-                    action='store')  
-  parser.add_argument('--id',
-                    required=False,
-                    type=str,
-                    action='store')  
+                    action='store')
   parser.add_argument('-t', '--type',
+                    choices=msgTypeValues,
                     required=False,
                     type=str,
-                    action='store')  
-  parser.add_argument('--start',
-                    required=False,
-                    type=str,
-                    action='store')  
-  parser.add_argument('--end',
-                    required=False,
-                    type=str,
-                    action='store')  
+                    action='store')    
   parser.add_argument('-i', '--item',
                     required=False,
+                    choices=msgItemValues,
                     type=str,
                     action='store')  
   parser.add_argument('-e', '--extra',
@@ -93,6 +113,22 @@ def command_line_args():
                     required=False,
                     type=str,
                     action='store') 
+  parser.add_argument('--id',
+                    required=False,
+                    type=str,
+                    action='store')   
+  parser.add_argument('--start',
+                    required=False,
+                    type=str,
+                    action='store')  
+  parser.add_argument('--end',
+                    required=False,
+                    type=str,
+                    action='store')
+  parser.add_argument('cmd',
+                    choices=['find', 'restore'],
+                    type=str,
+                    action='store')
   parser.add_argument('user',
                     type=str,
                     action='store')    
@@ -109,8 +145,6 @@ def command_line_args():
     if not (len(tmp) == 3 and int(tmp[0]) in range(1,32) and int(tmp[1]) in range(1,13) and int(tmp[1]) > 0):
       exit('The end date must be in the format DD-MM-YYYY')
 
-def sortDictbyDate(d):
-  return sorted(d.keys(), key=lambda x: d[x]['date'])
 
 
 def find(username, msgID = None, msgType = None, msgDateStart = None, msgDateEnd = None, msgItem = None, msgExtra = None, msgSubject = None):
@@ -123,7 +157,7 @@ def find(username, msgID = None, msgType = None, msgDateStart = None, msgDateEnd
   if msgSubject: msgSubject   = str(msgSubject).lower()
 
   if msgType not in msgTypeValues: msgType = None
-  if msgItem not in msgItemValues.keys(): msgItem = None
+  if msgItem not in msgItemValues: msgItem = None
   if msgDateStart:
     msgDateStart = datetime.datetime.strptime(msgDateStart, "%d-%m-%Y")
   if msgDateEnd:
@@ -143,8 +177,7 @@ def find(username, msgID = None, msgType = None, msgDateStart = None, msgDateEnd
   else:
     username = str(filename[0]).split('.',1)[0]
     filename = os.path.join(msgBackupLocation, filename[0])
-  print "Found index file", filename
-
+  #print "Found index file", filename
 
   p = subprocess.Popen([zarafaScript, filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   out, err = p.communicate()
@@ -157,6 +190,10 @@ def find(username, msgID = None, msgType = None, msgDateStart = None, msgDateEnd
   for line in str(out).split('\n')[1:]:
     if line:
       tmp = str(line).split('\t') + [None,None,None,None,None]
+      try:
+        tmp[3] = (str(tmp[3]).split('.')[1]).lower()
+      except:
+        tmp[3] = "other"
       add = True
       tmpDate = None
       strDate = 0
@@ -211,13 +248,47 @@ def restore(username, msgID, msgDateStart = None, msgDateEnd = None):
 if __name__ == "__main__":
   command_line_args()
 
-  print args
+  results = find("brandtb", msgDateStart="19-1-2016")
+
+  if args['cmd'] == 'find':
+    if args['output'] == 'text':
+      length={}
+      length['msgUser'] = max( len(args['user']), 8)      
+      length['msgType'] = max( [ len(m['msgType']) for m in results.values() ] )
+      length['msgDate'] = max( [ len(m['msgDate']) for m in results.values() ] )
+      length['msgItem'] = max( [ len(m['msgItem']) for m in results.values() ] )
+      length['msgExtra'] = max( [ len(m['msgExtra']) for m in results.values() ] )
+
+      print "Msg ID".center(8), "Username".center(length['msgUser']), "Type".center(length['msgType']), "Date".center(length['msgDate']), "Item".center(length['msgItem']), "Extra".center(length['msgExtra']), "     Subject"
+      for k in brandt.sortDictbyField(results,'date'):
+        print k, results[k]['msgUser'].ljust(length['msgUser']), results[k]['msgType'].ljust(length['msgType']), results[k]['msgDate'].center(length['msgDate']), results[k]['msgItem'].title().ljust(length['msgItem']), results[k]['msgExtra'].ljust(length['msgExtra']), results[k]['msgSubject']
+    else:
+      print args
+
+      attrib=args.copy()
+      del attrib['help'], attrib['version'], attrib['cmd'], attrib['output'], attrib['location'] 
+      print attrib
+      for k in attrib.keys():
+        if not attrib[k]: del attrib[k]
+      print attrib
 
 
-  # tmp = find("SYDENHAJ", msgDateStart="2-12-2005")
+      xml = ElementTree.Element('zarafa-restore', attrib=attrib)
+      # for k in brandt.sortDictbyField(results,'date'):
+      #   m = ElementTree.SubElement(xml, 'message', attrib={'name':deamon})
+      # t = ElementTree.SubElement(d, show, attrib={'command':command, 'returncode':str(self.__deamons[deamon][show]["returncode"]), 'name':self.__deamons[deamon][show]['deamon']})
+      # o = ElementTree.SubElement(t, 'output')
+      # o.text = self.__deamons[deamon][show]["output"]
+      # e = ElementTree.SubElement(t, 'error')
+      # e.text = self.__deamons[deamon][show]["error"]
+      # output = '<?xml version="1.0" encoding="' + self.__encoding + '"?>\n' + ElementTree.tostring(xml, encoding=self.__encoding, method="xml")
 
-  # for k in sortDictbyDate(tmp):
-  #   print k, tmp[k]['msgUser'], tmp[k]['msgType'], tmp[k]['msgDate'], tmp[k]['msgItem'], tmp[k]['msgExtra'], tmp[k]['msgSubject']
+
+
+
+
+  else:
+    print "Restore"
 
 
   #restore('SYDENHAJ', '2CA26800', msgDateStart = "1-12-2015", msgDateEnd = "7-12-2015")
