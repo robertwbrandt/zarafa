@@ -2,7 +2,9 @@
 """
 Script used to restore Zarafa Mailboxes using brick-level-backup commands.
 """
-import argparse, os, subprocess, sys, datetime, fnmatch
+import argparse, textwrap
+import subprocess
+import datetime, fnmatch
 import xml.etree.ElementTree as ElementTree
 
 # Import Brandt Common Utilities
@@ -31,7 +33,6 @@ encoding = "utf-8"
 
 msgTypeValues = ['folder', 'message']
 msgItemValues = {}
-
 
 class customUsageVersion(argparse.Action):
   def __init__(self, option_strings, dest, **kwargs):
@@ -153,8 +154,7 @@ def command_line_args():
     if not (len(tmp) == 3 and int(tmp[0]) in range(1,32) and int(tmp[1]) in range(1,13) and int(tmp[1]) > 0):
       exit('The end date must be in the format DD-MM-YYYY')
 
-def sortDictbyDate(d):
-  return sorted(d.keys(), key=lambda x: d[x]['date'])
+
 
 def find(username, msgID = None, msgType = None, msgDateStart = None, msgDateEnd = None, msgItem = None, msgExtra = None, msgSubject = None):
   
@@ -259,7 +259,7 @@ if __name__ == "__main__":
 
   # tmp = find("SYDENHAJ", msgDateStart="2-12-2005")
 
-  # for k in sortDictbyDate(tmp):
+  # for k in brandt.sortDictbyField(tmp,'date'):
   #   print k, tmp[k]['msgUser'], tmp[k]['msgType'], tmp[k]['msgDate'], tmp[k]['msgItem'], tmp[k]['msgExtra'], tmp[k]['msgSubject']
 
 
