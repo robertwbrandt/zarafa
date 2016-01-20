@@ -191,7 +191,7 @@ def find(username, msgID = None, msgType = None, msgDateStart = None, msgDateEnd
   else:
     username = str(filename[0]).split('.',1)[0]
     filename = os.path.join(msgBackupLocation, filename[0])
-  print "Found index file", filename
+  #print "Found index file", filename
 
   p = subprocess.Popen([zarafaScript, filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   out, err = p.communicate()
@@ -269,7 +269,7 @@ if __name__ == "__main__":
       length['msgItem'] = max( [ len(m['msgItem']) for m in results.values() ] )
       length['msgExtra'] = max( [ len(m['msgExtra']) for m in results.values() ] )
 
-      print "Msg ID".ljust(8), "Username".ljust(length['msgUser']), "Type".ljust(length['msgType']), "Date".center(length['msgDate']), "Extra".ljust(length['msgExtra']), Subject
+      print "Msg ID".ljust(8), "Username".ljust(length['msgUser']), "Type".ljust(length['msgType']), "Date".center(length['msgDate']), "Extra".ljust(length['msgExtra']), "Subject"
       for k in brandt.sortDictbyField(results,'date'):
         print k, results[k]['msgUser'].ljust(length['msgUser']), results[k]['msgType'].ljust(length['msgType']), results[k]['msgDate'].center(length['msgDate']), results[k]['msgItem'].ljust(length['msgItem']), results[k]['msgExtra'].ljust(length['msgExtra']), results[k]['msgSubject']
     else:
