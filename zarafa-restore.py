@@ -188,7 +188,6 @@ def find(username, msgID = None, msgType = None, msgDateStart = None, msgDateEnd
     filename = os.path.join(msgBackupLocation, filename[0])
   print "Found index file", filename
 
-
   p = subprocess.Popen([zarafaScript, filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   out, err = p.communicate()
   rc = p.returncode
@@ -254,10 +253,9 @@ def restore(username, msgID, msgDateStart = None, msgDateEnd = None):
 if __name__ == "__main__":
   command_line_args()
 
-  print args
+  results = find("brandtb", msgDateStart="2-12-2005")
+  print results
 
-
-  # tmp = find("SYDENHAJ", msgDateStart="2-12-2005")
 
   # for k in brandt.sortDictbyField(tmp,'date'):
   #   print k, tmp[k]['msgUser'], tmp[k]['msgType'], tmp[k]['msgDate'], tmp[k]['msgItem'], tmp[k]['msgExtra'], tmp[k]['msgSubject']
