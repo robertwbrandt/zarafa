@@ -284,12 +284,12 @@ if __name__ == "__main__":
       xml = ElementTree.Element('zarafa-restore', attrib=attrib)
       for k in brandt.sortDictbyField(results,'date'):
         attrib = {'msgID':k.decode('utf-8','replace'),
-                       'msgUser':results[k]['msgUser']).decode('utf-8','replace'),
-                       'msgType':results[k]['msgType']).decode('utf-8','replace'),
-                       'sortDate':results[k]['date']).decode('utf-8','replace'),
-                       'msgDate':results[k]['msgDate']).decode('utf-8','replace'),
-                       'msgItem':results[k]['msgItem']).decode('utf-8','replace'),
-                       'msgExtra':results[k]['msgExtra']).decode('utf-8','replace')}
+                       'msgUser':results[k]['msgUser'].decode('utf-8','replace'),
+                       'msgType':results[k]['msgType'].decode('utf-8','replace'),
+                       'sortDate':results[k]['date'].decode('utf-8','replace'),
+                       'msgDate':results[k]['msgDate'].decode('utf-8','replace'),
+                       'msgItem':results[k]['msgItem'].decode('utf-8','replace'),
+                       'msgExtra':results[k]['msgExtra'].decode('utf-8','replace')}
         m = ElementTree.SubElement(xml, 'message', attrib=attrib)
         m.text = results[k]['msgSubject'].decode('utf-8','replace')
       print '<?xml version="1.0" encoding="' + encoding + '"?>'
