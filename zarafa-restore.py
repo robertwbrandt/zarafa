@@ -273,8 +273,9 @@ if __name__ == "__main__":
       print attrib
 
 
-      # xml = ElementTree.Element('zarafa-restore')
-      # m = ElementTree.SubElement(xml, 'message', attrib={'name':deamon})
+      xml = ElementTree.Element('zarafa-restore', attrib=attrib)
+      # for k in brandt.sortDictbyField(results,'date'):
+      #   m = ElementTree.SubElement(xml, 'message', attrib={'name':deamon})
       # t = ElementTree.SubElement(d, show, attrib={'command':command, 'returncode':str(self.__deamons[deamon][show]["returncode"]), 'name':self.__deamons[deamon][show]['deamon']})
       # o = ElementTree.SubElement(t, 'output')
       # o.text = self.__deamons[deamon][show]["output"]
