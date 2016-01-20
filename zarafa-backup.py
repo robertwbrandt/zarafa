@@ -25,7 +25,7 @@ class customUsageVersion(argparse.Action):
   def __init__(self, option_strings, dest, **kwargs):
     self.__version = str(kwargs.get('version', ''))
     self.__prog = str(kwargs.get('prog', os.path.basename(__file__)))
-    self.__row = int(kwargs.get('max', brandt.getTerminalSize()[0]))
+    self.__row = min(int(kwargs.get('max', 80)), brandt.getTerminalSize()[0])
     self.__exit = int(kwargs.get('exit', 0))
     super(customUsageVersion, self).__init__(option_strings, dest, nargs=0)
   def __call__(self, parser, namespace, values, option_string=None):
@@ -103,11 +103,9 @@ if __name__ == "__main__":
   cmd = [ zarafaBackup, '-a', '-v', '-t', str(args['threads']), '-o', args['location'] ]
   users = {}
   currentuser = ""
-  print "Running the command: " + " ".join(cmd)
+  print 'Running the command: "' + ' '.join(cmd) + '"'
   print "Log File:", args['log']
   print "XML File:", args['xml']
-
-  exit()
 
   f = open(args['log'], 'w')
   p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
