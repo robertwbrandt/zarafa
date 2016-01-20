@@ -68,8 +68,8 @@ class customUsageVersion(argparse.Action):
       options.append(("-v, --version",           "Show program's version number and exit"))
       options.append(("-o, --output OUTPUT",     "Type of output {text | xml}"))
       options.append(("-l, --location LOCATION", "Backup location"))
-      options.append(("-t, --type TYPE",         "Type of msg {folder | message}"))
-      options.append(("-i, --item ITEM",         "Item ID {appointment | configuration | contact | distlist | documentlibrary | journal | note | post | recall | schedule | stickynote | task}"))
+      options.append(("-t, --type TYPE",         "Type of msg {" + " | ".join(msgTypeValues) + "}"))
+      options.append(("-i, --item ITEM",         "Item ID {" + " | ".join(msgItemValues) + "}"))
       options.append(("-e, --extra EXTRA",       "Msg extra info"))
       options.append(("-s, --subject SUBJECT",   "Msg subject"))
       options.append(("    --id MSGID",          "Msg ID"))
@@ -259,9 +259,9 @@ if __name__ == "__main__":
       length['msgItem'] = max( [ len(m['msgItem']) for m in results.values() ] )
       length['msgExtra'] = max( [ len(m['msgExtra']) for m in results.values() ] )
 
-      print "Msg ID".ljust(8), "Username".ljust(length['msgUser']), "Type".ljust(length['msgType']), "Date".center(length['msgDate']), "Item".ljust(length['msgItem']), "Extra".ljust(length['msgExtra']), "Subject"
+      print "Msg ID".center(8), "Username".center(length['msgUser']), "Type".center(length['msgType']), "Date".center(length['msgDate']), "Item".center(length['msgItem']), "Extra".center(length['msgExtra']), "     Subject"
       for k in brandt.sortDictbyField(results,'date'):
-        print k, results[k]['msgUser'].ljust(length['msgUser']), results[k]['msgType'].ljust(length['msgType']), results[k]['msgDate'].center(length['msgDate']), results[k]['msgItem'].ljust(length['msgItem']), results[k]['msgExtra'].ljust(length['msgExtra']), results[k]['msgSubject']
+        print k, results[k]['msgUser'].ljust(length['msgUser']), results[k]['msgType'].ljust(length['msgType']), results[k]['msgDate'].center(length['msgDate']), results[k]['msgItem'].title().ljust(length['msgItem']), results[k]['msgExtra'].ljust(length['msgExtra']), results[k]['msgSubject']
     else:
       print "XML"
   else:
