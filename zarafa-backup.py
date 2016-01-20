@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ElementTree
 
 # Import Brandt Common Utilities
 import sys
-sys.path.append("../common/") # this is where your python file exists
+sys.path.append("../common/")
 import brandt
 sys.path.pop()
 
