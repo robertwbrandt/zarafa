@@ -213,12 +213,13 @@ def find(username, msgID = None, msgType = None, msgDateStart = None, msgDateEnd
       if msgSubject and tmp[5]:
         add = fnmatch.fnmatch(str(tmp[5]).lower(), msgSubject)
       if add:
-        results[str(tmp[0])] = {'msgUser':username, 'msgType':str(tmp[1]), 
-                                     'msgDate':str(tmp[2].decode('utf-8','replace')),
-                                     'date':str(strDate.decode('utf-8','replace')),
-                                     'msgItem':str(tmp[3].decode('utf-8','replace'),
-                                     'msgExtra':str(tmp[4].decode('utf-8','replace')),
-                                     'msgSubject':str(tmp[5].decode('utf-8','replace'))}
+        results[str(tmp[0])] = {'msgUser':str(username),
+                                     'msgType':str(tmp[1]), 
+                                     'msgDate':str(tmp[2]),
+                                     'date':str(strDate),
+                                     'msgItem':str(tmp[3]),
+                                     'msgExtra':str(tmp[4]),
+                                     'msgSubject':str(tmp[5])}
   return results
 
 
@@ -296,7 +297,4 @@ if __name__ == "__main__":
 
 
   #restore('SYDENHAJ', '2CA26800', msgDateStart = "1-12-2015", msgDateEnd = "7-12-2015")
-
-
-
 
