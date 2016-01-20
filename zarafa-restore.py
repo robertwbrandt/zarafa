@@ -266,7 +266,7 @@ if __name__ == "__main__":
         print k, tmp[k]['msgUser'], tmp[k]['msgType'], tmp[k]['msgDate'], tmp[k]['msgItem'], tmp[k]['msgExtra'], tmp[k]['msgSubject']
     else:
       print "XML"
-  else
+  else:
     print "Restore"
 
 
