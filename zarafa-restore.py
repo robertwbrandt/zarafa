@@ -274,6 +274,7 @@ if __name__ == "__main__":
         m.text = str(results[k]['msgSubject'])
         print attrib
         print str(results[k]['msgSubject'])
+        print str(results[k]['msgSubject']).decode().encode('utf-8')
         print ElementTree.tostring(m, encoding=encoding, method="xml")
         print
       print '<?xml version="1.0" encoding="' + encoding + '"?>'
