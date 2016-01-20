@@ -62,7 +62,6 @@ class customUsageVersion(argparse.Action):
         print "  " + option[0].ljust(length) + "   " + description[0]
         for n in range(1,len(description)): print " " * (length + 5) + description[n]
     exit(self.__exit)
-
 def command_line_args():
   global args, version
 
