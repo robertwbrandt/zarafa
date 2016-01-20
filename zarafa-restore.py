@@ -17,6 +17,7 @@ version = 0.3
 args = {}
 args['output'] = "text"
 args['location'] = '/srv/backup/brick-level-backup'
+args['cmd'] = ''
 args['user'] = ''
 args['id'] = ''
 args['type'] = ''
@@ -137,7 +138,11 @@ def command_line_args():
   parser.add_argument('--end',
                     required=False,
                     type=str,
-                    action='store')  
+                    action='store')
+  parser.add_argument('cmd',
+                    choices=['find', 'restore'],
+                    type=str,
+                    action='store')
   parser.add_argument('user',
                     type=str,
                     action='store')    
@@ -253,12 +258,16 @@ def restore(username, msgID, msgDateStart = None, msgDateEnd = None):
 if __name__ == "__main__":
   command_line_args()
 
-  results = find("brandtb", msgDateStart="2-12-2005")
-  print results
-
-
-  # for k in brandt.sortDictbyField(tmp,'date'):
-  #   print k, tmp[k]['msgUser'], tmp[k]['msgType'], tmp[k]['msgDate'], tmp[k]['msgItem'], tmp[k]['msgExtra'], tmp[k]['msgSubject']
+  results = find("brandtb", msgDateStart="2-1-2006")
+  print args['cmd']
+  if args['cmd'] == 'find':
+    if args['output'] == 'text':
+      for k in brandt.sortDictbyField(tmp,'date'):
+        print k, tmp[k]['msgUser'], tmp[k]['msgType'], tmp[k]['msgDate'], tmp[k]['msgItem'], tmp[k]['msgExtra'], tmp[k]['msgSubject']
+    else:
+      print "XML"
+  else
+    print "Restore"
 
 
   #restore('SYDENHAJ', '2CA26800', msgDateStart = "1-12-2015", msgDateEnd = "7-12-2015")
