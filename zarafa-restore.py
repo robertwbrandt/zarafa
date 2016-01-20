@@ -266,12 +266,12 @@ if __name__ == "__main__":
       print args
 
       attrib=args.copy()
-      del attrib['help'] attrib['version'] attrib['cmd'] attrib['output'] attrib['location'] 
+      del attrib['help'], attrib['version'], attrib['cmd'], attrib['output'], attrib['location'] 
       print attrib
       for k in attrib.keys():
         if not attrib[k]: del attrib[k]
       print attrib
-        
+
 
       # xml = ElementTree.Element('zarafa-restore')
       # m = ElementTree.SubElement(xml, 'message', attrib={'name':deamon})
