@@ -2,13 +2,13 @@
 """
 Script used to backup Zarafa Mailboxes using brick-level-backup commands.
 """
-import argparse, textwrap, os
+import argparse, textwrap
 import subprocess
 import xml.etree.ElementTree as ElementTree
 
 # Import Brandt Common Utilities
-import sys
-sys.path.append("../common/")
+import sys, os
+sys.path.append( os.path.realpath( os.path.join( os.path.dirname(__file__), "../common" ) ) )
 import brandt
 sys.path.pop()
 
@@ -25,7 +25,7 @@ class customUsageVersion(argparse.Action):
   def __init__(self, option_strings, dest, **kwargs):
     self.__version = str(kwargs.get('version', ''))
     self.__prog = str(kwargs.get('prog', os.path.basename(__file__)))
-    self.__row, self.__col = brandt.getTerminalSize()
+    self.__row = int(kwargs.get('max', brandt.getTerminalSize()[0]))
     super(customUsageVersion, self).__init__(option_strings, dest, nargs=0)
 
   def __call__(self, parser, namespace, values, option_string=None):
@@ -37,7 +37,7 @@ class customUsageVersion(argparse.Action):
       version  = "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>. "
       version += "This is free software: you are free to change and redistribute it. "
       version += "There is NO WARRANTY, to the extent permitted by law."
-      print textwrap.fill(version, min(80, self.__row))
+      print textwrap.fill(version, self.__row)
       print "\nWritten by Bob Brandt <projects@brandt.ie>."
     else:
       print "Usage: " + self.__prog + " [-l LOCATION] [-t THREADS] [--log LOG] [--xml XML]"
