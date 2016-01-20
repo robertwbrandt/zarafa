@@ -60,7 +60,7 @@ class customUsageVersion(argparse.Action):
       print textwrap.fill(version, self.__row)
       print "\nWritten by Bob Brandt <projects@brandt.ie>."
     else:
-      print "Usage: " + self.__prog + " [options] USER"
+      print "Usage: " + self.__prog + " [options] {find|restore} USER"
       print "Script used to restore items to Zarafa Mailboxes via brick-level-backup.\n"
       print "Options:"
       options = []
