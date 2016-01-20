@@ -262,8 +262,8 @@ if __name__ == "__main__":
   print args['cmd']
   if args['cmd'] == 'find':
     if args['output'] == 'text':
-      for k in brandt.sortDictbyField(tmp,'date'):
-        print k, tmp[k]['msgUser'], tmp[k]['msgType'], tmp[k]['msgDate'], tmp[k]['msgItem'], tmp[k]['msgExtra'], tmp[k]['msgSubject']
+      for k in brandt.sortDictbyField(results,'date'):
+        print k, results[k]['msgUser'], results[k]['msgType'], results[k]['msgDate'], results[k]['msgItem'], results[k]['msgExtra'], results[k]['msgSubject']
     else:
       print "XML"
   else:
