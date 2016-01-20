@@ -26,17 +26,23 @@ class customUsageVersion(argparse.Action):
     self.__version = str(kwargs.get('version', ''))
     self.__prog = str(kwargs.get('prog', os.path.basename(__file__)))
     self.__row = int(kwargs.get('max', brandt.getTerminalSize()[0]))
+    self.__exit = int(kwargs.get('exit', 0))
     super(customUsageVersion, self).__init__(option_strings, dest, nargs=0)
-
   def __call__(self, parser, namespace, values, option_string=None):
     # print('%r %r %r' % (namespace, values, option_string))
     if self.__version:
       print self.__prog + " " + self.__version
-
       print "Copyright (C) 2013 Free Software Foundation, Inc."
-      version  = "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>. "
-      version += "This is free software: you are free to change and redistribute it. "
-      version += "There is NO WARRANTY, to the extent permitted by law."
+      print "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>."
+      version  = "This program is free software: you can redistribute it and/or modify "
+      version += "it under the terms of the GNU General Public License as published by "
+      version += "the Free Software Foundation, either version 3 of the License, or "
+      version += "(at your option) any later version."
+      print textwrap.fill(version, self.__row)
+      version  = "This program is distributed in the hope that it will be useful, "
+      version += "but WITHOUT ANY WARRANTY; without even the implied warranty of "
+      version += "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
+      version += "GNU General Public License for more details."
       print textwrap.fill(version, self.__row)
       print "\nWritten by Bob Brandt <projects@brandt.ie>."
     else:
@@ -55,8 +61,7 @@ class customUsageVersion(argparse.Action):
         description =  textwrap.wrap(option[1], (self.__row - length - 5))
         print "  " + option[0].ljust(length) + "   " + description[0]
         for n in range(1,len(description)): print " " * (length + 5) + description[n]
-    exit()
-
+    exit(self.__exit)
 
 def command_line_args():
   global args, version
