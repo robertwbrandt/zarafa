@@ -33,7 +33,7 @@ msgBackupLocation = '/srv/backup/brick-level-backup/'
 encoding = "utf-8"
 
 msgTypeValues = ['folder', 'message']
-msgItemValues = ['appointment','configuration','contact','distlist','documentlibrary','journal','note','post','recall','schedule','stickynote','task']
+msgItemValues = ['appointment','configuration','contact','distlist','documentlibrary','journal','note','post','recall','schedule','stickynote','task', 'other']
 
 class customUsageVersion(argparse.Action):
   def __init__(self, option_strings, dest, **kwargs):
@@ -190,7 +190,10 @@ def find(username, msgID = None, msgType = None, msgDateStart = None, msgDateEnd
   for line in str(out).split('\n')[1:]:
     if line:
       tmp = str(line).split('\t') + [None,None,None,None,None]
-      tmp[3] = str(tmp[3]).split('.')[1]
+      try:
+        tmp[3] = (str(tmp[3]).split('.')[1]).lower()
+      except:
+        tmp[3] = "other"
       add = True
       tmpDate = None
       strDate = 0
@@ -245,7 +248,7 @@ def restore(username, msgID, msgDateStart = None, msgDateEnd = None):
 if __name__ == "__main__":
   command_line_args()
 
-  results = find("brandtb", msgDateStart="2-1-2016")
+  results = find("brandtb", msgDateStart="19-1-2016")
   print args['cmd']
   if args['cmd'] == 'find':
     if args['output'] == 'text':
