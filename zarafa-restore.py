@@ -270,8 +270,8 @@ if __name__ == "__main__":
       xml = ElementTree.Element('zarafa-restore', attrib=attrib)
       for k in brandt.sortDictbyField(results,'date'):
         m = ElementTree.SubElement(xml, 'message', attrib=results[k])
-      print '<?xml version="1.0" encoding="' + self.__encoding + '"?>'
-      print ElementTree.tostring(xml, encoding=self.__encoding, method="xml")
+      print '<?xml version="1.0" encoding="' + encoding + '"?>'
+      print ElementTree.tostring(xml, encoding=encoding, method="xml")
   else:
     print "Restore"
 
