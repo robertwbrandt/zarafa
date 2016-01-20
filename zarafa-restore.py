@@ -30,7 +30,7 @@ args['subject'] = ''
 zarafaScript = '/usr/share/zarafa-backup/readable-index.pl'
 zarafaRestore = '/usr/sbin/zarafa-restore'
 msgBackupLocation = '/srv/backup/brick-level-backup/'
-encoding = "utf-8"
+encoding = 'utf-8'
 
 msgTypeValues = ['folder', 'message']
 msgItemValues = ['appointment','configuration','contact','distlist','documentlibrary','journal','note','post','recall','schedule','stickynote','task', 'other']
@@ -280,18 +280,18 @@ if __name__ == "__main__":
         if not attrib[k]: 
           del attrib[k]
         else:
-          attrib[k] = attrib[k].decode('utf-8','replace')
+          attrib[k] = attrib[k].decode(encoding,'replace')
       xml = ElementTree.Element('zarafa-restore', attrib=attrib)
       for k in brandt.sortDictbyField(results,'date'):
-        attrib = {'msgID':k.decode('utf-8','replace'),
-                       'msgUser':results[k]['msgUser'].decode('utf-8','replace'),
-                       'msgType':results[k]['msgType'].decode('utf-8','replace'),
-                       'sortDate':results[k]['date'].decode('utf-8','replace'),
-                       'msgDate':results[k]['msgDate'].decode('utf-8','replace'),
-                       'msgItem':results[k]['msgItem'].decode('utf-8','replace'),
-                       'msgExtra':results[k]['msgExtra'].decode('utf-8','replace')}
+        attrib = {'msgID':k.decode(encoding,'replace'),
+                       'msgUser':results[k]['msgUser'].decode(encoding,'replace'),
+                       'msgType':results[k]['msgType'].decode(encoding,'replace'),
+                       'sortDate':results[k]['date'].decode(encoding,'replace'),
+                       'msgDate':results[k]['msgDate'].decode(encoding,'replace'),
+                       'msgItem':results[k]['msgItem'].decode(encoding,'replace'),
+                       'msgExtra':results[k]['msgExtra'].decode(encoding,'replace')}
         m = ElementTree.SubElement(xml, 'message', attrib=attrib)
-        m.text = results[k]['msgSubject'].decode('utf-8','replace')
+        m.text = results[k]['msgSubject'].decode(encoding,'replace')
       print '<?xml version="1.0" encoding="' + encoding + '"?>'
       print ElementTree.tostring(xml, encoding=encoding, method="xml")
   else:
