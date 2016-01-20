@@ -272,6 +272,8 @@ if __name__ == "__main__":
         attrib = {'msgID':str(k), 'msgUser':str(results[k]['msgUser']), 'msgType':str(results[k]['msgType']), 'msgDate':str(results[k]['msgDate']), 'msgItem':str(results[k]['msgItem']), 'msgExtra':str(results[k]['msgExtra'])}
         m = ElementTree.SubElement(xml, 'message', attrib=attrib)
         m.text = str(results[k]['msgSubject'])
+        print ElementTree.tostring(m, encoding=encoding, method="xml")
+        print
       print '<?xml version="1.0" encoding="' + encoding + '"?>'
       print ElementTree.tostring(xml, encoding=encoding, method="xml")
   else:
