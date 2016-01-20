@@ -248,7 +248,7 @@ def restore(username, msgID, msgDateStart = None, msgDateEnd = None):
 if __name__ == "__main__":
   command_line_args()
 
-  results = find("brandtb", msgDateStart="20-1-2016")
+  results = find("brandtb", msgDateStart="19-1-2016")
 
   if args['cmd'] == 'find':
     if args['output'] == 'text':
