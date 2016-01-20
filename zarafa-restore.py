@@ -5,9 +5,15 @@ Script used to restore Zarafa Mailboxes using brick-level-backup commands.
 import argparse, os, subprocess, sys, datetime, fnmatch
 import xml.etree.ElementTree as ElementTree
 
+# Import Brandt Common Utilities
+import sys, os
+sys.path.append( os.path.realpath( os.path.join( os.path.dirname(__file__), "../common" ) ) )
+import brandt
+sys.path.pop()
+
+version = 0.3
 args = {}
 args['output'] = "text"
-args['version'] = 0.3
 args['location'] = '/srv/backup/brick-level-backup'
 args['user'] = ''
 args['id'] = ''
@@ -23,9 +29,45 @@ zarafaRestore = '/usr/sbin/zarafa-restore'
 msgBackupLocation = '/srv/backup/brick-level-backup/'
 encoding = "utf-8"
 
-
 msgTypeValues = ['folder', 'message']
 msgItemValues = {}
+
+
+class customUsageVersion(argparse.Action):
+  def __init__(self, option_strings, dest, **kwargs):
+    self.__version = str(kwargs.get('version', ''))
+    self.__prog = str(kwargs.get('prog', os.path.basename(__file__)))
+    self.__row = min(int(kwargs.get('max', 80)), brandt.getTerminalSize()[0])
+    self.__exit = int(kwargs.get('exit', 0))
+    super(customUsageVersion, self).__init__(option_strings, dest, nargs=0)
+  def __call__(self, parser, namespace, values, option_string=None):
+    # print('%r %r %r' % (namespace, values, option_string))
+    if self.__version:
+      print self.__prog + " " + self.__version
+      print "Copyright (C) 2013 Free Software Foundation, Inc."
+      print "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>."
+      version  = "This program is free software: you can redistribute it and/or modify "
+      version += "it under the terms of the GNU General Public License as published by "
+      version += "the Free Software Foundation, either version 3 of the License, or "
+      version += "(at your option) any later version."
+      print textwrap.fill(version, self.__row)
+      version  = "This program is distributed in the hope that it will be useful, "
+      version += "but WITHOUT ANY WARRANTY; without even the implied warranty of "
+      version += "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
+      version += "GNU General Public License for more details."
+      print textwrap.fill(version, self.__row)
+      print "\nWritten by Bob Brandt <projects@brandt.ie>."
+    else:
+      print "Usage: " + self.__prog + " [options] USER"
+      print "Script used to restore items to Zarafa Mailboxes via brick-level-backup.\n"
+      print "Options:"
+      options = []
+      options.append(("-h, --help",              "Show this help message and exit"))
+      options.append(("-v, --version",           "Show program's version number and exit"))
+      options.append(("-o, --output OUTPUT",     "Type of output [text | xml]"))
+      options.append(("-l, --location LOCATION", "Backup location"))
+      options.append(("-t, --type TYPE",         "Type of msg [folder | message]"))
+#      options.append(("-i, --item ITEM",         "Item ID"))
 # IPF.Appointment
 # IPF.Configuration
 # IPF.Contact
@@ -41,46 +83,36 @@ msgItemValues = {}
 # IPM.Schedule.Meeting.Request
 # IPM.Schedule.Meeting.Resp.Neg
 # IPM.Schedule.Meeting.Resp.Pos
-
+      options.append(("-e, --extra EXTRA",       "Msg extra info"))
+      options.append(("-s, --subject SUBJECT",   "Msg subject"))
+      options.append(("    --id MSGID",          "Msg ID"))
+      options.append(("    --start START",       "Start Date (in format DD-MM-YYYY)"))
+      options.append(("    --end END",           "End Date (in format DD-MM-YYYY)"))
+      length = max( [ len(option[0]) for option in options ] )
+      for option in options:
+        description =  textwrap.wrap(option[1], (self.__row - length - 5))
+        print "  " + option[0].ljust(length) + "   " + description[0]
+        for n in range(1,len(description)): print " " * (length + 5) + description[n]
+    exit(self.__exit)
 def command_line_args():
-  global args
+  global args, version
 
-  parser = argparse.ArgumentParser(description=".",
-                    formatter_class=argparse.RawDescriptionHelpFormatter)
-  parser.add_argument('-v', '--version',
-                    action='version',
-                    version="%(prog)s " + str(args['version']) + """
-  Copyright (C) 2011 Free Software Foundation, Inc.
-  License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
-  This is free software: you are free to change and redistribute it.
-  There is NO WARRANTY, to the extent permitted by law.
-  Written by Bob Brandt <projects@brandt.ie>.\n """)
+  parser = argparse.ArgumentParser(add_help=False)
+  parser.add_argument('-v', '--version', action=customUsageVersion, version=version, max=80)
+  parser.add_argument('-h', '--help', action=customUsageVersion)
   parser.add_argument('-o', '--output',
                     required=False,
                     default=args['output'],
-                    choices=['text', 'xml'],
-                    help='Display output type.')
+                    choices=['text', 'xml'])
   parser.add_argument('-l', '--location',
                     required=False,
                     default=args['location'],
                     type=str,
-                    action='store')  
-  parser.add_argument('--id',
-                    required=False,
-                    type=str,
-                    action='store')  
+                    action='store')
   parser.add_argument('-t', '--type',
                     required=False,
                     type=str,
-                    action='store')  
-  parser.add_argument('--start',
-                    required=False,
-                    type=str,
-                    action='store')  
-  parser.add_argument('--end',
-                    required=False,
-                    type=str,
-                    action='store')  
+                    action='store')    
   parser.add_argument('-i', '--item',
                     required=False,
                     type=str,
@@ -93,6 +125,18 @@ def command_line_args():
                     required=False,
                     type=str,
                     action='store') 
+  parser.add_argument('--id',
+                    required=False,
+                    type=str,
+                    action='store')   
+  parser.add_argument('--start',
+                    required=False,
+                    type=str,
+                    action='store')  
+  parser.add_argument('--end',
+                    required=False,
+                    type=str,
+                    action='store')  
   parser.add_argument('user',
                     type=str,
                     action='store')    
@@ -111,7 +155,6 @@ def command_line_args():
 
 def sortDictbyDate(d):
   return sorted(d.keys(), key=lambda x: d[x]['date'])
-
 
 def find(username, msgID = None, msgType = None, msgDateStart = None, msgDateEnd = None, msgItem = None, msgExtra = None, msgSubject = None):
   
