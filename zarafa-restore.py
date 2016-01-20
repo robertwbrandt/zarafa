@@ -33,7 +33,7 @@ msgBackupLocation = '/srv/backup/brick-level-backup/'
 encoding = "utf-8"
 
 msgTypeValues = ['folder', 'message']
-msgItemValues = {}
+msgItemValues = ['appointment','configuration','contact','distlist','documentlibrary','journal','note','post','recall','schedule','stickynote','task']
 
 class customUsageVersion(argparse.Action):
   def __init__(self, option_strings, dest, **kwargs):
@@ -60,31 +60,16 @@ class customUsageVersion(argparse.Action):
       print textwrap.fill(version, self.__row)
       print "\nWritten by Bob Brandt <projects@brandt.ie>."
     else:
-      print "Usage: " + self.__prog + " [options] {find|restore} USER"
+      print "Usage: " + self.__prog + " [options] {find | restore} USER"
       print "Script used to restore items to Zarafa Mailboxes via brick-level-backup.\n"
       print "Options:"
       options = []
       options.append(("-h, --help",              "Show this help message and exit"))
       options.append(("-v, --version",           "Show program's version number and exit"))
-      options.append(("-o, --output OUTPUT",     "Type of output [text | xml]"))
+      options.append(("-o, --output OUTPUT",     "Type of output {text | xml}"))
       options.append(("-l, --location LOCATION", "Backup location"))
-      options.append(("-t, --type TYPE",         "Type of msg [folder | message]"))
-#      options.append(("-i, --item ITEM",         "Item ID"))
-# IPF.Appointment
-# IPF.Configuration
-# IPF.Contact
-# IPF.Journal
-# IPF.Note
-# IPF.Note.OutlookHomepage
-# IPF.StickyNote
-# IPF.Task
-# IPM.Appointment
-# IPM.Note
-# IPM.Note.StorageQuotaWarning
-# IPM.Schedule.Meeting.Canceled
-# IPM.Schedule.Meeting.Request
-# IPM.Schedule.Meeting.Resp.Neg
-# IPM.Schedule.Meeting.Resp.Pos
+      options.append(("-t, --type TYPE",         "Type of msg {folder | message}"))
+      options.append(("-i, --item ITEM",         "Item ID {appointment | configuration | contact | distlist | documentlibrary | journal | note | post | recall | schedule | stickynote | task}"))
       options.append(("-e, --extra EXTRA",       "Msg extra info"))
       options.append(("-s, --subject SUBJECT",   "Msg subject"))
       options.append(("    --id MSGID",          "Msg ID"))
@@ -98,7 +83,6 @@ class customUsageVersion(argparse.Action):
     exit(self.__exit)
 def command_line_args():
   global args, version
-
   parser = argparse.ArgumentParser(add_help=False)
   parser.add_argument('-v', '--version', action=customUsageVersion, version=version, max=80)
   parser.add_argument('-h', '--help', action=customUsageVersion)
@@ -112,11 +96,13 @@ def command_line_args():
                     type=str,
                     action='store')
   parser.add_argument('-t', '--type',
+                    choices=msgTypeValues,
                     required=False,
                     type=str,
                     action='store')    
   parser.add_argument('-i', '--item',
                     required=False,
+                    choices=msgItemValues,
                     type=str,
                     action='store')  
   parser.add_argument('-e', '--extra',
@@ -171,7 +157,7 @@ def find(username, msgID = None, msgType = None, msgDateStart = None, msgDateEnd
   if msgSubject: msgSubject   = str(msgSubject).lower()
 
   if msgType not in msgTypeValues: msgType = None
-  if msgItem not in msgItemValues.keys(): msgItem = None
+  if msgItem not in msgItemValues: msgItem = None
   if msgDateStart:
     msgDateStart = datetime.datetime.strptime(msgDateStart, "%d-%m-%Y")
   if msgDateEnd:
@@ -204,6 +190,7 @@ def find(username, msgID = None, msgType = None, msgDateStart = None, msgDateEnd
   for line in str(out).split('\n')[1:]:
     if line:
       tmp = str(line).split('\t') + [None,None,None,None,None]
+      tmp[3] = str(tmp[3]).split('.')[1]
       add = True
       tmpDate = None
       strDate = 0
@@ -269,7 +256,7 @@ if __name__ == "__main__":
       length['msgItem'] = max( [ len(m['msgItem']) for m in results.values() ] )
       length['msgExtra'] = max( [ len(m['msgExtra']) for m in results.values() ] )
 
-      print "Msg ID".ljust(8), "Username".ljust(length['msgUser']), "Type".ljust(length['msgType']), "Date".center(length['msgDate']), "Extra".ljust(length['msgExtra']), "Subject"
+      print "Msg ID".ljust(8), "Username".ljust(length['msgUser']), "Type".ljust(length['msgType']), "Date".center(length['msgDate']), "Item".ljust(length['msgItem']), "Extra".ljust(length['msgExtra']), "Subject"
       for k in brandt.sortDictbyField(results,'date'):
         print k, results[k]['msgUser'].ljust(length['msgUser']), results[k]['msgType'].ljust(length['msgType']), results[k]['msgDate'].center(length['msgDate']), results[k]['msgItem'].ljust(length['msgItem']), results[k]['msgExtra'].ljust(length['msgExtra']), results[k]['msgSubject']
     else:
