@@ -248,7 +248,7 @@ def restore(username, msgID, msgDateStart = None, msgDateEnd = None):
 if __name__ == "__main__":
   command_line_args()
 
-  results = find("brandtb", msgDateStart="19-1-2016")
+  results = find("brandtb", msgDateStart="20-1-2016")
 
   if args['cmd'] == 'find':
     if args['output'] == 'text':
@@ -269,7 +269,8 @@ if __name__ == "__main__":
         if not attrib[k]: del attrib[k]
       xml = ElementTree.Element('zarafa-restore', attrib=attrib)
       for k in brandt.sortDictbyField(results,'date'):
-        m = ElementTree.SubElement(xml, 'message', attrib=results[k])
+        attrib = {'msgID':str(k), 'msgUser':str(results[k]['msgUser']), 'msgType':str(results[k]['msgType']), 'msgDate':str(results[k]['msgDate']), 'msgItem':str(results[k]['msgItem']), 'msgExtra':str(results[k]['msgExtra']), 'msgSubject':str(results[k]['msgSubject'])}
+        m = ElementTree.SubElement(xml, 'message', attrib=attrib)
       print '<?xml version="1.0" encoding="' + encoding + '"?>'
       print ElementTree.tostring(xml, encoding=encoding, method="xml")
   else:
