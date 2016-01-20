@@ -213,15 +213,13 @@ def find(username, msgID = None, msgType = None, msgDateStart = None, msgDateEnd
       if msgSubject and tmp[5]:
         add = fnmatch.fnmatch(str(tmp[5]).lower(), msgSubject)
       if add:
-        results[tmp[0]] = {'msgUser':username, 'msgType':str(tmp[1].decode('utf-8','replace')), 
+        results[str(tmp[0])] = {'msgUser':username, 'msgType':str(tmp[1]), 
                                      'msgDate':str(tmp[2].decode('utf-8','replace')),
                                      'date':str(strDate.decode('utf-8','replace')),
-                                     'msgItem':str(tmp[3].decode('utf-8','replace')),
+                                     'msgItem':str(tmp[3].decode('utf-8','replace'),
                                      'msgExtra':str(tmp[4].decode('utf-8','replace')),
                                      'msgSubject':str(tmp[5].decode('utf-8','replace'))}
   return results
-
-
 
 
 def restore(username, msgID, msgDateStart = None, msgDateEnd = None):
@@ -279,18 +277,18 @@ if __name__ == "__main__":
       del attrib['help'], attrib['version'], attrib['cmd'], attrib['output'], attrib['location'] 
       for k in attrib.keys():
         if not attrib[k]: del attrib[k]
+          attrib[k] = attrib[k].decode('utf-8','replace')
       xml = ElementTree.Element('zarafa-restore', attrib=attrib)
       for k in brandt.sortDictbyField(results,'date'):
-        attrib = {'msgID':str(k), 'msgUser':str(results[k]['msgUser']),
-                       'msgType':str(results[k]['msgType']),
-                       'sortDate':str(results[k]['date']),
-                       'msgDate':str(results[k]['msgDate']),
-                       'msgItem':str(results[k]['msgItem']),
-                       'msgExtra':str(results[k]['msgExtra'])}
+        attrib = {'msgID':k.decode('utf-8','replace'),
+                       'msgUser':results[k]['msgUser']).decode('utf-8','replace'),
+                       'msgType':results[k]['msgType']).decode('utf-8','replace'),
+                       'sortDate':results[k]['date']).decode('utf-8','replace'),
+                       'msgDate':results[k]['msgDate']).decode('utf-8','replace'),
+                       'msgItem':results[k]['msgItem']).decode('utf-8','replace'),
+                       'msgExtra':results[k]['msgExtra']).decode('utf-8','replace')}
         m = ElementTree.SubElement(xml, 'message', attrib=attrib)
-        m.text = results[k]['msgSubject']
-        # print ElementTree.tostring(m, encoding=encoding, method="xml")
-        # print
+        m.text = results[k]['msgSubject'].decode('utf-8','replace')
       print '<?xml version="1.0" encoding="' + encoding + '"?>'
       print ElementTree.tostring(xml, encoding=encoding, method="xml")
   else:
