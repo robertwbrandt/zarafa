@@ -265,7 +265,10 @@ if __name__ == "__main__":
     else:
       print args
 
-      # attrib={'name':deamon}
+      attrib=args.copy()
+      del attrib['help'] attrib['version'] attrib['cmd'] attrib['output'] attrib['location'] 
+      print attrib
+
 
 
       # xml = ElementTree.Element('zarafa-restore')
