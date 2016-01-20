@@ -258,12 +258,20 @@ def restore(username, msgID, msgDateStart = None, msgDateEnd = None):
 if __name__ == "__main__":
   command_line_args()
 
-  results = find("brandtb", msgDateStart="2-1-2006")
+  results = find("brandtb", msgDateStart="2-1-2016")
   print args['cmd']
   if args['cmd'] == 'find':
     if args['output'] == 'text':
+      length={}
+      length['msgUser'] = max( len(args['user']), 8)      
+      length['msgType'] = max( [ len(m['msgType']) for m in results.values() ] )
+      length['msgDate'] = max( [ len(m['msgDate']) for m in results.values() ] )
+      length['msgItem'] = max( [ len(m['msgItem']) for m in results.values() ] )
+      length['msgExtra'] = max( [ len(m['msgExtra']) for m in results.values() ] )
+
+      print "Msg ID".ljust(8), "Username".ljust(length['msgUser']), "Type".ljust(length['msgType']), "Date".center(length['msgDate']), "Extra".ljust(length['msgExtra']), Subject
       for k in brandt.sortDictbyField(results,'date'):
-        print k, results[k]['msgUser'], results[k]['msgType'], results[k]['msgDate'], results[k]['msgItem'], results[k]['msgExtra'], results[k]['msgSubject']
+        print k, results[k]['msgUser'].ljust(length['msgUser']), results[k]['msgType'].ljust(length['msgType']), results[k]['msgDate'].center(length['msgDate']), results[k]['msgItem'].ljust(length['msgItem']), results[k]['msgExtra'].ljust(length['msgExtra']), results[k]['msgSubject']
     else:
       print "XML"
   else:
