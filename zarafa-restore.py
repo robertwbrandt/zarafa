@@ -274,14 +274,16 @@ if __name__ == "__main__":
         if not attrib[k]: del attrib[k]
       xml = ElementTree.Element('zarafa-restore', attrib=attrib)
       for k in brandt.sortDictbyField(results,'date'):
-        attrib = {'msgID':str(k), 'msgUser':str(results[k]['msgUser']), 'msgType':str(results[k]['msgType']), 'msgDate':str(results[k]['msgDate']), 'msgItem':str(results[k]['msgItem']), 'msgExtra':str(results[k]['msgExtra'])}
+        attrib = {'msgID':str(k), 'msgUser':str(results[k]['msgUser']),
+                       'msgType':str(results[k]['msgType']),
+                       'sortDate':str(results[k]['date']),
+                       'msgDate':str(results[k]['msgDate']),
+                       'msgItem':str(results[k]['msgItem']),
+                       'msgExtra':str(results[k]['msgExtra'])}
         m = ElementTree.SubElement(xml, 'message', attrib=attrib)
-        m.text = results[k]['msgSubject'].encode()
-        # for s in str(results[k]['msgSubject']):
-        #   print s, s.encode()
-        # print str(results[k]['msgSubject']).decode()
-        print ElementTree.tostring(m, encoding=encoding, method="xml")
-        print
+        m.text = results[k]['msgSubject']
+        # print ElementTree.tostring(m, encoding=encoding, method="xml")
+        # print
       print '<?xml version="1.0" encoding="' + encoding + '"?>'
       print ElementTree.tostring(xml, encoding=encoding, method="xml")
   else:
