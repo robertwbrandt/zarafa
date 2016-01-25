@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ElementTree
 
 # Import Brandt Common Utilities
 import sys, os
-sys.path.append( os.path.realpath( os.path.join( os.path.dirname(__file__), "../common" ) ) )
+sys.path.append( os.path.realpath( os.path.join( os.path.dirname(__file__), "/opt/brandt/common" ) ) )
 import brandt
 sys.path.pop()
 
