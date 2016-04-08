@@ -17,7 +17,7 @@ if [ ! -r "$_this_conf" ]; then
       echo -e "#     Bob Brandt <projects@brandt.ie>\n#"
       echo -e "_backup_veto_hours=$( seq -s ',' 8 17 )"
       echo -e "_backup_user='root'"
-      echo -e "_backup_source='/srv/zarafa/*'"
+      echo -e "_backup_source='/srv/zarafa'"
       echo -e "_backup_dest='zarafa-backup:/srv/zarafa/'" ) > "$_this_conf"
     echo "Unable to find required file: $_this_conf" 1>&2
 fi
@@ -90,7 +90,11 @@ done
 
 if ! is_workday
 then
-	echo run-one rsync -a ${_backup_source} ${_backup_user}@${_backup_dest}
+	if [ -d "$_backup_source" ]; then
+		run-one rsync -a ${_backup_source}/* ${_backup_user}@${_backup_dest}
+	else
+		echo "Unable to find source directory: $_backup_source" 1>&2
+	fi 
 fi
 
 exit $?

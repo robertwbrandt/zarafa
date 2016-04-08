@@ -55,6 +55,7 @@ function usage() {
     [ "$_exitcode" == "0" ] && _output=1
     [ "$2" == "" ] || echo -e "$2"
     ( echo -e "Usage: $0 [options]"
+	  echo -e "Script to run the z-push fixstates command and record to output in a log file."    	
       echo -e "Options:"
       echo -e " -h, --help     display this help and exit"
       echo -e " -v, --version  output version information and exit" ) >&$_output
