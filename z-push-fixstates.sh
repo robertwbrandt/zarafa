@@ -24,7 +24,7 @@ fi
 . "$_this_conf"
 
 function fixstate_cmd() {
-	_z_push_admin -a fixstates
+	$_z_push_admin -a fixstates
 	return $?
 }
 
