@@ -21,7 +21,7 @@ zarafaFiles  = {'server.cfg': '/etc/zarafa/server.cfg',
                 'ldap.propmap.cfg': '/etc/zarafa/ldap.propmap.cfg',
                 'ldap.cfg': '/etc/zarafa/ldap.active-directory.cfg'}
 zarafaLDAP   = {}
-zarafaAttrs  = []
+zarafaAttrs  = set([])
 zarafaFilter = ""
 
 
@@ -102,11 +102,11 @@ def write_zarafa_cache():
     if line and str(line)[0] not in ['#',';']:
       line = line.split("=",1)
       if len(line) == 2 and line[1].strip(): 
-        zarafaAttrs.append(str(line[1]).strip())
+        zarafaAttrs.append(str(line[1]).strip().lower())
 
   for key in zarafaLDAP.keys():
-    if 'attribute' in key:
-      print key, zarafaLDAP[key]
+    if key[-9:] == 'attribute':
+      print key, zarafaLDAP[key].lower()
 
   # print zarafaAttrs
 
