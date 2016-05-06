@@ -17,12 +17,13 @@ args = {}
 version = 0.3
 encoding = 'utf-8'
 
-zarafaFiles  = {'server.cfg': '/etc/zarafa/server.cfg',
-                'ldap.propmap.cfg': '/etc/zarafa/ldap.propmap.cfg',
-                'ldap.cfg': '/etc/zarafa/ldap.active-directory.cfg'}
-zarafaLDAP   = {}
-zarafaAttrs  = set([])
-zarafaFilter = ""
+zarafaFiles   = {'server.cfg': '/etc/zarafa/server.cfg',
+                 'ldap.propmap.cfg': '/etc/zarafa/ldap.propmap.cfg',
+                 'ldap.cfg': '/etc/zarafa/ldap.active-directory.cfg'}
+zarafaLDAP    = {}
+zarafaAttrs   = set([])
+zarafaFilter  = ""
+ZarafaLDAPURL = ""
 
 
 class customUsageVersion(argparse.Action):
@@ -112,7 +113,12 @@ def write_zarafa_cache():
     if key[-6:] == 'filter':
       zarafaFilter += zarafaLDAP[key]
   zarafaFilter = "(|" + zarafaFilter +")"
-  print zarafaFilter
+
+  print zarafaLDAP('ldap_uri')
+
+  # ZarafaLDAPURL = 
+
+
 
 # Start program
 if __name__ == "__main__":
