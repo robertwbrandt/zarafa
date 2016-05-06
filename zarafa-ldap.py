@@ -104,7 +104,11 @@ def write_zarafa_cache():
       if len(line) == 2 and line[1].strip(): 
         zarafaAttrs.append(str(line[1]).strip())
 
-  print zarafaAttrs
+  for key in zarafaLDAP.keys():
+    if 'attribute' in key:
+      print key, zarafaLDAP[key]
+
+  # print zarafaAttrs
 
 
 
