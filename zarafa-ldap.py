@@ -17,10 +17,11 @@ args = {}
 version = 0.3
 encoding = 'utf-8'
 
-zarafaFiles = {'server.cfg': '/etc/zarafa/server.cfg',
-               'ldap.propmap.cfg': '/etc/zarafa/ldap.propmap.cfg',
-               'ldap.cfg': '/etc/zarafa/ldap.active-directory.cfg'}
-zarafaLDAP  = {}
+zarafaFiles  = {'server.cfg': '/etc/zarafa/server.cfg',
+                'ldap.propmap.cfg': '/etc/zarafa/ldap.propmap.cfg',
+                'ldap.cfg': '/etc/zarafa/ldap.active-directory.cfg'}
+zarafaLDAP   = {}
+zarafaAttrs  = {}
 
 class customUsageVersion(argparse.Action):
   def __init__(self, option_strings, dest, **kwargs):
@@ -71,7 +72,7 @@ def read_zarafa_cache():
 
 
 def write_zarafa_cache():
-  global zarafaFiles, zarafaLDAP
+  global zarafaFiles, zarafaLDAP, zarafaAttrs
 
   f = open(zarafaFiles['server.cfg'], 'r')
   out = f.read()
@@ -93,18 +94,16 @@ def write_zarafa_cache():
       if len(line) == 2:
         zarafaLDAP[str(line[0]).strip().lower()] = str(line[1]).strip()
 
-  print zarafaLDAP
+  f = open(zarafaFiles['ldap.propmap.cfg'], 'r')
+  out = f.read()
+  f.close()
+  for line in out.split('\n'):
+    if line and str(line)[0] not in ['#',';']:
+      line = line.split("=",1)
+      if len(line) == 2:
+        zarafaAttrs[str(line[0]).strip().lower()] = str(line[1]).strip()
 
-
-# Get LDAP file
-# sed -n "s|user_plugin_config\W*=||p" /etc/zarafa/server.cfg 
-
-# Get LDAP properties
-# cat /etc/zarafa/ldap.active-directory.cfg
-
-# Attributes
-# sed -ne 's|.*=\W*||p' /etc/zarafa/ldap.propmap.cfg   
-
+  print zarafaAttrs
 
 
 
