@@ -74,7 +74,7 @@ def read_zarafa_cache():
 
 
 def write_zarafa_cache():
-  global zarafaFiles, zarafaLDAP, zarafaAttrs
+  global zarafaFiles, zarafaLDAP, zarafaAttrs, zarafaFilter
 
   f = open(zarafaFiles['server.cfg'], 'r')
   out = f.read()
@@ -110,9 +110,9 @@ def write_zarafa_cache():
 
   for key in zarafaLDAP.keys():
     if key[-6:] == 'filter':
-      print key, zarafaLDAP[key]
-
-
+      zarafaFilter += zarafaLDAP[key]
+  zarafaFilter = "(|" + zarafaFilter +")"
+  print zarafaFilter
 
 # Start program
 if __name__ == "__main__":
