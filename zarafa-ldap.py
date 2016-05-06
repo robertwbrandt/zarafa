@@ -106,9 +106,9 @@ def write_zarafa_cache():
 
   for key in zarafaLDAP.keys():
     if key[-9:] == 'attribute':
-      print key, zarafaLDAP[key].lower()
+      zarafaAttrs.add(zarafaLDAP[key].lower())
 
-  # print zarafaAttrs
+  print sorted(zarafaAttrs)
 
 
 
