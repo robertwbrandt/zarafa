@@ -88,7 +88,10 @@ def write_zarafa_cache():
   out = f.read()
   f.close()
   for line in out.split('\n'):
-    print line
+    if line and str(line)[0] not in ['#',';']:
+      line = line.split("=",1)
+      if len(line) == 2:
+        print str(line[0]).strip().lower(),"=",str(line[1]).strip()
 
 
 
