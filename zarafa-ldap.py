@@ -109,7 +109,7 @@ def write_zarafa_cache():
       zarafaAttrs.add(zarafaLDAP[key].lower())
 
   for key in zarafaLDAP.keys():
-    if 'filter' in key:
+    if key[-6:] == 'filter':
       print key, zarafaLDAP[key]
 
 
