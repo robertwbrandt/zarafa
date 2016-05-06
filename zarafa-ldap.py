@@ -114,7 +114,7 @@ def write_zarafa_cache():
       zarafaFilter += zarafaLDAP[key]
   zarafaFilter = "(|" + zarafaFilter +")"
 
-  print zarafaLDAP('ldap_uri')
+  print zarafaLDAP['ldap_uri']
 
   # ZarafaLDAPURL = 
 
