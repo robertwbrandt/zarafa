@@ -92,7 +92,7 @@ def write_zarafa_cache():
   for line in out.split('\n'):
     if line and str(line)[0] not in ['#',';']:
       line = line.split("=",1)
-      if len(line) == 2:
+      if len(line) == 2 and line[1].strip(): 
         zarafaLDAP[str(line[0]).strip().lower()] = str(line[1]).strip()
 
   f = open(zarafaFiles['ldap.propmap.cfg'], 'r')
