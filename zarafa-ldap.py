@@ -21,7 +21,9 @@ zarafaFiles  = {'server.cfg': '/etc/zarafa/server.cfg',
                 'ldap.propmap.cfg': '/etc/zarafa/ldap.propmap.cfg',
                 'ldap.cfg': '/etc/zarafa/ldap.active-directory.cfg'}
 zarafaLDAP   = {}
-zarafaAttrs  = {}
+zarafaAttrs  = []
+zarafaFilter = ""
+
 
 class customUsageVersion(argparse.Action):
   def __init__(self, option_strings, dest, **kwargs):
@@ -82,7 +84,6 @@ def write_zarafa_cache():
       line = line.split("=",1)
       if len(line) == 2: 
         zarafaFiles['ldap.cfg'] = str(line[1]).strip()
-        print zarafaFiles['ldap.cfg']
         break
 
   f = open(zarafaFiles['ldap.cfg'], 'r')
@@ -101,7 +102,7 @@ def write_zarafa_cache():
     if line and str(line)[0] not in ['#',';']:
       line = line.split("=",1)
       if len(line) == 2:
-        zarafaAttrs[str(line[0]).strip().lower()] = str(line[1]).strip()
+        zarafaAttrs.append(str(line[1]).strip())
 
   print zarafaAttrs
 
