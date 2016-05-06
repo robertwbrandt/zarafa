@@ -2,7 +2,7 @@
 """
 Python utility to monitor when LDAP attributes change and issue --sync command to Zarafa
 """
-import argparse, textwrap, fnmatch, datetime
+import argparse, textwrap, fnmatch, datetime, urllib
 import xml.etree.cElementTree as ElementTree
 import subprocess
 
@@ -119,11 +119,11 @@ def write_zarafa_cache():
     ZarafaLDAPURL = zarafaLDAP.get('ldap_protocol','ldap') + '://' + zarafaLDAP.get('ldap_host','')
     if zarafaLDAP.has_key('ldap_port'): ZarafaLDAPURL += ':' + zarafaLDAP['ldap_port']
   if ZarafaLDAPURL[-1] != "/": ZarafaLDAPURL += '/'
-  ZarafaLDAPURL += zarafaLDAP['ldap_search_base']
-  ZarafaLDAPURL += "?" + ",".join(sorted(zarafaAttrs))
+  ZarafaLDAPURL += urllib.quote(zarafaLDAP['ldap_search_base'])
+  ZarafaLDAPURL += "?" + urllib.quote(",".join(sorted(zarafaAttrs)))
   ZarafaLDAPURL += "?sub"
   ZarafaLDAPURL += "?" + zarafaFilter
-  if zarafaLDAP.has_key('ldap_bind_user'): ZarafaLDAPURL += "?bindname=" + zarafaLDAP['ldap_bind_user'] + ",X-BINDPW=" + zarafaLDAP['ldap_bind_passwd']
+  if zarafaLDAP.has_key('ldap_bind_user'): ZarafaLDAPURL += "?bindname=" + urllib.quote(zarafaLDAP['ldap_bind_user']) + ",X-BINDPW=" + urllib.quote(zarafaLDAP['ldap_bind_passwd'])
 
 
   print ZarafaLDAPURL
