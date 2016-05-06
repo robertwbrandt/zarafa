@@ -126,7 +126,7 @@ def write_zarafa_cache():
   if zarafaLDAP.has_key('ldap_bind_user'): ZarafaLDAPURL += "?bindname=" + zarafaLDAP['ldap_bind_user'] + ",X-BINDPW=" + zarafaLDAP['ldap_bind_passwd']
 
 
-
+  print ZarafaLDAPURL
   results = brandt.LDAPSearch(ZarafaLDAPURL).results
 
 
