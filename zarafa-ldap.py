@@ -136,6 +136,7 @@ def write_zarafa_cache():
 
 
   print results
+  print len(results)
   # if str(results[0][1]['sAMAccountName'][0]).lower() == user:
   #   for key in results[0][1]:
   #     try:
