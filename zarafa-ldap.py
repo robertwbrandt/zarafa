@@ -108,9 +108,9 @@ def write_zarafa_cache():
     if key[-9:] == 'attribute':
       zarafaAttrs.add(zarafaLDAP[key].lower())
 
-  print sorted(zarafaAttrs)
-
-
+  for key in zarafaLDAP.keys():
+    if 'filter' in key:
+      print key, zarafaLDAP[key]
 
 
 
