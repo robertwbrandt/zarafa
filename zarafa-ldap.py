@@ -130,7 +130,7 @@ def write_zarafa_cache():
   results = brandt.LDAPSearch(ZarafaLDAPURL).results
 
 
-  print results[0]
+  print len(results)
   # if str(results[0][1]['sAMAccountName'][0]).lower() == user:
   #   for key in results[0][1]:
   #     try:
