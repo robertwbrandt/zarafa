@@ -2,7 +2,7 @@
 """
 Python utility to monitor when LDAP attributes change and issue --sync command to Zarafa
 """
-import argparse, textwrap, fnmatch, datetime, urllib
+import argparse, textwrap, fnmatch, datetime, urllib, json
 import xml.etree.cElementTree as ElementTree
 import subprocess
 
@@ -21,9 +21,13 @@ zarafaFiles   = {'server.cfg': '/etc/zarafa/server.cfg',
                  'ldap.propmap.cfg': '/etc/zarafa/ldap.propmap.cfg',
                  'ldap.cfg': '/etc/zarafa/ldap.active-directory.cfg'}
 zarafaLDAP    = {}
-zarafaAttrs   = set([])
+zarafaAttrs   = set(["objectclass"])
 zarafaFilter  = ""
-ZarafaLDAPURL = ""
+zarafaLDAPURL = ""
+zarafaCacheFile = "/tmp/zarafa.ldap.cache"
+
+dominoLDAPURL = "ldap://domino.i.opw.ie/?objectclass,mail,member, mailaddress?sub?(|(objectClass=dominoPerson)(objectClass=dominoGroup))"
+dominoCacheFile = "/tmp/domino.ldap.cache"
 
 
 class customUsageVersion(argparse.Action):
@@ -70,11 +74,7 @@ def command_line_args():
   parser.add_argument('-h', '--help', action=customUsageVersion)
   args.update(vars(parser.parse_args()))
 
-def read_zarafa_cache():
-  pass
-
-
-def write_zarafa_cache():
+def get_zarafa_ldap():
   global zarafaFiles, zarafaLDAP, zarafaAttrs, zarafaFilter
 
   f = open(zarafaFiles['server.cfg'], 'r')
@@ -114,50 +114,46 @@ def write_zarafa_cache():
       zarafaFilter += zarafaLDAP[key]
   zarafaFilter = "(|" + zarafaFilter +")"
 
-  ZarafaLDAPURL = zarafaLDAP.get('ldap_uri','').split(" ")[0]
-  if not ZarafaLDAPURL:
-    ZarafaLDAPURL = zarafaLDAP.get('ldap_protocol','ldap') + '://' + zarafaLDAP.get('ldap_host','')
-    if zarafaLDAP.has_key('ldap_port'): ZarafaLDAPURL += ':' + zarafaLDAP['ldap_port']
-  if ZarafaLDAPURL[-1] != "/": ZarafaLDAPURL += '/'
-  ZarafaLDAPURL += urllib.quote(zarafaLDAP['ldap_search_base'])
-  ZarafaLDAPURL += "?" + urllib.quote(",".join(sorted(zarafaAttrs)))
-  ZarafaLDAPURL += "?sub"
-  ZarafaLDAPURL += "?" + zarafaFilter
-  # if zarafaLDAP.has_key('ldap_bind_user'): ZarafaLDAPURL += "?bindname=" + urllib.quote(zarafaLDAP['ldap_bind_user']) + ",X-BINDPW=" + urllib.quote(zarafaLDAP['ldap_bind_passwd'])
+  zarafaLDAPURL = zarafaLDAP.get('ldap_uri','').split(" ")[0]
+  if not zarafaLDAPURL:
+    zarafaLDAPURL = zarafaLDAP.get('ldap_protocol','ldap') + '://' + zarafaLDAP.get('ldap_host','')
+    if zarafaLDAP.has_key('ldap_port'): zarafaLDAPURL += ':' + zarafaLDAP['ldap_port']
+  if zarafaLDAPURL[-1] != "/": zarafaLDAPURL += '/'
+  zarafaLDAPURL += urllib.quote(zarafaLDAP['ldap_search_base'])
+  zarafaLDAPURL += "?" + urllib.quote(",".join(sorted(zarafaAttrs)))
+  zarafaLDAPURL += "?sub"
+  zarafaLDAPURL += "?" + zarafaFilter
+  if zarafaLDAP.has_key('ldap_bind_user'): zarafaLDAPURL += "?bindname=" + urllib.quote(zarafaLDAP['ldap_bind_user']) + ",X-BINDPW=" + urllib.quote(zarafaLDAP['ldap_bind_passwd'])
 
+  results = brandt.LDAPSearch(zarafaLDAPURL).results
+  return results
 
-  results = brandt.LDAPSearch(ZarafaLDAPURL).results
+def get_domino_ldap():
+  global dominoLDAPURL
+  results = brandt.LDAPSearch(dominoLDAPURL).results
+  return results
 
+def write_domino_ldap(results):
+  global dominoCacheFile
+  json.dump(results, 
+            open(dominoCacheFile,'w'),
+            sort_keys=True,
+            indent=2)
 
-  print len(results)
-  # if str(results[0][1]['sAMAccountName'][0]).lower() == user:
-  #   for key in results[0][1]:
-  #     try:
-  #       value = results[0][1][key][0]
-  #       key = key.lower()
-  #       if key in ['badpasswordtime','lastlogoff','lastlogon','pwdlastset','lastlogontimestamp','accountexpires']:
-  #         value = str(datetime.datetime(1601,1,1) + datetime.timedelta(microseconds=( int(value)/10) ))[:19]
-  #         if value == '1601-01-01 00:00:00': value = 'never'
-  #       elif key == 'logonhours':
-  #         tmp = ""
-  #         for char in value:
-  #           tmp += str(hex(ord(char))[2:]).upper()
-  #         value = tmp
-  #       users[user][key] = brandt.strXML(value)
-
-
-
-
-
-
-
+def read_domino_ldap():
+  global dominoCacheFile  
+  return json.load(open(dominoCacheFile,'r'))
 
 
 # Start program
 if __name__ == "__main__":
   command_line_args()  
 
-  write_zarafa_cache()
+  # zarafaResults = get_zarafa_ldap()
+  dominoResults = get_domino_ldap()
+  write_domino_ldap(dominoResults)
+  dominoResults2 = read_domino_ldap()
+  print dominoResults2
 
 
 
