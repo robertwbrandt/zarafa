@@ -124,10 +124,10 @@ def write_zarafa_cache():
   ZarafaLDAPURL += "?sub"
   ZarafaLDAPURL += "?" + zarafaFilter
   if zarafaLDAP.has_key('ldap_bind_user'): ZarafaLDAPURL += "?bindname=" + zarafaLDAP['ldap_bind_user'] + ",X-BINDPW=" + zarafaLDAP['ldap_bind_passwd']
-  print ZarafaLDAPURL
+  results = brandt.LDAPSearch(ZarafaLDAPURL).results
 
 
-  # results = brandt.LDAPSearch(ldapURI).results
+  print results
   # if str(results[0][1]['sAMAccountName'][0]).lower() == user:
   #   for key in results[0][1]:
   #     try:
