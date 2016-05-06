@@ -20,7 +20,7 @@ encoding = 'utf-8'
 zarafaFiles = {'server.cfg': '/etc/zarafa/server.cfg',
                'ldap.propmap.cfg': '/etc/zarafa/ldap.propmap.cfg',
                'ldap.cfg': '/etc/zarafa/ldap.active-directory.cfg'}
-
+zarafaLDAP  = {}
 
 class customUsageVersion(argparse.Action):
   def __init__(self, option_strings, dest, **kwargs):
@@ -71,7 +71,7 @@ def read_zarafa_cache():
 
 
 def write_zarafa_cache():
-  global zarafaFiles
+  global zarafaFiles, zarafaLDAP
 
   f = open(zarafaFiles['server.cfg'], 'r')
   out = f.read()
@@ -91,8 +91,9 @@ def write_zarafa_cache():
     if line and str(line)[0] not in ['#',';']:
       line = line.split("=",1)
       if len(line) == 2:
-        print str(line[0]).strip().lower(),"=",str(line[1]).strip()
+        zarafaLDAP[str(line[0]).strip().lower()] = str(line[1]).strip()
 
+  print zarafaLDAP
 
 
 # Get LDAP file
