@@ -114,7 +114,7 @@ def write_zarafa_cache():
       zarafaFilter += zarafaLDAP[key]
   zarafaFilter = "(|" + zarafaFilter +")"
 
-  ZarafaLDAPURL = zarafaLDAP['ldap_uri'].split(" ")[0]
+  ZarafaLDAPURL = zarafaLDAP.get('ldap_uri','').split(" ")[0]
   if not ZarafaLDAPURL:
     ZarafaLDAPURL = zarafaLDAP.get('ldap_protocol','ldap') + '://' + zarafaLDAP.get('ldap_host','')
     if zarafaLDAP.has_key('ldap_port'): ZarafaLDAPURL += ':' + zarafaLDAP['ldap_port']
