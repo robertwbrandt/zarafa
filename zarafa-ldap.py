@@ -119,8 +119,37 @@ def write_zarafa_cache():
     ZarafaLDAPURL = zarafaLDAP.get('ldap_protocol','ldap') + '://' + zarafaLDAP.get('ldap_host','')
     if zarafaLDAP.has_key('ldap_port'): ZarafaLDAPURL += ':' + zarafaLDAP['ldap_port']
   if ZarafaLDAPURL[-1] != "/": ZarafaLDAPURL += '/'
-
+  ZarafaLDAPURL += "?" + ZarafaLDAPURL.get('ldap_search_base','')
+  ZarafaLDAPURL += "?" + ",".join(sorted(zarafaAttrs))
+  ZarafaLDAPURL += "?sub"
+  ZarafaLDAPURL += "?" + zarafaFilter
+  if ZarafaLDAPURL.has_key('ldap_bind_user'): ZarafaLDAPURL += "?bindname=" + ZarafaLDAPURL['ldap_bind_user'] + ",X-BINDPW=" + ZarafaLDAPURL['ldap_bind_passwd']
   print ZarafaLDAPURL
+
+
+  # results = brandt.LDAPSearch(ldapURI).results
+  # if str(results[0][1]['sAMAccountName'][0]).lower() == user:
+  #   for key in results[0][1]:
+  #     try:
+  #       value = results[0][1][key][0]
+  #       key = key.lower()
+  #       if key in ['badpasswordtime','lastlogoff','lastlogon','pwdlastset','lastlogontimestamp','accountexpires']:
+  #         value = str(datetime.datetime(1601,1,1) + datetime.timedelta(microseconds=( int(value)/10) ))[:19]
+  #         if value == '1601-01-01 00:00:00': value = 'never'
+  #       elif key == 'logonhours':
+  #         tmp = ""
+  #         for char in value:
+  #           tmp += str(hex(ord(char))[2:]).upper()
+  #         value = tmp
+  #       users[user][key] = brandt.strXML(value)
+
+
+
+
+
+
+
+
 
 # Start program
 if __name__ == "__main__":
