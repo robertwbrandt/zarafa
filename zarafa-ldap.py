@@ -74,9 +74,9 @@ def write_zarafa_cache():
   global zarafaFiles
 
   f = open(zarafaFiles['server.cfg'], 'r')
-  out = f.read().split('\n')
+  out = f.read()
   f.close()
-  for line in out:
+  for line in out.split('\n'):
     if str(line)[:18].lower() == "user_plugin_config":
       line = line.split("=",1)
       if len(line) == 2: 
@@ -84,16 +84,11 @@ def write_zarafa_cache():
         print zarafaFiles['ldap.cfg']
         break
 
-  print "Reading", zarafaFiles['ldap.cfg']
-  # f = open(zarafaFiles['server.cfg'], 'r')
-  # out = f.read().split('\n')
-  # f.close()
-  # for line in out:
-  #   if str(line)[:18].lower() == "user_plugin_config":
-  #     line = line.split("=",1)
-  #     if len(line) == 2: 
-  #       zarafaFiles['ldap.cfg'] = str(line[1]).strip()
-  #       break
+  f = open(zarafaFiles['ldap.cfg'], 'r')
+  out = f.read()
+  f.close()
+  for line in out.split('\n'):
+    print line
 
 
 
