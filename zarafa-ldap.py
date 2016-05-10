@@ -13,15 +13,11 @@ import brandt
 sys.path.pop()
 
 args = {}
-
+args['config'] = '/etc/zarafa/server.cfg'
 version = 0.3
 encoding = 'utf-8'
 
-zarafaFiles   = {'server.cfg': '/etc/zarafa/server.cfg',
-                 'ldap.propmap.cfg': '/etc/zarafa/ldap.propmap.cfg',
-                 'ldap.cfg': '/etc/zarafa/ldap.active-directory.cfg'}
 zarafaLDAP    = {}
-zarafaAttrs   = set(["objectclass"])
 zarafaFilter  = ""
 zarafaLDAPURL = ""
 zarafaCacheFile = "/tmp/zarafa.ldap.cache"
@@ -59,8 +55,9 @@ class customUsageVersion(argparse.Action):
       print "Python utility to monitor when LDAP attributes change and issue --sync command to Zarafa.\n"
       print "Options:"
       options = []
-      options.append(("-h, --help",              "Show this help message and exit"))
-      options.append(("-v, --version",           "Show program's version number and exit"))
+      options.append(("-h, --help",         "Show this help message and exit"))
+      options.append(("-v, --version",      "Show program's version number and exit"))
+      options.append(("-c, --config",       "Zarafa Configuration file"))
       length = max( [ len(option[0]) for option in options ] )
       for option in options:
         description = textwrap.wrap(option[1], (self.__row - length - 5))
@@ -72,31 +69,46 @@ def command_line_args():
   parser = argparse.ArgumentParser(add_help=False)
   parser.add_argument('-v', '--version', action=customUsageVersion, version=version, max=80)
   parser.add_argument('-h', '--help', action=customUsageVersion)
+  parser.add_argument('-c', '--config',
+                      required=False,
+                      default=args['config'],
+                      type=str,
+                      help="Zarafa Configuration file.")  
   args.update(vars(parser.parse_args()))
 
-def get_zarafa_ldap():
-  global zarafaFiles, zarafaLDAP, zarafaAttrs, zarafaFilter
 
-  f = open(zarafaFiles['server.cfg'], 'r')
+def get_zarafa_LDAPURI():
+  global args
+  ldapConfig  = ""
+  ldapPropMap = ""
+  zarafaAttrs = set(["objectclass"])
+  zarafaFilter = ""
+
+
+  f = open(args['config'], 'r')
   out = f.read()
   f.close()
   for line in out.split('\n'):
     if str(line)[:18].lower() == "user_plugin_config":
       line = line.split("=",1)
       if len(line) == 2: 
-        zarafaFiles['ldap.cfg'] = str(line[1]).strip()
+        ldapConfig = str(line[1]).strip()
         break
 
-  f = open(zarafaFiles['ldap.cfg'], 'r')
+  f = open(ldapConfig, 'r')
   out = f.read()
   f.close()
   for line in out.split('\n'):
+    if str(line)[:9].lower() == "!propmap ":
+      ldapPropMap = str(line.split(" ",1)[1]).strip()
+      continue
+
     if line and str(line)[0] not in ['#',';']:
       line = line.split("=",1)
       if len(line) == 2 and line[1].strip(): 
         zarafaLDAP[str(line[0]).strip().lower()] = str(line[1]).strip()
 
-  f = open(zarafaFiles['ldap.propmap.cfg'], 'r')
+  f = open(ldapPropMap, 'r')
   out = f.read()
   f.close()
   for line in out.split('\n'):
@@ -114,46 +126,44 @@ def get_zarafa_ldap():
       zarafaFilter += zarafaLDAP[key]
   zarafaFilter = "(|" + zarafaFilter +")"
 
-  zarafaLDAPURL = zarafaLDAP.get('ldap_uri','').split(" ")[0]
-  if not zarafaLDAPURL:
-    zarafaLDAPURL = zarafaLDAP.get('ldap_protocol','ldap') + '://' + zarafaLDAP.get('ldap_host','')
-    if zarafaLDAP.has_key('ldap_port'): zarafaLDAPURL += ':' + zarafaLDAP['ldap_port']
-  if zarafaLDAPURL[-1] != "/": zarafaLDAPURL += '/'
-  zarafaLDAPURL += urllib.quote(zarafaLDAP['ldap_search_base'])
-  zarafaLDAPURL += "?" + urllib.quote(",".join(sorted(zarafaAttrs)))
-  zarafaLDAPURL += "?sub"
-  zarafaLDAPURL += "?" + zarafaFilter
-  if zarafaLDAP.has_key('ldap_bind_user'): zarafaLDAPURL += "?bindname=" + urllib.quote(zarafaLDAP['ldap_bind_user']) + ",X-BINDPW=" + urllib.quote(zarafaLDAP['ldap_bind_passwd'])
+  zarafaLDAPURI = zarafaLDAP.get('ldap_uri','').split(" ")[0]
+  if not zarafaLDAPURI:
+    zarafaLDAPURI = zarafaLDAP.get('ldap_protocol','ldap') + '://' + zarafaLDAP.get('ldap_host','')
+    if zarafaLDAP.has_key('ldap_port'): zarafaLDAPURI += ':' + zarafaLDAP['ldap_port']
+  if zarafaLDAPURI[-1] != "/": zarafaLDAPURI += '/'
+  zarafaLDAPURI += urllib.quote(zarafaLDAP['ldap_search_base'])
+  zarafaLDAPURI += "?" + urllib.quote(",".join(sorted(zarafaAttrs)))
+  zarafaLDAPURI += "?sub"
+  zarafaLDAPURI += "?" + zarafaFilter
+  if zarafaLDAP.has_key('ldap_bind_user'): zarafaLDAPURI += "?bindname=" + urllib.quote(zarafaLDAP['ldap_bind_user']) + ",X-BINDPW=" + urllib.quote(zarafaLDAP.get('ldap_bind_passwd',""))
 
-  results = brandt.LDAPSearch(zarafaLDAPURL).results
-  return results
+  return zarafaLDAPURI
 
-def get_domino_ldap():
-  global dominoLDAPURL
-  results = brandt.LDAPSearch(dominoLDAPURL).results
-  return results
+def get_ldap(LDAPURI):
+  return brandt.LDAPSearch(LDAPURI).results
 
-def write_domino_ldap(results):
-  global dominoCacheFile
+def write_cache_file(filename, results):
   json.dump(results, 
-            open(dominoCacheFile,'w'),
+            open(filename,'w'),
             sort_keys=True,
             indent=2)
 
-def read_domino_ldap():
-  global dominoCacheFile  
-  return json.load(open(dominoCacheFile,'r'))
+def read_cache_file(filename):
+  return json.load(open(filename,'r'))
 
 
 # Start program
 if __name__ == "__main__":
   command_line_args()  
 
-  # zarafaResults = get_zarafa_ldap()
-  dominoResults = get_domino_ldap()
-  write_domino_ldap(dominoResults)
-  dominoResults2 = read_domino_ldap()
-  print dominoResults2
+  zarafaLDAPURI = get_zarafa_LDAPURI()
+
+  print zarafaLDAPURI
+
+  # dominoResults = get_domino_ldap()
+  # write_domino_ldap(dominoResults)
+  # dominoResults2 = read_domino_ldap()
+  # print dominoResults2
 
 
 
