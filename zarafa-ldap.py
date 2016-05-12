@@ -148,6 +148,9 @@ def write_cache_file(filename, results):
             sort_keys=True,
             indent=2)
 
+# brandt.strXML(
+
+
 def read_cache_file(filename):
   try:
     tmp = json.load(open(filename,'r'))
@@ -170,12 +173,15 @@ if __name__ == "__main__":
   zarafaLive = get_ldap(tmp)
   zarafaCache = read_cache_file(args['config'])
 
+
+  print zarafaLive
+
   # if cmpDict(zarafaLive, zarafaCache):
   #   pass
   # else:
-  write_cache_file(args['config'], zarafaLive)
+  # write_cache_file(args['config'], zarafaLive)
 
-  dominoLive = get_ldap(dominoLDAPURI)
+  # dominoLive = get_ldap(dominoLDAPURI)
 
   # print dominoLive
   # dominoResults = get_domino_ldap()
