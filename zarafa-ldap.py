@@ -89,6 +89,7 @@ def get_zarafa_LDAPURI():
   out = f.read()
   f.close()
   for line in out.split('\n'):
+    print line
     if str(line)[:18].lower() == "user_plugin_config":
       line = line.split("=",1)
       if len(line) == 2: 
