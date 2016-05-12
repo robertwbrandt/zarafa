@@ -168,9 +168,7 @@ def cmpDict(dict1, dict2):#
 if __name__ == "__main__":
   command_line_args()  
 
-  tmp = get_zarafa_LDAPURI()
-  print tmp
-  zarafaLive = get_ldap(tmp)
+  zarafaLive = get_ldap(get_zarafa_LDAPURI())
   # zarafaCache = read_cache_file(args['config'])
 
 
