@@ -171,7 +171,7 @@ if __name__ == "__main__":
   tmp = get_zarafa_LDAPURI()
   print tmp
   zarafaLive = get_ldap(tmp)
-  zarafaCache = read_cache_file(args['config'])
+  # zarafaCache = read_cache_file(args['config'])
 
 
   print zarafaLive
