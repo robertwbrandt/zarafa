@@ -181,7 +181,6 @@ if __name__ == "__main__":
   # if cmpDict(zarafaLive, zarafaCache):
   #   pass
   # else:
-  # write_cache_file(args['config'], zarafaLive)
 
   # dominoLive = get_ldap(dominoLDAPURI)
 
