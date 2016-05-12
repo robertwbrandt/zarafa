@@ -22,7 +22,7 @@ zarafaFilter  = ""
 zarafaLDAPURL = ""
 zarafaCacheFile = "/tmp/zarafa.ldap.cache"
 
-dominoLDAPURL = "ldap://domino.i.opw.ie/?objectclass,mail,member, mailaddress?sub?(|(objectClass=dominoPerson)(objectClass=dominoGroup))"
+dominoLDAPURI = "ldap://domino.i.opw.ie/?objectclass,mail,member, mailaddress?sub?(|(objectClass=dominoPerson)(objectClass=dominoGroup))"
 dominoCacheFile = "/tmp/domino.ldap.cache"
 
 
@@ -149,17 +149,32 @@ def write_cache_file(filename, results):
             indent=2)
 
 def read_cache_file(filename):
-  return json.load(open(filename,'r'))
+  try:
+    tmp = json.load(open(filename,'r'))
+  except:
+    tmp = {}
+
+def cmpDict(dict1, dict2):#
+  return True
+
+
 
 
 # Start program
 if __name__ == "__main__":
   command_line_args()  
 
-  zarafaLDAPURI = get_zarafa_LDAPURI()
+  zarafaLive = get_ldap(get_zarafa_LDAPURI())
+  zarafaCache = read_cache_file(args['config'])
 
-  print zarafaLDAPURI
+  if cmpDict(zarafaLive, zarafaCache):
+    pass
+  else:
+    write_cache_file(args['config'], zarafaLive)
 
+  dominoLive = get_ldap(dominoLDAPURI)
+
+  print dominoLive
   # dominoResults = get_domino_ldap()
   # write_domino_ldap(dominoResults)
   # dominoResults2 = read_domino_ldap()
