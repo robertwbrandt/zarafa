@@ -95,6 +95,7 @@ def get_zarafa_LDAPURI():
         ldapConfig = str(line[1]).strip()
         break
 
+  print ldapConfig
   f = open(ldapConfig, 'r')
   out = f.read()
   f.close()
