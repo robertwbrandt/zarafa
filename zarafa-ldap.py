@@ -160,21 +160,24 @@ def cmpDict(dict1, dict2):#
 
 
 
+
 # Start program
 if __name__ == "__main__":
   command_line_args()  
 
-  zarafaLive = get_ldap(get_zarafa_LDAPURI())
+  tmp = get_zarafa_LDAPURI()
+  print tmp
+  zarafaLive = get_ldap(tmp)
   zarafaCache = read_cache_file(args['config'])
 
-  if cmpDict(zarafaLive, zarafaCache):
-    pass
-  else:
-    write_cache_file(args['config'], zarafaLive)
+  # if cmpDict(zarafaLive, zarafaCache):
+  #   pass
+  # else:
+  write_cache_file(args['config'], zarafaLive)
 
   dominoLive = get_ldap(dominoLDAPURI)
 
-  print dominoLive
+  # print dominoLive
   # dominoResults = get_domino_ldap()
   # write_domino_ldap(dominoResults)
   # dominoResults2 = read_domino_ldap()
