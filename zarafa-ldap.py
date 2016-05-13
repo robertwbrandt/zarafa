@@ -225,11 +225,12 @@ def get_data():
       objectType = "user"
     else:
       objectType = ",".join(sorted(zarafaLive[account].get('objectclass',[])))
-   
+    username = zarafaLive[account].get('samaccountname',"")
+
     if zarafaLive[account].has_key('mail'):
-      for mail in zarafaLive[account]['mail']: combinedEmails.update({mail: {'zarafa':True, 'domino':False, 'forward':False, 'type':objectType}})
+      for mail in zarafaLive[account]['mail']: combinedEmails.update({mail: {'zarafa':True, 'domino':False, 'forward':False, 'type':objectType, 'username':username}})
     if zarafaLive[account].has_key('othermailbox'):
-      for mail in zarafaLive[account]['othermailbox']: combinedEmails.update({mail: {'zarafa':True, 'domino':False, 'forward':False, 'type':objectType}})
+      for mail in zarafaLive[account]['othermailbox']: combinedEmails.update({mail: {'zarafa':True, 'domino':False, 'forward':False, 'type':objectType, 'username':username}})
 
   for account in dominoLive.keys():
     if bool(set(["group","dominogroup","groupofnames"]) & set([ str(x).lower() for x in dominoLive[account].get('objectclass',[]) ])):
