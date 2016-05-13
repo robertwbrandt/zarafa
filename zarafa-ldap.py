@@ -25,8 +25,8 @@ zarafaLDAPURL = ""
 zarafaCacheFile = "/tmp/zarafa.ldap.cache"
 zarafaAttrIgnore = set(["usnchanged","objectguid","grouptype","unicodepwd"])
 
-dominoLDAPURI = "ldap://domino.i.opw.ie/?objectclass,mail,member,mailaddress?sub?(|(objectClass=dominoPerson)(objectClass=dominoGroup))"
-dominoCacheFile = "/tmp/domino.ldap.cache"
+# dominoLDAPURI = "ldap://domino.i.opw.ie/?objectclass,mail,member,mailaddress?sub?(|(objectClass=dominoPerson)(objectClass=dominoGroup))"
+dominoLDAPURI = "ldap://10.200.200.20/?objectclass,mail,member,mailaddress?sub?(|(objectClass=dominoPerson)(objectClass=dominoGroup))"
 
 emailCacheFile = "/tmp/email.ldap.xml"
 class customUsageVersion(argparse.Action):
@@ -203,113 +203,101 @@ def cmpDict(dict1, dict2):
   return True
 
 def get_data():
-  global args,output,error,exitcode, xmldata, emailCacheFile
+  global error
   zarafaChanged = False
   domainoChanged = False
 
   zarafaLive = get_ldap(get_zarafa_LDAPURI())
   zarafaCache = read_cache_file(zarafaCacheFile)
   error += "Checking Zarafa entries\n"
-  if args['force'] or not cmpDict(zarafaLive, zarafaCache):
+  if cmpDict(zarafaLive, zarafaCache):
     error += "Zarafa entries have changed\n"
     write_cache_file(zarafaCacheFile,zarafaLive)
     zarafaChanged = True
 
   dominoLive = get_ldap(dominoLDAPURI)
-  dominoCache = read_cache_file(dominoCacheFile)
-  error += "Checking Domino entries\n"  
-  if args['force'] or not cmpDict(dominoLive, dominoCache):
-    error += "Domino entries have changed\n"
-    write_cache_file(dominoCacheFile,dominoLive)
-    domainoChanged = True
 
-  if zarafaChanged or domainoChanged:
-    combinedUsers = {}
-    for account in zarafaLive.keys():
-      if bool(set(["group","dominogroup","groupofnames"]) & set([ str(x).lower() for x in zarafaLive[account].get('objectclass',[]) ])):
-        objectType = "group"
-      elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & set([ str(x).lower() for x in zarafaLive[account].get('objectclass',[]) ])):
-        objectType = "user"
-      else:
-        objectType = ",".join(sorted(zarafaLive[account].get('objectclass',[])))
+  combinedEmails = {}
+  for account in zarafaLive.keys():
+    if bool(set(["group","dominogroup","groupofnames"]) & set([ str(x).lower() for x in zarafaLive[account].get('objectclass',[]) ])):
+      objectType = "group"
+    elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & set([ str(x).lower() for x in zarafaLive[account].get('objectclass',[]) ])):
+      objectType = "user"
+    else:
+      objectType = ",".join(sorted(zarafaLive[account].get('objectclass',[])))
+   
+    if zarafaLive[account].has_key('mail'):
+      for mail in zarafaLive[account]['mail']: combinedEmails.update({mail: {'zarafa':True, 'domino':False, 'forward':False, 'type':objectType}})
+    if zarafaLive[account].has_key('othermailbox'):
+      for mail in zarafaLive[account]['othermailbox']: combinedEmails.update({mail: {'zarafa':True, 'domino':False, 'forward':False, 'type':objectType}})
 
-     
-      if zarafaLive[account].has_key('mail'):
-        for mail in zarafaLive[account]['mail']: combinedUsers.update({mail: {'zarafa':True, 'domino':False, 'forward':False, 'type':objectType}})
-      if zarafaLive[account].has_key('othermailbox'):
-        for mail in zarafaLive[account]['othermailbox']: combinedUsers.update({mail: {'zarafa':True, 'domino':False, 'forward':False, 'type':objectType}})
+  for account in dominoLive.keys():
+    if bool(set(["group","dominogroup","groupofnames"]) & set([ str(x).lower() for x in dominoLive[account].get('objectclass',[]) ])):
+      objectType = "group"
+    elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & set([ str(x).lower() for x in dominoLive[account].get('objectclass',[]) ])):
+      objectType = "user"
+    else:
+      objectType = ",".join(sorted(dominoLive[account].get('objectclass',[])))
 
-    for account in dominoLive.keys():
-      if bool(set(["group","dominogroup","groupofnames"]) & set([ str(x).lower() for x in dominoLive[account].get('objectclass',[]) ])):
-        objectType = "group"
-      elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & set([ str(x).lower() for x in dominoLive[account].get('objectclass',[]) ])):
-        objectType = "user"
-      else:
-        objectType = ",".join(sorted(dominoLive[account].get('objectclass',[])))
+    if dominoLive[account].has_key('mail'):
+      for mail in dominoLive[account]['mail']: 
+        if combinedEmails.has_key(mail): 
+          combinedEmails[mail]['domino'] = True
+        else:
+          combinedEmails.update({mail: {'zarafa':False, 'domino':True, 'forward':False, 'type':objectType}})
+      if dominoLive[account].has_key('mailaddress'):
+        combinedEmails[mail]['forward'] = True
 
-      if dominoLive[account].has_key('mail'):
-        for mail in dominoLive[account]['mail']: 
-          if combinedUsers.has_key(mail): 
-            combinedUsers[mail]['domino'] = True
-          else:
-            combinedUsers.update({mail: {'zarafa':False, 'domino':True, 'forward':False, 'type':objectType}})
-        if dominoLive[account].has_key('mailaddress'):
-          combinedUsers[mail]['forward'] = True
-
-    xmldata = ElementTree.Element('emails', **{'date': brandt.strXML(datetime.datetime.strftime(datetime.datetime.now(),'%Y%m%d%H%M%S'))})
-    for user in sorted(combinedUsers):
-      ElementTree.SubElement(xmldata, 'email', **{'mail': brandt.strXML(user), 
-                                      'zarafa': brandt.strXML(combinedUsers[user]['zarafa']), 
-                                      'domino': brandt.strXML(combinedUsers[user]['domino']), 
-                                      'forward': brandt.strXML(combinedUsers[user]['forward']),
-                                      'type': brandt.strXML(combinedUsers[user]['type'])})
-    f = open(emailCacheFile, "w")
-    f.write('<?xml version="1.0" encoding="' + encoding + '"?>\n' + ElementTree.tostring(xml, encoding=encoding, method="xml") +'\n')
-    f.close()
-    
-    return (zarafaChanged, domainoChanged)
+    return (zarafaChanged, combinedEmails)
 
 # Start program
 if __name__ == "__main__":
-  try:
+  # try:
     output = ""
     error = ""
     exitcode = 0    
-    xmldata = ElementTree.Element('error', code="-1", msg="Unknown Error", cmd=brandt.strXML(" ".join(sys.argv)))
-
-    output,error,exitcode,xmldata
+    xmldata = None
 
     command_line_args()  
-    zarafaChanged, domainoChanged = get_data()
+    zarafaChanged, emails = get_data()
 
-    if not args['web']: 
-      if zarafaChanged:
+    if args['web']:
+      xmldata = ElementTree.Element('emails', **{'date': brandt.strXML(datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d %H:%M:%S'))})
+      for email in sorted(emails.keys()):
+        ElementTree.SubElement(xmldata, 'email', **{'mail': brandt.strXML(email), 
+                                        'zarafa': brandt.strXML(emails[email]['zarafa']), 
+                                        'domino': brandt.strXML(emails[email]['domino']), 
+                                        'forward': brandt.strXML(emails[email]['forward']),
+                                        'type': brandt.strXML(emails[email]['type'])})
+    else:
+      if zarafaChanged or args['force']:
         error += "Running Zarafa Sync\n"
+
       error += "Building Postfix BCC file for Mailmeter\n"
       error += "Building Postfix vTransport file for Smarthost\n"
 
-  except SystemExit as err:
-    pass
-  except Exception as err:
-    try:
-      exitcode = int(err[0])
-      errmsg = str(" ".join(err[1:]))
-    except:
-      exitcode = -1
-      errmsg = str(err)
+  # except SystemExit as err:
+  #   pass
+  # except Exception as err:
+  #   try:
+  #     exitcode = int(err[0])
+  #     errmsg = str(" ".join(err[1:]))
+  #   except:
+  #     exitcode = -1
+  #     errmsg = str(err)
 
-    if args['web']: 
-      error = "(" + str(exitcode) + ") " + str(errmsg) + "\nCommand: " + " ".join(sys.argv)
-    else:
-      xmldata = ElementTree.Element('error', code=brandt.strXML(exitcode), 
-                                             msg=brandt.strXML(errmsg), 
-                                             cmd=brandt.strXML(" ".join(sys.argv)))
-  finally:
-    if not args['web']: 
-      if output: print str(output)
-      if error:  sys.stderr.write( str(error) + "\n" )
-    else:    
-      xml = ElementTree.Element('zarafaadmin')
-      xml.append(xmldata)
-      print '<?xml version="1.0" encoding="' + encoding + '"?>\n' + ElementTree.tostring(xml, encoding=encoding, method="xml")
-    sys.exit(exitcode)
+  #   if args['web']: 
+  #     error = "(" + str(exitcode) + ") " + str(errmsg) + "\nCommand: " + " ".join(sys.argv)
+  #   else:
+  #     xmldata = ElementTree.Element('error', code=brandt.strXML(exitcode), 
+  #                                            msg=brandt.strXML(errmsg), 
+  #                                            cmd=brandt.strXML(" ".join(sys.argv)))
+  # finally:
+  #   if not args['web']: 
+  #     if output: print str(output)
+  #     if error:  sys.stderr.write( str(error) + "\n" )
+  #   else:    
+  #     xml = ElementTree.Element('zarafaadmin')
+  #     xml.append(xmldata)
+  #     print '<?xml version="1.0" encoding="' + encoding + '"?>\n' + ElementTree.tostring(xml, encoding=encoding, method="xml")
+  #   sys.exit(exitcode)
