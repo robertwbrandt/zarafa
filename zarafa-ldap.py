@@ -293,11 +293,11 @@ if __name__ == "__main__":
   #                                            msg=brandt.strXML(errmsg), 
   #                                            cmd=brandt.strXML(" ".join(sys.argv)))
   # finally:
-  #   if not args['web']: 
-  #     if output: print str(output)
-  #     if error:  sys.stderr.write( str(error) + "\n" )
-  #   else:    
-  #     xml = ElementTree.Element('zarafaadmin')
-  #     xml.append(xmldata)
-  #     print '<?xml version="1.0" encoding="' + encoding + '"?>\n' + ElementTree.tostring(xml, encoding=encoding, method="xml")
-  #   sys.exit(exitcode)
+    if not args['web']: 
+      if output: print str(output)
+      if error:  sys.stderr.write( str(error) + "\n" )
+    else:    
+      xml = ElementTree.Element('zarafaadmin')
+      xml.append(xmldata)
+      print '<?xml version="1.0" encoding="' + encoding + '"?>\n' + ElementTree.tostring(xml, encoding=encoding, method="xml")
+    sys.exit(exitcode)
