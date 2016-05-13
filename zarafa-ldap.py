@@ -14,6 +14,8 @@ sys.path.pop()
 
 args = {}
 args['config'] = '/etc/zarafa/server.cfg'
+args['force'] = False
+args['web'] = False
 version = 0.3
 encoding = 'utf-8'
 
@@ -21,11 +23,12 @@ zarafaLDAP    = {}
 zarafaFilter  = ""
 zarafaLDAPURL = ""
 zarafaCacheFile = "/tmp/zarafa.ldap.cache"
+zarafaAttrIgnore = set(["usnchanged","objectguid","grouptype","unicodepwd"])
 
-dominoLDAPURI = "ldap://domino.i.opw.ie/?objectclass,mail,member, mailaddress?sub?(|(objectClass=dominoPerson)(objectClass=dominoGroup))"
+dominoLDAPURI = "ldap://domino.i.opw.ie/?objectclass,mail,member,mailaddress?sub?(|(objectClass=dominoPerson)(objectClass=dominoGroup))"
 dominoCacheFile = "/tmp/domino.ldap.cache"
 
-
+emailCacheFile = "/tmp/email.ldap.xml"
 class customUsageVersion(argparse.Action):
   def __init__(self, option_strings, dest, **kwargs):
     self.__version = str(kwargs.get('version', ''))
@@ -55,9 +58,11 @@ class customUsageVersion(argparse.Action):
       print "Python utility to monitor when LDAP attributes change and issue --sync command to Zarafa.\n"
       print "Options:"
       options = []
-      options.append(("-h, --help",         "Show this help message and exit"))
-      options.append(("-v, --version",      "Show program's version number and exit"))
-      options.append(("-c, --config",       "Zarafa Configuration file"))
+      options.append(("-h, --help",          "Show this help message and exit"))
+      options.append(("-v, --version",       "Show program's version number and exit"))
+      options.append(("-c, --config CONFIG", "Zarafa Configuration file (Default: " + args['config'] + ")"))
+      options.append(("-f, --force",         "Force sync"))
+      options.append(("-w, --web",           "Web XML only"))
       length = max( [ len(option[0]) for option in options ] )
       for option in options:
         description = textwrap.wrap(option[1], (self.__row - length - 5))
@@ -73,12 +78,22 @@ def command_line_args():
                       required=False,
                       default=args['config'],
                       type=str,
-                      help="Zarafa Configuration file.")  
+                      help="Zarafa Configuration file")
+  parser.add_argument('-f', '--force',
+                      required=False,
+                      default=args['force'],
+                      action="store_true",
+                      help="Force sync")
+  parser.add_argument('-w', '--web',
+                      required=False,
+                      default=args['web'],
+                      action="store_true",
+                      help="Web XML only")  
   args.update(vars(parser.parse_args()))
 
 
 def get_zarafa_LDAPURI():
-  global args
+  global args, zarafaAttrIgnore
   ldapConfig  = ""
   ldapPropMap = ""
   zarafaAttrs = set(["objectclass"])
@@ -120,6 +135,7 @@ def get_zarafa_LDAPURI():
   for key in zarafaLDAP.keys():
     if key[-9:] == 'attribute':
       zarafaAttrs.add(zarafaLDAP[key].lower())
+  zarafaAttrs -= zarafaAttrIgnore
 
   for key in zarafaLDAP.keys():
     if key[-6:] == 'filter':
@@ -140,7 +156,9 @@ def get_zarafa_LDAPURI():
   return zarafaLDAPURI
 
 def get_ldap(LDAPURI):
-  return brandt.LDAPSearch(LDAPURI).results
+  return brandt.LDAPSearch(LDAPURI).resultsDict(functDN=lambda dn: brandt.strXML(brandt.formatDN(dn)),
+                                                functAttr=lambda a: brandt.strXML(str(a).lower()), 
+                                                functValue=lambda *v:brandt.strXML(brandt.formatDN(v[-1])))
 
 def write_cache_file(filename, results):
   json.dump(results, 
@@ -148,43 +166,150 @@ def write_cache_file(filename, results):
             sort_keys=True,
             indent=2)
 
-# brandt.strXML(
-
-
 def read_cache_file(filename):
   try:
-    tmp = json.load(open(filename,'r'))
+    return json.load(open(filename,'r'))
   except:
-    tmp = {}
+    return {}
 
-def cmpDict(dict1, dict2):#
+def cmpDict(dict1, dict2):
+  global args,output,error,exitcode,xmldata
+
+  try:  
+    if set(dict1.keys()) != set(dict2.keys()): 
+      error += "Changes Found:\n"
+      if bool(set(dict1.keys()) - set(dict2.keys())):
+        error += "New DNs: " + ", ".join(list(set(dict1.keys()))) + "\n"
+      if bool(set(dict2.keys()) - set(dict1.keys())):
+        error += "Removed DNs: " + ", ".join(list(set(dict2.keys()))) + "\n"
+      return False
+    for dn in dict1.keys():
+      if sorted(dict1[dn].keys()) != sorted(dict2[dn].keys()):
+        error += "Changes Found:\n"
+        if bool(set(dict1[dn].keys()) - set(dict2[dn].keys())):
+          error += "New Attribute for (" + str(dn) + "): " + ", ".join(list(set(dict1[dn].keys()))) + "\n"
+        if bool(set(dict2[dn].keys()) - set(dict1[dn].keys())):
+          error += "Removed Attribute for (" + str(dn) + "): " + ", ".join(list(set(dict2[dn].keys()))) + "\n"
+        return False
+      for attr in dict1[dn].keys():
+        if sorted(dict1[dn][attr]) != sorted(dict2[dn][attr]):
+          error += "Changes Found:\n"
+          error += "Value of Attribute(" + str(attr) + ") for (" + str(dn) + "):\n"
+          error += "Old: " + ", ".join(sorted(dict2[dn][attr])) + "\n"
+          error += "New: " + ", ".join(sorted(dict1[dn][attr])) + "\n"
+          return False
+  except:
+    return False
   return True
 
+def get_data():
+  global args,output,error,exitcode, xmldata, emailCacheFile
+  zarafaChanged = False
+  domainoChanged = False
 
+  zarafaLive = get_ldap(get_zarafa_LDAPURI())
+  zarafaCache = read_cache_file(zarafaCacheFile)
+  error += "Checking Zarafa entries\n"
+  if args['force'] or not cmpDict(zarafaLive, zarafaCache):
+    error += "Zarafa entries have changed\n"
+    write_cache_file(zarafaCacheFile,zarafaLive)
+    zarafaChanged = True
 
+  dominoLive = get_ldap(dominoLDAPURI)
+  dominoCache = read_cache_file(dominoCacheFile)
+  error += "Checking Domino entries\n"  
+  if args['force'] or not cmpDict(dominoLive, dominoCache):
+    error += "Domino entries have changed\n"
+    write_cache_file(dominoCacheFile,dominoLive)
+    domainoChanged = True
 
+  if zarafaChanged or domainoChanged:
+    combinedUsers = {}
+    for account in zarafaLive.keys():
+      if bool(set(["group","dominogroup","groupofnames"]) & set([ str(x).lower() for x in zarafaLive[account].get('objectclass',[]) ])):
+        objectType = "group"
+      elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & set([ str(x).lower() for x in zarafaLive[account].get('objectclass',[]) ])):
+        objectType = "user"
+      else:
+        objectType = ",".join(sorted(zarafaLive[account].get('objectclass',[])))
+
+     
+      if zarafaLive[account].has_key('mail'):
+        for mail in zarafaLive[account]['mail']: combinedUsers.update({mail: {'zarafa':True, 'domino':False, 'forward':False, 'type':objectType}})
+      if zarafaLive[account].has_key('othermailbox'):
+        for mail in zarafaLive[account]['othermailbox']: combinedUsers.update({mail: {'zarafa':True, 'domino':False, 'forward':False, 'type':objectType}})
+
+    for account in dominoLive.keys():
+      if bool(set(["group","dominogroup","groupofnames"]) & set([ str(x).lower() for x in dominoLive[account].get('objectclass',[]) ])):
+        objectType = "group"
+      elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & set([ str(x).lower() for x in dominoLive[account].get('objectclass',[]) ])):
+        objectType = "user"
+      else:
+        objectType = ",".join(sorted(dominoLive[account].get('objectclass',[])))
+
+      if dominoLive[account].has_key('mail'):
+        for mail in dominoLive[account]['mail']: 
+          if combinedUsers.has_key(mail): 
+            combinedUsers[mail]['domino'] = True
+          else:
+            combinedUsers.update({mail: {'zarafa':False, 'domino':True, 'forward':False, 'type':objectType}})
+        if dominoLive[account].has_key('mailaddress'):
+          combinedUsers[mail]['forward'] = True
+
+    xmldata = ElementTree.Element('emails', **{'date': brandt.strXML(datetime.datetime.strftime(datetime.datetime.now(),'%Y%m%d%H%M%S'))})
+    for user in sorted(combinedUsers):
+      ElementTree.SubElement(xmldata, 'email', **{'mail': brandt.strXML(user), 
+                                      'zarafa': brandt.strXML(combinedUsers[user]['zarafa']), 
+                                      'domino': brandt.strXML(combinedUsers[user]['domino']), 
+                                      'forward': brandt.strXML(combinedUsers[user]['forward']),
+                                      'type': brandt.strXML(combinedUsers[user]['type'])})
+    f = open(emailCacheFile, "w")
+    f.write('<?xml version="1.0" encoding="' + encoding + '"?>\n' + ElementTree.tostring(xml, encoding=encoding, method="xml") +'\n')
+    f.close()
+    
+    return (zarafaChanged, domainoChanged)
 
 # Start program
 if __name__ == "__main__":
-  command_line_args()  
+  try:
+    output = ""
+    error = ""
+    exitcode = 0    
+    xmldata = ElementTree.Element('error', code="-1", msg="Unknown Error", cmd=brandt.strXML(" ".join(sys.argv)))
 
-  zarafaLive = get_ldap(get_zarafa_LDAPURI())
-  # zarafaCache = read_cache_file(args['config'])
+    output,error,exitcode,xmldata
 
+    command_line_args()  
+    zarafaChanged, domainoChanged = get_data()
 
-  print zarafaLive
+    if not args['web']: 
+      if zarafaChanged:
+        error += "Running Zarafa Sync\n"
+      error += "Building Postfix BCC file for Mailmeter\n"
+      error += "Building Postfix vTransport file for Smarthost\n"
 
-  # if cmpDict(zarafaLive, zarafaCache):
-  #   pass
-  # else:
+  except SystemExit as err:
+    pass
+  except Exception as err:
+    try:
+      exitcode = int(err[0])
+      errmsg = str(" ".join(err[1:]))
+    except:
+      exitcode = -1
+      errmsg = str(err)
 
-  # dominoLive = get_ldap(dominoLDAPURI)
-
-  # print dominoLive
-  # dominoResults = get_domino_ldap()
-  # write_domino_ldap(dominoResults)
-  # dominoResults2 = read_domino_ldap()
-  # print dominoResults2
-
-
-
+    if args['web']: 
+      error = "(" + str(exitcode) + ") " + str(errmsg) + "\nCommand: " + " ".join(sys.argv)
+    else:
+      xmldata = ElementTree.Element('error', code=brandt.strXML(exitcode), 
+                                             msg=brandt.strXML(errmsg), 
+                                             cmd=brandt.strXML(" ".join(sys.argv)))
+  finally:
+    if not args['web']: 
+      if output: print str(output)
+      if error:  sys.stderr.write( str(error) + "\n" )
+    else:    
+      xml = ElementTree.Element('zarafaadmin')
+      xml.append(xmldata)
+      print '<?xml version="1.0" encoding="' + encoding + '"?>\n' + ElementTree.tostring(xml, encoding=encoding, method="xml")
+    sys.exit(exitcode)
