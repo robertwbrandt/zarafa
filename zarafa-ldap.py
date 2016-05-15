@@ -232,28 +232,47 @@ def get_data():
     write_cache_file(dominoCacheFile,dominoLive)
 
     combinedEmails = {}
-    for email in set(zarafaLive.keys() + dominoLive.keys()):
-      combinedEmails[email] = {'zarafa':False, 'domino':False, 'forward':False, 'type':'', 'username':''}
+    for account in [ k for k in zarafaLive.keys() if zarafaLive[k].has_key('mail') ]
+      mail = zarafaLive[account]['mail']
+      objectclass = set([ str(x).lower() for x in zarafaLive[account].get('objectclass',[]) ])
+      combinedEmails[mail] = {'zarafa':True, 
+                              'domino':False, 
+                              'forward':False, 
+                              'type':'', 
+                              'username':zarafaLive[account]['samaccountname']}
+      if bool(set(["group","dominogroup","groupofnames"]) & objectclass):
+        combinedEmails[mail]['type'] = "Group"
+      elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & objectclass):
+        combinedEmails[mail]['type'] = "User"
+      else:
+        combinedEmails[mail]['type'] = ",".join(sorted(objectclass))
+      print zarafaLive[mail]
 
-      if zarafaLive.has_key(email):    
-        combinedEmails[email]['zarafa'] = True
-        combinedEmails[email]['username'] = zarafaLive[email]['samaccountname']
-        if bool(set(["group","dominogroup","groupofnames"]) & set([ str(x).lower() for x in zarafaLive[email].get('objectclass',[]) ])):
-           combinedEmails[email]['type'] = "Group"
-        elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & set([ str(x).lower() for x in zarafaLive[email].get('objectclass',[]) ])):
-          combinedEmails[email]['type'] = "User"
-        else:
-          combinedEmails[email]['type'] = ",".join(sorted(zarafaLive[email].get('objectclass',[])))    
 
-      if dominoLive.has_key(email):
-        combinedEmails[email]['domino'] = True
-        combinedEmails[email]['forward'] = bool(dominoLive[email].has_key('mailaddress'))
-        if bool(set(["group","dominogroup","groupofnames"]) & set([ str(x).lower() for x in dominoLive[email].get('objectclass',[]) ])):
-           combinedEmails[email]['type'] = "Group"
-        elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & set([ str(x).lower() for x in dominoLive[email].get('objectclass',[]) ])):
-          combinedEmails[email]['type'] = "User"
-        else:
-          combinedEmails[email]['type'] = ",".join(sorted(dominoLive[email].get('objectclass',[])))         
+
+
+    # for email in set(zarafaLive.keys() + dominoLive.keys()):
+    #   combinedEmails[email] = {'zarafa':False, 'domino':False, 'forward':False, 'type':'', 'username':''}
+
+    #   if zarafaLive.has_key(email):    
+    #     combinedEmails[email]['zarafa'] = True
+    #     combinedEmails[email]['username'] = zarafaLive[email]['samaccountname']
+    #     if bool(set(["group","dominogroup","groupofnames"]) & set([ str(x).lower() for x in zarafaLive[email].get('objectclass',[]) ])):
+    #        combinedEmails[email]['type'] = "Group"
+    #     elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & set([ str(x).lower() for x in zarafaLive[email].get('objectclass',[]) ])):
+    #       combinedEmails[email]['type'] = "User"
+    #     else:
+    #       combinedEmails[email]['type'] = ",".join(sorted(zarafaLive[email].get('objectclass',[])))    
+
+    #   if dominoLive.has_key(email):
+    #     combinedEmails[email]['domino'] = True
+    #     combinedEmails[email]['forward'] = bool(dominoLive[email].has_key('mailaddress'))
+    #     if bool(set(["group","dominogroup","groupofnames"]) & set([ str(x).lower() for x in dominoLive[email].get('objectclass',[]) ])):
+    #        combinedEmails[email]['type'] = "Group"
+    #     elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & set([ str(x).lower() for x in dominoLive[email].get('objectclass',[]) ])):
+    #       combinedEmails[email]['type'] = "User"
+    #     else:
+    #       combinedEmails[email]['type'] = ",".join(sorted(dominoLive[email].get('objectclass',[])))         
 
   return (zarafaChanged, combinedEmails)
 
@@ -268,7 +287,6 @@ if __name__ == "__main__":
     command_line_args()  
     zarafaChanged, emails = get_data()
 
-    print zarafaChanged, emails['bob.brandt@opw.ie']
     sys.exit(0)
 
     if args['web']:
