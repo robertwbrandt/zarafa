@@ -283,10 +283,8 @@ if __name__ == "__main__":
     command_line_args()  
     zarafaChanged, date, emails = get_data()
 
-    print zarafaChanged, brandt.strXML(datetime.datetime.strftime(date,'%Y-%m-%d %H:%M:%S'))
-
     if args['web']:
-      xmldata = ElementTree.Element('emails', **{'date': brandt.strXML(datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d %H:%M:%S'))})
+      xmldata = ElementTree.Element('emails', **{'date': brandt.strXML(datetime.datetime.strftime(date,'%Y-%m-%d %H:%M:%S'))})
       for email in sorted(emails.keys()):
         ElementTree.SubElement(xmldata, 'email', **{'mail': brandt.strXML(email), 
                                         'zarafa': brandt.strXML(emails[email]['zarafa']), 
