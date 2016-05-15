@@ -285,8 +285,6 @@ if __name__ == "__main__":
 
     print zarafaChanged, brandt.strXML(datetime.datetime.strftime(date,'%Y-%m-%d %H:%M:%S'))
 
-    sys.exit(0)
-
     if args['web']:
       xmldata = ElementTree.Element('emails', **{'date': brandt.strXML(datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d %H:%M:%S'))})
       for email in sorted(emails.keys()):
