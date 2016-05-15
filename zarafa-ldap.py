@@ -214,7 +214,11 @@ def get_data():
 
   zarafaChanged = False
   combinedEmails = read_cache_file(emailCacheFile)
-  if not args['web']:
+  date = None
+  if combinedEmails: date = datetime.datetime.fromtimestamp(os.stat(cachefile).st_mtime)
+
+  if not combinedEmails or not args['web']:
+    date = datetime.datetime.now()
     zarafaLive = get_ldap(get_zarafa_LDAPURI())
     if len(zarafaLive) < args['minObjects']:
       raise IOError, "Unable to get reliable Zarafa Download. Only " + str(len(zarafaLive)) + " objects."
@@ -263,34 +267,10 @@ def get_data():
           combinedEmails[mail]['type'] = ",".join(sorted(objectclass))
         combinedEmails[mail]['domino'] = True
         combinedEmails[mail]['forward'] = dominoLive[account].has_key('mailaddress')
-        print mail, combinedEmails[mail]
 
+    write_cache_file(emailCacheFile,combinedEmails)
 
-
-    # for email in set(zarafaLive.keys() + dominoLive.keys()):
-    #   combinedEmails[email] = {'zarafa':False, 'domino':False, 'forward':False, 'type':'', 'username':''}
-
-    #   if zarafaLive.has_key(email):    
-    #     combinedEmails[email]['zarafa'] = True
-    #     combinedEmails[email]['username'] = zarafaLive[email]['samaccountname']
-    #     if bool(set(["group","dominogroup","groupofnames"]) & set([ str(x).lower() for x in zarafaLive[email].get('objectclass',[]) ])):
-    #        combinedEmails[email]['type'] = "Group"
-    #     elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & set([ str(x).lower() for x in zarafaLive[email].get('objectclass',[]) ])):
-    #       combinedEmails[email]['type'] = "User"
-    #     else:
-    #       combinedEmails[email]['type'] = ",".join(sorted(zarafaLive[email].get('objectclass',[])))    
-
-    #   if dominoLive.has_key(email):
-    #     combinedEmails[email]['domino'] = True
-    #     combinedEmails[email]['forward'] = bool(dominoLive[email].has_key('mailaddress'))
-    #     if bool(set(["group","dominogroup","groupofnames"]) & set([ str(x).lower() for x in dominoLive[email].get('objectclass',[]) ])):
-    #        combinedEmails[email]['type'] = "Group"
-    #     elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & set([ str(x).lower() for x in dominoLive[email].get('objectclass',[]) ])):
-    #       combinedEmails[email]['type'] = "User"
-    #     else:
-    #       combinedEmails[email]['type'] = ",".join(sorted(dominoLive[email].get('objectclass',[])))         
-
-  return (zarafaChanged, combinedEmails)
+  return (zarafaChanged, date, combinedEmails)
 
 # Start program
 if __name__ == "__main__":
@@ -301,7 +281,7 @@ if __name__ == "__main__":
     xmldata = None
 
     command_line_args()  
-    zarafaChanged, emails = get_data()
+    zarafaChanged, date, emails = get_data()
 
     sys.exit(0)
 
