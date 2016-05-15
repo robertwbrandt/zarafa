@@ -232,7 +232,7 @@ def get_data():
     write_cache_file(dominoCacheFile,dominoLive)
 
     combinedEmails = {}
-    for account in [ k for k in zarafaLive.keys() if zarafaLive[k].has_key('mail') ]
+    for account in [ k for k in zarafaLive.keys() if zarafaLive[k].has_key('mail') ]:
       mail = zarafaLive[account]['mail']
       objectclass = set([ str(x).lower() for x in zarafaLive[account].get('objectclass',[]) ])
       combinedEmails[mail] = {'zarafa':True, 
