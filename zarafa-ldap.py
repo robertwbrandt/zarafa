@@ -215,7 +215,7 @@ def get_data():
   zarafaChanged = False
   combinedEmails = read_cache_file(emailCacheFile)
   date = None
-  if combinedEmails: date = datetime.datetime.fromtimestamp(os.stat(cachefile).st_mtime)
+  if combinedEmails: date = datetime.datetime.fromtimestamp(os.stat(emailCacheFile).st_mtime)
 
   if not combinedEmails or not args['web']:
     date = datetime.datetime.now()
