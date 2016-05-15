@@ -16,9 +16,9 @@ args = {}
 args['config'] = '/etc/zarafa/server.cfg'
 args['force'] = False
 args['web'] = False
-args['cache'] = 15
+args['minObjects'] = 800
 
-version = 0.3
+version = 0.4
 encoding = 'utf-8'
 
 zarafaLDAP       = {}
@@ -161,11 +161,9 @@ def get_zarafa_LDAPURI():
 
 def get_ldap(LDAPURI):
   try:
-    tmp = brandt.LDAPSearch(LDAPURI).resultsDict(functDN=lambda dn: brandt.strXML(brandt.formatDN(dn)),
+    return brandt.LDAPSearch(LDAPURI).resultsDict(functDN=lambda dn: brandt.strXML(brandt.formatDN(dn)),
                                                   functAttr=lambda a: brandt.strXML(str(a).lower()), 
                                                   functValue=lambda *v:brandt.strXML(brandt.formatDN(v[-1])))
-    print LDAPURI, len(tmp)
-    return tmp
   except:
     return {}
 
@@ -213,20 +211,14 @@ def cmpLDAPDict(dict1, dict2):
 
 def get_data():
   global args, error
+
   zarafaChanged = False
-  combinedEmails = {}
-
-  args['cache'] *= 60
-  age = args['cache'] + 1
-  try:
-    age = (datetime.datetime.now() - datetime.datetime.fromtimestamp(os.stat(emailCacheFile).st_mtime)).seconds
-  except:
-    pass
-
-  if age <= args['cache']:
-    combinedEmails = read_cache_file(emailCacheFile)
-  else:
+  combinedEmails = read_cache_file(emailCacheFile)
+  if age > args['cache'] or not args['web']:
     zarafaLive = get_ldap(get_zarafa_LDAPURI())
+    if len(zarafaLive) < args['minObjects']:
+      raise IOError, "Unable to get reliable Zarafa Download. Only " + str(len(zarafaLive)) + " objects."
+
     zarafaCache = read_cache_file(zarafaCacheFile)
     error += "Checking Zarafa entries\n"
     if cmpLDAPDict(zarafaLive, zarafaCache):
@@ -235,37 +227,33 @@ def get_data():
       zarafaChanged = True
 
     dominoLive = get_ldap(dominoLDAPURI)
+    if len(dominoLive) < args['minObjects']:
+      raise IOError, "Unable to get reliable Domino Download. Only " + str(len(dominoLive)) + " objects."
+    write_cache_file(dominoCacheFile,dominoLive)
 
-    for account in zarafaLive.keys():
-      if bool(set(["group","dominogroup","groupofnames"]) & set([ str(x).lower() for x in zarafaLive[account].get('objectclass',[]) ])):
-        objectType = "group"
-      elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & set([ str(x).lower() for x in zarafaLive[account].get('objectclass',[]) ])):
-        objectType = "user"
-      else:
-        objectType = ",".join(sorted(zarafaLive[account].get('objectclass',[])))
-      username = zarafaLive[account].get('samaccountname',"")
+    combinedEmails = {}
+    for email in set(zarafaLive.keys() + dominoLive.keys()):
+      combinedEmails[email] = {'zarafa':False, 'domino':False, 'forward':False, 'type':'', 'username':''}})
 
-      if zarafaLive[account].has_key('mail'):
-        for mail in zarafaLive[account]['mail']: combinedEmails.update({mail: {'zarafa':True, 'domino':False, 'forward':False, 'type':objectType, 'username':username}})
-      if zarafaLive[account].has_key('othermailbox'):
-        for mail in zarafaLive[account]['othermailbox']: combinedEmails.update({mail: {'zarafa':True, 'domino':False, 'forward':False, 'type':objectType, 'username':username}})
+      if zarafaLive.has_key(email):    
+        combinedEmails[email]['zarafa'] = True
+        combinedEmails[email]['username'] = zarafaLive[email]['samaccountname']
+        if bool(set(["group","dominogroup","groupofnames"]) & set([ str(x).lower() for x in zarafaLive[email].get('objectclass',[]) ])):
+           combinedEmails[email]['type'] = "group"
+        elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & set([ str(x).lower() for x in zarafaLive[email].get('objectclass',[]) ])):
+          combinedEmails[email]['type'] = "user"
+        else:
+          combinedEmails[email]['type'] = ",".join(sorted(zarafaLive[email].get('objectclass',[])))    
 
-    for account in dominoLive.keys():
-      if bool(set(["group","dominogroup","groupofnames"]) & set([ str(x).lower() for x in dominoLive[account].get('objectclass',[]) ])):
-        objectType = "group"
-      elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & set([ str(x).lower() for x in dominoLive[account].get('objectclass',[]) ])):
-        objectType = "user"
-      else:
-        objectType = ",".join(sorted(dominoLive[account].get('objectclass',[])))
-
-      if dominoLive[account].has_key('mail'):
-        for mail in dominoLive[account]['mail']: 
-          if combinedEmails.has_key(mail): 
-            combinedEmails[mail]['domino'] = True
-          else:
-            combinedEmails.update({mail: {'zarafa':False, 'domino':True, 'forward':False, 'type':objectType}})
-        if dominoLive[account].has_key('mailaddress'):
-          combinedEmails[mail]['forward'] = True
+      if dominoLive.has_key(email):
+        combinedEmails[email]['domino'] = True
+        combinedEmails[email]['forward'] = bool(dominoLive[email].has_key('mailaddress'))
+        if bool(set(["group","dominogroup","groupofnames"]) & set([ str(x).lower() for x in dominoLive[email].get('objectclass',[]) ])):
+           combinedEmails[email]['type'] = "group"
+        elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & set([ str(x).lower() for x in dominoLive[email].get('objectclass',[]) ])):
+          combinedEmails[email]['type'] = "user"
+        else:
+          combinedEmails[email]['type'] = ",".join(sorted(dominoLive[email].get('objectclass',[])))         
 
   return (zarafaChanged, combinedEmails)
 
@@ -279,6 +267,9 @@ if __name__ == "__main__":
 
     command_line_args()  
     zarafaChanged, emails = get_data()
+
+    print zarafaChanged, emails
+    sys.exit(0)
 
     if args['web']:
       xmldata = ElementTree.Element('emails', **{'date': brandt.strXML(datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d %H:%M:%S'))})
