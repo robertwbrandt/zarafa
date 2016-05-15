@@ -239,7 +239,7 @@ def get_data():
                               'domino':False, 
                               'forward':False, 
                               'type':'', 
-                              'username':zarafaLive[account]['samaccountname']}
+                              'username':zarafaLive[account].get('samaccountname',[''])[0]}
       if bool(set(["group","dominogroup","groupofnames"]) & objectclass):
         combinedEmails[mail]['type'] = "Group"
       elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & objectclass):
