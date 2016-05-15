@@ -283,6 +283,8 @@ if __name__ == "__main__":
     command_line_args()  
     zarafaChanged, date, emails = get_data()
 
+    print zarafaChanged, brandt.strXML(datetime.datetime.strftime(date,'%Y-%m-%d %H:%M:%S'))
+
     sys.exit(0)
 
     if args['web']:
