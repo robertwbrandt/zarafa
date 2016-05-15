@@ -16,19 +16,24 @@ args = {}
 args['config'] = '/etc/zarafa/server.cfg'
 args['force'] = False
 args['web'] = False
+args['cache'] = 15
+
 version = 0.3
 encoding = 'utf-8'
 
-zarafaLDAP    = {}
-zarafaFilter  = ""
-zarafaLDAPURL = ""
-zarafaCacheFile = "/tmp/zarafa.ldap.cache"
+zarafaLDAP       = {}
+zarafaFilter     = ""
+zarafaLDAPURL    = ""
+zarafaAttrAdd    = set(["objectclass","samaccountname"])
 zarafaAttrIgnore = set(["usnchanged","objectguid","grouptype","unicodepwd"])
+zarafaCacheFile  = "/tmp/zarafa.ldap.cache"
 
 # dominoLDAPURI = "ldap://domino.i.opw.ie/?objectclass,mail,member,mailaddress?sub?(|(objectClass=dominoPerson)(objectClass=dominoGroup))"
-dominoLDAPURI = "ldap://10.200.200.20/?objectclass,mail,member,mailaddress?sub?(|(objectClass=dominoPerson)(objectClass=dominoGroup))"
+dominoLDAPURI    = "ldap://10.200.200.20/?objectclass,mail,member,mailaddress?sub?(|(objectClass=dominoPerson)(objectClass=dominoGroup))"
+dominoCacheFile  = "/tmp/domino.ldap.cache"
 
-emailCacheFile = "/tmp/email.ldap.xml"
+emailCacheFile   = "/tmp/email.ldap.cache"
+
 class customUsageVersion(argparse.Action):
   def __init__(self, option_strings, dest, **kwargs):
     self.__version = str(kwargs.get('version', ''))
@@ -99,7 +104,6 @@ def get_zarafa_LDAPURI():
   zarafaAttrs = set(["objectclass"])
   zarafaFilter = ""
 
-
   f = open(args['config'], 'r')
   out = f.read()
   f.close()
@@ -156,12 +160,17 @@ def get_zarafa_LDAPURI():
   return zarafaLDAPURI
 
 def get_ldap(LDAPURI):
-  return brandt.LDAPSearch(LDAPURI).resultsDict(functDN=lambda dn: brandt.strXML(brandt.formatDN(dn)),
-                                                functAttr=lambda a: brandt.strXML(str(a).lower()), 
-                                                functValue=lambda *v:brandt.strXML(brandt.formatDN(v[-1])))
+  try:
+    tmp = brandt.LDAPSearch(LDAPURI).resultsDict(functDN=lambda dn: brandt.strXML(brandt.formatDN(dn)),
+                                                  functAttr=lambda a: brandt.strXML(str(a).lower()), 
+                                                  functValue=lambda *v:brandt.strXML(brandt.formatDN(v[-1])))
+    print LDAPURI, len(tmp)
+    return tmp
+  except:
+    return {}
 
-def write_cache_file(filename, results):
-  json.dump(results, 
+def write_cache_file(filename, data):
+  json.dump(data, 
             open(filename,'w'),
             sort_keys=True,
             indent=2)
@@ -172,7 +181,7 @@ def read_cache_file(filename):
   except:
     return {}
 
-def cmpDict(dict1, dict2):
+def cmpLDAPDict(dict1, dict2):
   global args,output,error,exitcode,xmldata
 
   try:  
@@ -203,53 +212,62 @@ def cmpDict(dict1, dict2):
   return True
 
 def get_data():
-  global error
+  global args, error
   zarafaChanged = False
-  domainoChanged = False
-
-  zarafaLive = get_ldap(get_zarafa_LDAPURI())
-  zarafaCache = read_cache_file(zarafaCacheFile)
-  error += "Checking Zarafa entries\n"
-  if cmpDict(zarafaLive, zarafaCache):
-    error += "Zarafa entries have changed\n"
-    write_cache_file(zarafaCacheFile,zarafaLive)
-    zarafaChanged = True
-
-  dominoLive = get_ldap(dominoLDAPURI)
-
   combinedEmails = {}
-  for account in zarafaLive.keys():
-    if bool(set(["group","dominogroup","groupofnames"]) & set([ str(x).lower() for x in zarafaLive[account].get('objectclass',[]) ])):
-      objectType = "group"
-    elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & set([ str(x).lower() for x in zarafaLive[account].get('objectclass',[]) ])):
-      objectType = "user"
-    else:
-      objectType = ",".join(sorted(zarafaLive[account].get('objectclass',[])))
-    username = zarafaLive[account].get('samaccountname',"")
 
-    if zarafaLive[account].has_key('mail'):
-      for mail in zarafaLive[account]['mail']: combinedEmails.update({mail: {'zarafa':True, 'domino':False, 'forward':False, 'type':objectType, 'username':username}})
-    if zarafaLive[account].has_key('othermailbox'):
-      for mail in zarafaLive[account]['othermailbox']: combinedEmails.update({mail: {'zarafa':True, 'domino':False, 'forward':False, 'type':objectType, 'username':username}})
+  args['cache'] *= 60
+  age = args['cache'] + 1
+  try:
+    age = (datetime.datetime.now() - datetime.datetime.fromtimestamp(os.stat(emailCacheFile).st_mtime)).seconds
+  except:
+    pass
 
-  for account in dominoLive.keys():
-    if bool(set(["group","dominogroup","groupofnames"]) & set([ str(x).lower() for x in dominoLive[account].get('objectclass',[]) ])):
-      objectType = "group"
-    elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & set([ str(x).lower() for x in dominoLive[account].get('objectclass',[]) ])):
-      objectType = "user"
-    else:
-      objectType = ",".join(sorted(dominoLive[account].get('objectclass',[])))
+  if age <= args['cache']:
+    combinedEmails = read_cache_file(emailCacheFile)
+  else:
+    zarafaLive = get_ldap(get_zarafa_LDAPURI())
+    zarafaCache = read_cache_file(zarafaCacheFile)
+    error += "Checking Zarafa entries\n"
+    if cmpLDAPDict(zarafaLive, zarafaCache):
+      error += "Zarafa entries have changed\n"
+      write_cache_file(zarafaCacheFile,zarafaLive)
+      zarafaChanged = True
 
-    if dominoLive[account].has_key('mail'):
-      for mail in dominoLive[account]['mail']: 
-        if combinedEmails.has_key(mail): 
-          combinedEmails[mail]['domino'] = True
-        else:
-          combinedEmails.update({mail: {'zarafa':False, 'domino':True, 'forward':False, 'type':objectType}})
-      if dominoLive[account].has_key('mailaddress'):
-        combinedEmails[mail]['forward'] = True
+    dominoLive = get_ldap(dominoLDAPURI)
 
-    return (zarafaChanged, combinedEmails)
+    for account in zarafaLive.keys():
+      if bool(set(["group","dominogroup","groupofnames"]) & set([ str(x).lower() for x in zarafaLive[account].get('objectclass',[]) ])):
+        objectType = "group"
+      elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & set([ str(x).lower() for x in zarafaLive[account].get('objectclass',[]) ])):
+        objectType = "user"
+      else:
+        objectType = ",".join(sorted(zarafaLive[account].get('objectclass',[])))
+      username = zarafaLive[account].get('samaccountname',"")
+
+      if zarafaLive[account].has_key('mail'):
+        for mail in zarafaLive[account]['mail']: combinedEmails.update({mail: {'zarafa':True, 'domino':False, 'forward':False, 'type':objectType, 'username':username}})
+      if zarafaLive[account].has_key('othermailbox'):
+        for mail in zarafaLive[account]['othermailbox']: combinedEmails.update({mail: {'zarafa':True, 'domino':False, 'forward':False, 'type':objectType, 'username':username}})
+
+    for account in dominoLive.keys():
+      if bool(set(["group","dominogroup","groupofnames"]) & set([ str(x).lower() for x in dominoLive[account].get('objectclass',[]) ])):
+        objectType = "group"
+      elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & set([ str(x).lower() for x in dominoLive[account].get('objectclass',[]) ])):
+        objectType = "user"
+      else:
+        objectType = ",".join(sorted(dominoLive[account].get('objectclass',[])))
+
+      if dominoLive[account].has_key('mail'):
+        for mail in dominoLive[account]['mail']: 
+          if combinedEmails.has_key(mail): 
+            combinedEmails[mail]['domino'] = True
+          else:
+            combinedEmails.update({mail: {'zarafa':False, 'domino':True, 'forward':False, 'type':objectType}})
+        if dominoLive[account].has_key('mailaddress'):
+          combinedEmails[mail]['forward'] = True
+
+  return (zarafaChanged, combinedEmails)
 
 # Start program
 if __name__ == "__main__":
