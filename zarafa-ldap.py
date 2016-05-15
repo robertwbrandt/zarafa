@@ -218,7 +218,6 @@ def get_data():
     zarafaLive = get_ldap(get_zarafa_LDAPURI())
     if len(zarafaLive) < args['minObjects']:
       raise IOError, "Unable to get reliable Zarafa Download. Only " + str(len(zarafaLive)) + " objects."
-
     zarafaCache = read_cache_file(zarafaCacheFile)
     error += "Checking Zarafa entries\n"
     if cmpLDAPDict(zarafaLive, zarafaCache):
@@ -235,7 +234,6 @@ def get_data():
     for account in [ k for k in zarafaLive.keys() if zarafaLive[k].has_key('mail') ]:
       mail = zarafaLive[account]['mail'][0]
       objectclass = set([ str(x).lower() for x in zarafaLive[account].get('objectclass',[]) ])
-      print account, zarafaLive[account]
       combinedEmails[mail] = {'zarafa':True, 
                               'domino':False, 
                               'forward':False, 
@@ -247,7 +245,7 @@ def get_data():
         combinedEmails[mail]['type'] = "User"
       else:
         combinedEmails[mail]['type'] = ",".join(sorted(objectclass))
-
+      print mail, combinedEmails[mail]
 
 
 
