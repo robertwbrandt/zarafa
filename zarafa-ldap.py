@@ -233,7 +233,7 @@ def get_data():
 
     combinedEmails = {}
     for email in set(zarafaLive.keys() + dominoLive.keys()):
-      combinedEmails[email] = {'zarafa':False, 'domino':False, 'forward':False, 'type':'', 'username':''}})
+      combinedEmails[email] = {'zarafa':False, 'domino':False, 'forward':False, 'type':'', 'username':''}
 
       if zarafaLive.has_key(email):    
         combinedEmails[email]['zarafa'] = True
