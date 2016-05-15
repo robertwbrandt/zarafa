@@ -168,7 +168,6 @@ def get_ldap(LDAPURI):
     return {}
 
 def write_cache_file(filename, data):
-  print filename
   json.dump(data, 
             open(filename,'w'),
             sort_keys=True,
