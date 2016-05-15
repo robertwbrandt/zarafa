@@ -233,10 +233,9 @@ def get_data():
 
     combinedEmails = {}
     for account in [ k for k in zarafaLive.keys() if zarafaLive[k].has_key('mail') ]:
-      mail = zarafaLive[account]['mail']
+      mail = zarafaLive[account]['mail'][0]
       objectclass = set([ str(x).lower() for x in zarafaLive[account].get('objectclass',[]) ])
       print account, zarafaLive[account]
-
       combinedEmails[mail] = {'zarafa':True, 
                               'domino':False, 
                               'forward':False, 
