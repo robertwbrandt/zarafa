@@ -231,21 +231,21 @@ def get_data():
     write_cache_file(dominoCacheFile,dominoLive)
 
     combinedEmails = {}
-    for account in [ k for k in zarafaLive.keys() if zarafaLive[k].has_key('mail') ]:
-      mail = zarafaLive[account]['mail'][0]
-      objectclass = set([ str(x).lower() for x in zarafaLive[account].get('objectclass',[]) ])
-      combinedEmails[mail] = {'zarafa':True, 
-                              'domino':False, 
-                              'forward':False, 
-                              'type':'', 
-                              'username':str(zarafaLive[account].get('samaccountname',[''])[0])}
-      if bool(set(["group","dominogroup","groupofnames"]) & objectclass):
-        combinedEmails[mail]['type'] = "Group"
-      elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & objectclass):
-        combinedEmails[mail]['type'] = "User"
-      else:
-        combinedEmails[mail]['type'] = ",".join(sorted(objectclass))
-      print mail, combinedEmails[mail]
+    for account in zarafaLive.keys():
+      for mail in zarafaLive[account].get('mail',[]) + zarafaLive[account].get('othermailbox',[]):
+        objectclass = set([ str(x).lower() for x in zarafaLive[account].get('objectclass',[]) ])
+        combinedEmails[mail] = {'zarafa':True, 
+                                'domino':False, 
+                                'forward':False, 
+                                'type':'', 
+                                'username':str(zarafaLive[account].get('samaccountname',[''])[0])}
+        if bool(set(["group","dominogroup","groupofnames"]) & objectclass):
+          combinedEmails[mail]['type'] = "Group"
+        elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & objectclass):
+          combinedEmails[mail]['type'] = "User"
+        else:
+          combinedEmails[mail]['type'] = ",".join(sorted(objectclass))
+        print mail, combinedEmails[mail]
 
 
 
