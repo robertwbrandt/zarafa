@@ -245,6 +245,24 @@ def get_data():
           combinedEmails[mail]['type'] = "User"
         else:
           combinedEmails[mail]['type'] = ",".join(sorted(objectclass))
+
+    for account in dominoLive.keys():
+      for mail in dominoLive[account].get('mail',[]):
+        objectclass = set([ str(x).lower() for x in dominoLive[account].get('objectclass',[]) ])
+        if not combinedEmails.has_key(mail):
+          combinedEmails[mail] = {'zarafa':False, 
+                                  'domino':True, 
+                                  'forward':False, 
+                                  'type':'', 
+                                  'username':''}
+        if bool(set(["group","dominogroup","groupofnames"]) & objectclass):
+          combinedEmails[mail]['type'] = "Group"
+        elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & objectclass):
+          combinedEmails[mail]['type'] = "User"
+        else:
+          combinedEmails[mail]['type'] = ",".join(sorted(objectclass))
+        combinedEmails[mail]['domino'] = True
+        combinedEmails[mail]['forward'] = dominoLive[account].has_key('mailaddress')
         print mail, combinedEmails[mail]
 
 
