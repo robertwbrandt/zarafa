@@ -214,7 +214,7 @@ def get_data():
 
   zarafaChanged = False
   combinedEmails = read_cache_file(emailCacheFile)
-  if age > args['cache'] or not args['web']:
+  if not args['web']:
     zarafaLive = get_ldap(get_zarafa_LDAPURI())
     if len(zarafaLive) < args['minObjects']:
       raise IOError, "Unable to get reliable Zarafa Download. Only " + str(len(zarafaLive)) + " objects."
