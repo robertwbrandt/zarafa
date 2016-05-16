@@ -308,7 +308,7 @@ if __name__ == "__main__":
         if line and not line[0] in ["#",";"]:
           line = line.split()[0].lower()
           oldBCC[line] = line
-      newBCC = { k:k for k in emails.keys() if emails[k]['zarafa'] }
+      newBCC = { k:k for k in emails.keys() if emails[k]['zarafa'] and not emails[k]['domino'] }
       error += "Checking Postfix BCC entries\n"
       print cmpDict(oldBCC, newBCC)
 
