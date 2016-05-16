@@ -2,7 +2,7 @@
 """
 Python utility to monitor when LDAP attributes change and issue --sync command to Zarafa
 """
-import argparse, textwrap, fnmatch, datetime, urllib, json
+import argparse, textwrap, fnmatch, datetime, urllib, json, re
 import xml.etree.cElementTree as ElementTree
 import subprocess
 
@@ -299,28 +299,57 @@ if __name__ == "__main__":
         # out, err = p.communicate()
         # if err: raise IOError(err)
 
-      error += "Building Postfix BCC file for Mailmeter\n"
+      reloadPostfix = False
+
       f = open(postfixBCC, 'r')
       out = f.read().split('\n')
       f.close()
-      oldBCC = set([])
+      oldFile = set([])
       for line in out:
         if line and not line[0] in ["#",";"]:
-          oldBCC.add(line.split()[0].lower())
-      newBCC = set([ k for k in emails.keys() if (emails[k]['type'] == "User") and emails[k]['zarafa'] and ( emails[k]['domino'] == emails[k]['forward'] ) ])
+          oldFile.add(line.split()[0].lower())
+      newFile = set([ k for k in emails.keys() if (emails[k]['type'] == "User") and emails[k]['zarafa'] and ( emails[k]['domino'] == emails[k]['forward'] ) ])
       error += "Checking Postfix BCC entries\n"
-      print "Removed emails:", oldBCC - newBCC
-      print "Added emails:", newBCC - oldBCC
+      if len(oldFile ^ newFile):
+        reloadPostfix = True
+        error += "Building Postfix BCC file for Mailmeter"
+        error += "Removed BCC emails:" + ", ".join(sorted(oldFile - newFile))
+        error += "Added BCC emails:" + ", ".join(sorted(newFile - oldFile))
 
-      print len(oldBCC), len(newBCC)
+        output = "# /etc/postfix/bcc - OPW Postfix BCC Mapping for Zarafa Only users\n"
+        for mail in sorted(newFile):
+          output += mail + "\tarchive@mailmeter.opw.ie\n"
+        # f = open(postfixBCC, 'w')
+        # f.write(output)
+        # f.close()
+
+      f = open(postfixVTrans, 'r')
+      out = f.read().split('\n')
+      f.close()
+      oldFile = set([])
+      for line in out:
+        if line and not line[0] in ["#",";"]:
+          oldFile.add(line.split()[0].lower())
+      newFile = set([ k for k in emails.keys() if emails[k]['domino'] and not emails[k]['forward'] ])
+      error += "Checking Postfix vTransport entries\n"
+      if len(oldFile ^ newFile):
+        reloadPostfix = True
+        error += "Building Postfix vTransport file for Smarthost\n"
+        print "Removed vTransport emails:" + ", ".join(sorted(oldFile - newFile))
+        print "Added vTransport emails:" + ", ".join(sorted(newFile - oldFile))
+
+        output = "# /etc/postfix/vtransport - OPW Postfix virtual transport for Lotus Notes\n"
+        output += "# this file configures virtual transport for Lotus Notes only accounts (users & groups accounts)\n"
+        output += "# and for Zarafa & Lotus notes accounts (users & groups accounts, no aliases exist)\n"
+        for mail in sorted(newFile):
+          output += mail + "\t" + re.sub('@opw.ie$','@dublinnotes.opw.ie',mail) + "\n"
+        # f = open(postfixVTrans, 'w')
+        # f.write(output)
+        # f.close()
+
+      print brandt.syslog("This is a test\nA multi-line test!", options=['pid'])
+
       sys.exit(0)
-      # print cmpDict(oldBCC, newBCC)
-
-      # error += "Building Postfix vTransport file for Smarthost\n"
-      # f = open(postfixVTrans, 'r')
-      # out = f.read().split('\n')
-      # f.close()
-
   # except SystemExit as err:
   #   pass
   # except Exception as err:
