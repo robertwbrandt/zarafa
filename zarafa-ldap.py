@@ -168,10 +168,9 @@ def get_ldap(LDAPURI):
     return {}
 
 def write_cache_file(filename, data):
-  json.dump(data, 
-            open(filename,'w'),
-            sort_keys=True,
-            indent=2)
+  print "\nWriting to", filename, "\n"
+  with open(filename, 'w') as f:
+      json.dump(data, f, sort_keys=True, indent=2)
 
 def read_cache_file(filename):
   try:
