@@ -307,9 +307,11 @@ if __name__ == "__main__":
       for line in out:
         if line and not line[0] in ["#",";"]:
           oldBCC.add(line.split()[0].lower())
-      newBCC = set([ k for k in emails.keys() if emails[k]['zarafa'] and ( emails[k]['domino'] == emails[k]['forward'] ) ])
+      newBCC = set([ k for k in emails.keys() if (emails[k]['type'] == "User") and emails[k]['zarafa'] and ( emails[k]['domino'] == emails[k]['forward'] ) ])
       error += "Checking Postfix BCC entries\n"
-      print oldBCC ^ newBCC
+      print "Removed emails:", oldBCC - newBCC
+      print "Added emails:", newBCC - oldBCC
+
       print len(oldBCC), len(newBCC)
       sys.exit(0)
       # print cmpDict(oldBCC, newBCC)
