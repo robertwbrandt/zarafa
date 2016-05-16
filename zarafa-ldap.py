@@ -306,7 +306,7 @@ if __name__ == "__main__":
       oldBCC = {}
       for line in out:
         if line and not line[0] in ["#",";"]:
-          line = line.split(" ")[0].lower()
+          line = line.split()[0].lower()
           oldBCC[line] = line
           print oldBCC[line], line
       newBCC = { k:k for k in emails.keys() if emails[k]['zarafa'] }
