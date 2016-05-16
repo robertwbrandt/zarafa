@@ -34,6 +34,9 @@ dominoCacheFile  = "/tmp/domino.ldap.cache"
 
 emailCacheFile   = "/tmp/email.ldap.cache"
 
+postfixBCC = "/etc/postfix/bcc"
+postfixVTrans = "/etc/postfix/vtransport"
+
 class customUsageVersion(argparse.Action):
   def __init__(self, option_strings, dest, **kwargs):
     self.__version = str(kwargs.get('version', ''))
@@ -168,9 +171,7 @@ def get_ldap(LDAPURI):
     return {}
 
 def write_cache_file(filename, data):
-  print "\nWriting to", filename, "\n"
-  with open(filename, 'w') as f:
-      json.dump(data, f, sort_keys=True, indent=2)
+  json.dump(data, open(filename, 'w'), sort_keys=True, indent=2)
 
 def read_cache_file(filename):
   try:
@@ -178,7 +179,7 @@ def read_cache_file(filename):
   except:
     return {}
 
-def cmpLDAPDict(dict1, dict2):
+def cmpDict(dict1, dict2):
   global args,output,error,exitcode,xmldata
 
   try:  
@@ -223,7 +224,7 @@ def get_data():
       raise IOError, "Unable to get reliable Zarafa Download. Only " + str(len(zarafaLive)) + " objects."
     zarafaCache = read_cache_file(zarafaCacheFile)
     error += "Checking Zarafa entries\n"
-    if not cmpLDAPDict(zarafaLive, zarafaCache):
+    if not cmpDict(zarafaLive, zarafaCache):
       error += "Zarafa entries have changed\n"
       write_cache_file(zarafaCacheFile,zarafaLive)
       zarafaChanged = True
@@ -293,9 +294,28 @@ if __name__ == "__main__":
     else:
       if zarafaChanged or args['force']:
         error += "Running Zarafa Sync\n"
+        # command = '/usr/sbin/zarafa-admin --sync'
+        # p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # out, err = p.communicate()
+        # if err: raise IOError(err)
 
       error += "Building Postfix BCC file for Mailmeter\n"
-      error += "Building Postfix vTransport file for Smarthost\n"
+      f = open(postfixBCC, 'r')
+      out = f.read().split('\n')
+      f.close()
+      oldBCC = {}
+      for line in out:
+        if line and not line[0] in ["#",";"]:
+          line = line.split(" ")[0].lower()
+          oldBCC[line] = line
+          print oldBCC[line], line
+      newBCC = { k:k for k in emails.keys() if emails[k]['zarafa'] }
+
+
+      # error += "Building Postfix vTransport file for Smarthost\n"
+      # f = open(postfixVTrans, 'r')
+      # out = f.read().split('\n')
+      # f.close()
 
   # except SystemExit as err:
   #   pass
