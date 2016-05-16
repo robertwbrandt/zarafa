@@ -223,7 +223,7 @@ def get_data():
       raise IOError, "Unable to get reliable Zarafa Download. Only " + str(len(zarafaLive)) + " objects."
     zarafaCache = read_cache_file(zarafaCacheFile)
     error += "Checking Zarafa entries\n"
-    if cmpLDAPDict(zarafaLive, zarafaCache):
+    if not cmpLDAPDict(zarafaLive, zarafaCache):
       error += "Zarafa entries have changed\n"
       write_cache_file(zarafaCacheFile,zarafaLive)
       zarafaChanged = True
