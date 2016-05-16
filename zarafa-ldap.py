@@ -310,7 +310,13 @@ if __name__ == "__main__":
           oldBCC[line] = line
       newBCC = { k:k for k in emails.keys() if emails[k]['zarafa'] and ( emails[k]['domino'] == emails[k]['forward'] ) }
       error += "Checking Postfix BCC entries\n"
-      print cmpDict(oldBCC, newBCC)
+      print oldBCC
+
+      print newBCC
+
+      print len(oldBCC), len(newBCC)
+      sys.exit(0)
+      # print cmpDict(oldBCC, newBCC)
 
       # error += "Building Postfix vTransport file for Smarthost\n"
       # f = open(postfixVTrans, 'r')
