@@ -274,7 +274,7 @@ def get_data():
 
 # Start program
 if __name__ == "__main__":
-  # try:
+  try:
     output = ""
     error = ""
     exitcode = 0    
