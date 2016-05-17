@@ -295,11 +295,11 @@ if __name__ == "__main__":
     else:
       if zarafaChanged or args['force']:
         error += brandt.syslog("Changes detected: Running Zarafa Sync\n", options=['pid'])
-        # command = '/usr/sbin/zarafa-admin --sync'
-        # p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        # out, err = p.communicate()
-        # if err: raise IOError(err)
-        # output += out + "\n"
+        command = '/usr/sbin/zarafa-admin --sync'
+        p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = p.communicate()
+        if err: raise IOError(err)
+        output += out + "\n"
 
       reloadPostfix = False
 
