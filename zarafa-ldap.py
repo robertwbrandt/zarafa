@@ -328,29 +328,41 @@ if __name__ == "__main__":
       f = open(postfixVTrans, 'r')
       out = f.read().split('\n')
       f.close()
-      oldFile = set([])
+      oldFile = {}
       for line in out:
         if line and not line[0] in ["#",";"]:
-          oldFile.add(line.split()[0].lower())
-      newFile = set([ k for k in emails.keys() if emails[k]['domino'] and not emails[k]['forward'] ])
-      output += "Checking Postfix vTransport entries\n"
-      if len(oldFile ^ newFile) or args['force']:
-        reloadPostfix = True
-        tmp = "Changes detected: Rebuilding Postfix vTransport file for Smarthost\n"
-        tmp += "Removed vTransport emails:" + ", ".join(sorted(oldFile - newFile)) + "\n"
-        tmp += "Added vTransport emails:" + ", ".join(sorted(newFile - oldFile)) + "\n"
-        output += brandt.syslog(tmp, options=['pid'])
+          tmp = str(line).lower().split()
+          oldFile[tmp[0]] = sorted([ x.strip() for x in tmp[1:].strip().split() ])
+      newFile = {}
+      for mail in sorted(emails.keys()):
+        if emails[mail]['domino'] and not emails[mail]['forward']:
+          newFile[mail] = [ re.sub('@opw.ie$','@dublinnotes.opw.ie',mail) ]
+          if emails[mail]['zarafa']: newFile[mail].append(mail)
+          newFile[mail] = sorted(newFile[mail])
 
-        tmp = "# /etc/postfix/vtransport - OPW Postfix virtual transport for Lotus Notes\n"
-        tmp += "# this file configures virtual transport for Lotus Notes only accounts (users & groups accounts)\n"
-        tmp += "# and for Zarafa & Lotus notes accounts (users & groups accounts, no aliases exist)\n"
-        for mail in sorted(newFile):
-          tmp += mail + "\t" + re.sub('@opw.ie$','@dublinnotes.opw.ie',mail)
-          if emails[mail]['zarafa']: tmp += "\t" + mail
-          tmp += "\n"
-        # f = open(postfixVTrans, 'w')
-        # f.write(tmp)
-        # f.close()
+      print oldFile
+      sys.exit(0)
+
+
+
+      # output += "Checking Postfix vTransport entries\n"
+      # if len(oldFile ^ newFile) or args['force']:
+      #   reloadPostfix = True
+      #   tmp = "Changes detected: Rebuilding Postfix vTransport file for Smarthost\n"
+      #   tmp += "Removed vTransport emails:" + ", ".join(sorted(oldFile - newFile)) + "\n"
+      #   tmp += "Added vTransport emails:" + ", ".join(sorted(newFile - oldFile)) + "\n"
+      #   output += brandt.syslog(tmp, options=['pid'])
+
+      #   tmp = "# /etc/postfix/vtransport - OPW Postfix virtual transport for Lotus Notes\n"
+      #   tmp += "# this file configures virtual transport for Lotus Notes only accounts (users & groups accounts)\n"
+      #   tmp += "# and for Zarafa & Lotus notes accounts (users & groups accounts, no aliases exist)\n"
+      #   for mail in sorted(newFile):
+      #     tmp += mail + "\t" + re.sub('@opw.ie$','@dublinnotes.opw.ie',mail)
+      #     if emails[mail]['zarafa']: tmp += "\t" + mail
+      #     tmp += "\n"
+      #   # f = open(postfixVTrans, 'w')
+      #   # f.write(tmp)
+      #   # f.close()
 
       # if reloadPostfix or args['force']:
       #   output += brandt.syslog("Rebuilding Postmaps\n", options=['pid'])      
