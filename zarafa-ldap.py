@@ -348,8 +348,8 @@ if __name__ == "__main__":
       if not same or args['force']:
         reloadPostfix = True
         tmp = "Changes detected: Rebuilding Postfix vTransport file for Smarthost\n"
-        tmp += "Removed vTransport emails:" + ", ".join(sorted(oldFile - newFile)) + "\n"
-        tmp += "Added vTransport emails:" + ", ".join(sorted(newFile - oldFile)) + "\n"
+        tmp += "Removed vTransport emails:" + ", ".join(sorted(set(oldFile.keys()) - set(newFile.keys()))) + "\n"
+        tmp += "Added vTransport emails:" + ", ".join(sorted(set(newFile.keys()) - set(oldFile.keys()))) + "\n"
         output += brandt.syslog(tmp, options=['pid'])
 
         tmp = "# /etc/postfix/vtransport - OPW Postfix virtual transport for Lotus Notes\n"
