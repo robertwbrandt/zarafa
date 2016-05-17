@@ -340,7 +340,7 @@ if __name__ == "__main__":
           if emails[mail]['zarafa']: newFile[mail].append(mail)
           newFile[mail] = sorted(newFile[mail])
 
-      print oldFile
+      print newFile
       sys.exit(0)
 
 
