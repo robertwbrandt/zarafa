@@ -273,7 +273,7 @@ def get_data():
 
 # Start program
 if __name__ == "__main__":
-  # try:
+  try:
     output = ""
     error = ""
     exitcode = 0    
@@ -344,28 +344,24 @@ if __name__ == "__main__":
       if same:
         for mail in oldFile.keys():
           same = bool( oldFile[mail] == newFile[mail] )
-          if not same: 
-            print oldFile[mail]
-            print newFile[mail]
-            break
-      print same
-      # if same or args['force']:
-      #   reloadPostfix = True
-      #   tmp = "Changes detected: Rebuilding Postfix vTransport file for Smarthost\n"
-      #   tmp += "Removed vTransport emails:" + ", ".join(sorted(oldFile - newFile)) + "\n"
-      #   tmp += "Added vTransport emails:" + ", ".join(sorted(newFile - oldFile)) + "\n"
-      #   output += brandt.syslog(tmp, options=['pid'])
+          if not same: break
+      if not same or args['force']:
+        reloadPostfix = True
+        tmp = "Changes detected: Rebuilding Postfix vTransport file for Smarthost\n"
+        tmp += "Removed vTransport emails:" + ", ".join(sorted(oldFile - newFile)) + "\n"
+        tmp += "Added vTransport emails:" + ", ".join(sorted(newFile - oldFile)) + "\n"
+        output += brandt.syslog(tmp, options=['pid'])
 
-      #   tmp = "# /etc/postfix/vtransport - OPW Postfix virtual transport for Lotus Notes\n"
-      #   tmp += "# this file configures virtual transport for Lotus Notes only accounts (users & groups accounts)\n"
-      #   tmp += "# and for Zarafa & Lotus notes accounts (users & groups accounts, no aliases exist)\n"
-      #   for mail in sorted(newFile):
-      #     tmp += mail + "\t" + re.sub('@opw.ie$','@dublinnotes.opw.ie',mail)
-      #     if emails[mail]['zarafa']: tmp += "\t" + mail
-      #     tmp += "\n"
-        # f = open(postfixVTrans, 'w')
-        # f.write(tmp)
-        # f.close()
+        tmp = "# /etc/postfix/vtransport - OPW Postfix virtual transport for Lotus Notes\n"
+        tmp += "# this file configures virtual transport for Lotus Notes only accounts (users & groups accounts)\n"
+        tmp += "# and for Zarafa & Lotus notes accounts (users & groups accounts, no aliases exist)\n"
+        for mail in sorted(newFile):
+          tmp += mail + "\t" + re.sub('@opw.ie$','@dublinnotes.opw.ie',mail)
+          if emails[mail]['zarafa']: tmp += "\t" + mail
+          tmp += "\n"
+        f = open(postfixVTrans, 'w')
+        f.write(tmp)
+        f.close()
 
       # if reloadPostfix or args['force']:
       #   output += brandt.syslog("Rebuilding Postmaps\n", options=['pid'])      
@@ -388,23 +384,23 @@ if __name__ == "__main__":
       #   if err: raise IOError(err)
       #   output += out + "\n"
 
-  # except SystemExit as err:
-  #   pass
-  # except Exception as err:
-  #   try:
-  #     exitcode = int(err[0])
-  #     errmsg = str(" ".join(err[1:]))
-  #   except:
-  #     exitcode = -1
-  #     errmsg = str(err)
+  except SystemExit as err:
+    pass
+  except Exception as err:
+    try:
+      exitcode = int(err[0])
+      errmsg = str(" ".join(err[1:]))
+    except:
+      exitcode = -1
+      errmsg = str(err)
 
-  #   if args['web']: 
-  #     error = "(" + str(exitcode) + ") " + str(errmsg) + "\nCommand: " + " ".join(sys.argv)
-  #   else:
-  #     xmldata = ElementTree.Element('error', code=brandt.strXML(exitcode), 
-  #                                            msg=brandt.strXML(errmsg), 
-  #                                            cmd=brandt.strXML(" ".join(sys.argv)))
-  # finally:
+    if args['web']: 
+      error = "(" + str(exitcode) + ") " + str(errmsg) + "\nCommand: " + " ".join(sys.argv)
+    else:
+      xmldata = ElementTree.Element('error', code=brandt.strXML(exitcode), 
+                                             msg=brandt.strXML(errmsg), 
+                                             cmd=brandt.strXML(" ".join(sys.argv)))
+  finally:
     if not args['web']: 
       if output: print str(output)
       if error:  sys.stderr.write( str(error) + "\n" )
