@@ -180,37 +180,37 @@ def read_cache_file(filename):
     return {}
 
 def cmpDict(dict1, dict2):
-  global args,output,error,exitcode,xmldata
+  global args,output
 
   try:  
     if set(dict1.keys()) != set(dict2.keys()): 
-      error += "Changes Found:\n"
+      output += "Changes Found:\n"
       if bool(set(dict1.keys()) - set(dict2.keys())):
-        error += "New DNs: " + ", ".join(list(set(dict1.keys()))) + "\n"
+        output += "New DNs: " + ", ".join(list(set(dict1.keys()))) + "\n"
       if bool(set(dict2.keys()) - set(dict1.keys())):
-        error += "Removed DNs: " + ", ".join(list(set(dict2.keys()))) + "\n"
+        output += "Removed DNs: " + ", ".join(list(set(dict2.keys()))) + "\n"
       return False
     for dn in dict1.keys():
       if sorted(dict1[dn].keys()) != sorted(dict2[dn].keys()):
-        error += "Changes Found:\n"
+        output += "Changes Found:\n"
         if bool(set(dict1[dn].keys()) - set(dict2[dn].keys())):
-          error += "New Attribute for (" + str(dn) + "): " + ", ".join(list(set(dict1[dn].keys()))) + "\n"
+          output += "New Attribute for (" + str(dn) + "): " + ", ".join(list(set(dict1[dn].keys()))) + "\n"
         if bool(set(dict2[dn].keys()) - set(dict1[dn].keys())):
-          error += "Removed Attribute for (" + str(dn) + "): " + ", ".join(list(set(dict2[dn].keys()))) + "\n"
+          output += "Removed Attribute for (" + str(dn) + "): " + ", ".join(list(set(dict2[dn].keys()))) + "\n"
         return False
       for attr in dict1[dn].keys():
         if sorted(dict1[dn][attr]) != sorted(dict2[dn][attr]):
-          error += "Changes Found:\n"
-          error += "Value of Attribute(" + str(attr) + ") for (" + str(dn) + "):\n"
-          error += "Old: " + ", ".join(sorted(dict2[dn][attr])) + "\n"
-          error += "New: " + ", ".join(sorted(dict1[dn][attr])) + "\n"
+          output += "Changes Found:\n"
+          output += "Value of Attribute(" + str(attr) + ") for (" + str(dn) + "):\n"
+          output += "Old: " + ", ".join(sorted(dict2[dn][attr])) + "\n"
+          output += "New: " + ", ".join(sorted(dict1[dn][attr])) + "\n"
           return False
   except:
     return False
   return True
 
 def get_data():
-  global args, error
+  global args, output
 
   zarafaChanged = False
   combinedEmails = read_cache_file(emailCacheFile)
@@ -223,9 +223,9 @@ def get_data():
     if len(zarafaLive) < args['minObjects']:
       raise IOError, "Unable to get reliable Zarafa Download. Only " + str(len(zarafaLive)) + " objects."
     zarafaCache = read_cache_file(zarafaCacheFile)
-    error += "Checking Zarafa entries\n"
+    output += "Checking Zarafa entries\n"
     if not cmpDict(zarafaLive, zarafaCache):
-      error += "Zarafa entries have changed\n"
+      output += "Zarafa entries have changed\n"
       write_cache_file(zarafaCacheFile,zarafaLive)
       zarafaChanged = True
 
@@ -294,7 +294,7 @@ if __name__ == "__main__":
                                         'type': brandt.strXML(emails[email]['type'])})
     else:
       if zarafaChanged or args['force']:
-        error += brandt.syslog("Changes detected: Running Zarafa Sync\n", options=['pid'])
+        output += brandt.syslog("Changes detected: Running Zarafa Sync\n", options=['pid'])
         command = '/usr/sbin/zarafa-admin --sync'
         p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
@@ -311,13 +311,13 @@ if __name__ == "__main__":
         if line and not line[0] in ["#",";"]:
           oldFile.add(line.split()[0].lower())
       newFile = set([ k for k in emails.keys() if (emails[k]['type'] == "User") and emails[k]['zarafa'] and ( emails[k]['domino'] == emails[k]['forward'] ) ])
-      error += "Checking Postfix BCC entries\n"
+      output += "Checking Postfix BCC entries\n"
       if len(oldFile ^ newFile):
         reloadPostfix = True
         tmp = "Changes detected: Rebuilding Postfix BCC file for Mailmeter\n"
         tmp += "Removed BCC emails:" + ", ".join(sorted(oldFile - newFile)) + "\n"
         tmp += "Added BCC emails:" + ", ".join(sorted(newFile - oldFile)) + "\n"
-        error += brandt.syslog(tmp, options=['pid'])
+        output += brandt.syslog(tmp, options=['pid'])
 
         tmp = "# /etc/postfix/bcc - OPW Postfix BCC Mapping for Zarafa Only users\n"
         for mail in sorted(newFile):
@@ -334,13 +334,13 @@ if __name__ == "__main__":
         if line and not line[0] in ["#",";"]:
           oldFile.add(line.split()[0].lower())
       newFile = set([ k for k in emails.keys() if emails[k]['domino'] and not emails[k]['forward'] ])
-      error += "Checking Postfix vTransport entries\n"
+      output += "Checking Postfix vTransport entries\n"
       if len(oldFile ^ newFile):
         reloadPostfix = True
         tmp = "Changes detected: Rebuilding Postfix vTransport file for Smarthost\n"
         tmp += "Removed vTransport emails:" + ", ".join(sorted(oldFile - newFile)) + "\n"
         tmp += "Added vTransport emails:" + ", ".join(sorted(newFile - oldFile)) + "\n"
-        error += brandt.syslog(tmp, options=['pid'])
+        output += brandt.syslog(tmp, options=['pid'])
 
         tmp = "# /etc/postfix/vtransport - OPW Postfix virtual transport for Lotus Notes\n"
         tmp += "# this file configures virtual transport for Lotus Notes only accounts (users & groups accounts)\n"
@@ -352,7 +352,7 @@ if __name__ == "__main__":
         f.close()
 
       if reloadPostfix or args['force']:
-        error += brandt.syslog("Rebuilding Postmaps\n", options=['pid'])      
+        output += brandt.syslog("Rebuilding Postmaps\n", options=['pid'])      
       #   command = '/usr/sbin/postmap ' + postfixBCC 
       #   p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
       #   out, err = p.communicate()
@@ -365,7 +365,7 @@ if __name__ == "__main__":
       #   if err: raise IOError(err)
       #   output += out + "\n"
 
-        error += brandt.syslog("Reloading Postfix\n", options=['pid'])      
+        output += brandt.syslog("Reloading Postfix\n", options=['pid'])      
       #   command = 'service postfix reload'
       #   p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
       #   out, err = p.communicate()
