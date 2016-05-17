@@ -332,7 +332,7 @@ if __name__ == "__main__":
       for line in out:
         if line and not line[0] in ["#",";"]:
           tmp = str(line).lower().split()
-          oldFile[tmp[0]] = sorted([ x.strip() for x in "".join(tmp[1:]).strip().split() ])
+          oldFile[tmp[0]] = sorted([ x.strip() for x in tmp[1:] if x.strip() ])
       newFile = {}
       for mail in sorted(emails.keys()):
         if emails[mail]['domino'] and not emails[mail]['forward']:
