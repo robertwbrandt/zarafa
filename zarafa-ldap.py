@@ -290,6 +290,7 @@ if __name__ == "__main__":
                                         'zarafa': brandt.strXML(emails[email]['zarafa']), 
                                         'domino': brandt.strXML(emails[email]['domino']), 
                                         'forward': brandt.strXML(emails[email]['forward']),
+                                        'username': brandt.strXML(emails[email]['username']),
                                         'type': brandt.strXML(emails[email]['type'])})
     else:
       if zarafaChanged or args['force']:
@@ -312,15 +313,16 @@ if __name__ == "__main__":
       error += "Checking Postfix BCC entries\n"
       if len(oldFile ^ newFile):
         reloadPostfix = True
-        error += "Building Postfix BCC file for Mailmeter"
-        error += "Removed BCC emails:" + ", ".join(sorted(oldFile - newFile))
-        error += "Added BCC emails:" + ", ".join(sorted(newFile - oldFile))
+        tmp = "Changes detected: Rebuilding Postfix BCC file for Mailmeter\n"
+        tmp += "Removed BCC emails:" + ", ".join(sorted(oldFile - newFile)) + "\n"
+        tmp += "Added BCC emails:" + ", ".join(sorted(newFile - oldFile)) + "\n"
+        error += brandt.syslog(tmp, options=['pid'])
 
-        output = "# /etc/postfix/bcc - OPW Postfix BCC Mapping for Zarafa Only users\n"
+        tmp = "# /etc/postfix/bcc - OPW Postfix BCC Mapping for Zarafa Only users\n"
         for mail in sorted(newFile):
-          output += mail + "\tarchive@mailmeter.opw.ie\n"
+          tmp += mail + "\tarchive@mailmeter.opw.ie\n"
         # f = open(postfixBCC, 'w')
-        # f.write(output)
+        # f.write(tmp)
         # f.close()
 
       f = open(postfixVTrans, 'r')
@@ -334,22 +336,20 @@ if __name__ == "__main__":
       error += "Checking Postfix vTransport entries\n"
       if len(oldFile ^ newFile):
         reloadPostfix = True
-        error += "Building Postfix vTransport file for Smarthost\n"
-        print "Removed vTransport emails:" + ", ".join(sorted(oldFile - newFile))
-        print "Added vTransport emails:" + ", ".join(sorted(newFile - oldFile))
+        tmp = "Building Postfix vTransport file for Smarthost\n"
+        tmp += "Removed vTransport emails:" + ", ".join(sorted(oldFile - newFile)) + "\n"
+        tmp += "Added vTransport emails:" + ", ".join(sorted(newFile - oldFile)) + "\n"
+        error += brandt.syslog(tmp, options=['pid'])
 
-        output = "# /etc/postfix/vtransport - OPW Postfix virtual transport for Lotus Notes\n"
-        output += "# this file configures virtual transport for Lotus Notes only accounts (users & groups accounts)\n"
-        output += "# and for Zarafa & Lotus notes accounts (users & groups accounts, no aliases exist)\n"
+        tmp = "# /etc/postfix/vtransport - OPW Postfix virtual transport for Lotus Notes\n"
+        tmp += "# this file configures virtual transport for Lotus Notes only accounts (users & groups accounts)\n"
+        tmp += "# and for Zarafa & Lotus notes accounts (users & groups accounts, no aliases exist)\n"
         for mail in sorted(newFile):
-          output += mail + "\t" + re.sub('@opw.ie$','@dublinnotes.opw.ie',mail) + "\n"
+          tmp += mail + "\t" + re.sub('@opw.ie$','@dublinnotes.opw.ie',mail) + "\n"
         # f = open(postfixVTrans, 'w')
-        # f.write(output)
+        # f.write(tmp)
         # f.close()
 
-      print brandt.syslog("This is a test\nA multi-line test!", options=['pid'])
-
-      sys.exit(0)
   # except SystemExit as err:
   #   pass
   # except Exception as err:
