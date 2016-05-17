@@ -28,8 +28,7 @@ zarafaAttrAdd    = set(["objectclass","samaccountname"])
 zarafaAttrIgnore = set(["usnchanged","objectguid","grouptype","unicodepwd"])
 zarafaCacheFile  = "/tmp/zarafa.ldap.cache"
 
-# dominoLDAPURI = "ldap://domino.i.opw.ie/?objectclass,mail,member,mailaddress?sub?(|(objectClass=dominoPerson)(objectClass=dominoGroup))"
-dominoLDAPURI    = "ldap://10.200.200.20/?objectclass,mail,member,mailaddress?sub?(|(objectClass=dominoPerson)(objectClass=dominoGroup))"
+dominoLDAPURI = "ldap://domino.i.opw.ie/?objectclass,mail,member,mailaddress?sub?(|(objectClass=dominoPerson)(objectClass=dominoGroup))"
 dominoCacheFile  = "/tmp/domino.ldap.cache"
 
 emailCacheFile   = "/tmp/email.ldap.cache"
@@ -346,8 +345,10 @@ if __name__ == "__main__":
         tmp += "# this file configures virtual transport for Lotus Notes only accounts (users & groups accounts)\n"
         tmp += "# and for Zarafa & Lotus notes accounts (users & groups accounts, no aliases exist)\n"
         for mail in sorted(newFile):
-          tmp += mail + "\t" + re.sub('@opw.ie$','@dublinnotes.opw.ie',mail) + "\n"
-        f = open(postfixVTrans, 'w')
+          tmp += mail + "\t" + re.sub('@opw.ie$','@dublinnotes.opw.ie',mail)
+          if emails[k]['zarafa']: tmp += "\t" + mail
+          tmp += "\n"
+        f = open(postfixVTrans + ".bob", 'w')
         f.write(tmp)
         f.close()
 
