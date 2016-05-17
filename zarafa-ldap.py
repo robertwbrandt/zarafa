@@ -348,7 +348,7 @@ if __name__ == "__main__":
           tmp += mail + "\t" + re.sub('@opw.ie$','@dublinnotes.opw.ie',mail)
           if emails[k]['zarafa']: tmp += "\t" + mail
           tmp += "\n"
-        f = open(postfixVTrans + ".bob", 'w')
+        f = open(postfixVTrans, 'w')
         f.write(tmp)
         f.close()
 
