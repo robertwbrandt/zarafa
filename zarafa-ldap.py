@@ -294,11 +294,11 @@ if __name__ == "__main__":
     else:
       if zarafaChanged or args['force']:
         output += brandt.syslog("Changes detected: Running Zarafa Sync\n", options=['pid'])
-        # command = '/usr/sbin/zarafa-admin --sync'
-        # p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        # out, err = p.communicate()
-        # if err: raise IOError(err)
-        # output += out + "\n"
+        command = '/usr/sbin/zarafa-admin --sync'
+        p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = p.communicate()
+        if err: raise IOError(err)
+        output += out + "\n"
 
       reloadPostfix = False
 
@@ -321,9 +321,9 @@ if __name__ == "__main__":
         tmp = "# /etc/postfix/bcc - OPW Postfix BCC Mapping for Zarafa Only users\n"
         for mail in sorted(newFile):
           tmp += mail + "\tarchive@mailmeter.opw.ie\n"
-        # f = open(postfixBCC, 'w')
-        # f.write(tmp)
-        # f.close()
+        f = open(postfixBCC, 'w')
+        f.write(tmp)
+        f.close()
 
       f = open(postfixVTrans, 'r')
       out = f.read().split('\n')
@@ -363,26 +363,26 @@ if __name__ == "__main__":
         f.write(tmp)
         f.close()
 
-      # if reloadPostfix or args['force']:
-      #   output += brandt.syslog("Rebuilding Postmaps\n", options=['pid'])      
-      #   command = '/usr/sbin/postmap ' + postfixBCC 
-      #   p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-      #   out, err = p.communicate()
-      #   if err: raise IOError(err)
-      #   output += out + "\n"
+      if reloadPostfix or args['force']:
+        output += brandt.syslog("Rebuilding Postmaps\n", options=['pid'])      
+        command = '/usr/sbin/postmap ' + postfixBCC 
+        p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = p.communicate()
+        if err: raise IOError(err)
+        output += out + "\n"
 
-      #   command = '/usr/sbin/postmap ' + postfixVTrans 
-      #   p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-      #   out, err = p.communicate()
-      #   if err: raise IOError(err)
-      #   output += out + "\n"
+        command = '/usr/sbin/postmap ' + postfixVTrans 
+        p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = p.communicate()
+        if err: raise IOError(err)
+        output += out + "\n"
 
-      #   output += brandt.syslog("Reloading Postfix\n", options=['pid'])      
-      #   command = 'service postfix reload'
-      #   p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-      #   out, err = p.communicate()
-      #   if err: raise IOError(err)
-      #   output += out + "\n"
+        output += brandt.syslog("Reloading Postfix\n", options=['pid'])      
+        command = 'service postfix reload'
+        p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = p.communicate()
+        if err: raise IOError(err)
+        output += out + "\n"
 
   except SystemExit as err:
     pass
