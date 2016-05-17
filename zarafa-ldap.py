@@ -348,6 +348,7 @@ if __name__ == "__main__":
             print oldFile[mail]
             print newFile[mail]
             break
+      print same
       # if same or args['force']:
       #   reloadPostfix = True
       #   tmp = "Changes detected: Rebuilding Postfix vTransport file for Smarthost\n"
