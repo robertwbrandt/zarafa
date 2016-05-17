@@ -294,7 +294,7 @@ if __name__ == "__main__":
                                         'type': brandt.strXML(emails[email]['type'])})
     else:
       if zarafaChanged or args['force']:
-        error += "Running Zarafa Sync\n"
+        error += brandt.syslog("Changes detected: Running Zarafa Sync\n", options=['pid'])
         # command = '/usr/sbin/zarafa-admin --sync'
         # p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # out, err = p.communicate()
@@ -351,7 +351,8 @@ if __name__ == "__main__":
         f.write(tmp)
         f.close()
 
-      # if reloadPostfix:
+      if reloadPostfix or args['force']:
+        error += brandt.syslog("Rebuilding Postmaps\n", options=['pid'])      
       #   command = '/usr/sbin/postmap ' + postfixBCC 
       #   p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
       #   out, err = p.communicate()
@@ -364,6 +365,7 @@ if __name__ == "__main__":
       #   if err: raise IOError(err)
       #   output += out + "\n"
 
+        error += brandt.syslog("Reloading Postfix\n", options=['pid'])      
       #   command = 'service postfix reload'
       #   p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
       #   out, err = p.communicate()
