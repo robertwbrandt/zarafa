@@ -336,7 +336,7 @@ if __name__ == "__main__":
       error += "Checking Postfix vTransport entries\n"
       if len(oldFile ^ newFile):
         reloadPostfix = True
-        tmp = "Building Postfix vTransport file for Smarthost\n"
+        tmp = "Changes detected: Rebuilding Postfix vTransport file for Smarthost\n"
         tmp += "Removed vTransport emails:" + ", ".join(sorted(oldFile - newFile)) + "\n"
         tmp += "Added vTransport emails:" + ", ".join(sorted(newFile - oldFile)) + "\n"
         error += brandt.syslog(tmp, options=['pid'])
