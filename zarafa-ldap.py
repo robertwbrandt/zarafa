@@ -346,11 +346,17 @@ if __name__ == "__main__":
         tmp += "# and for Zarafa & Lotus notes accounts (users & groups accounts, no aliases exist)\n"
         for mail in sorted(newFile):
           tmp += mail + "\t" + re.sub('@opw.ie$','@dublinnotes.opw.ie',mail)
-          if emails[k]['zarafa']: tmp += "\t" + mail
+          if emails[mail]['zarafa']:
+            print emails[mail]
+            tmp += "\t" + mail
           tmp += "\n"
         f = open(postfixVTrans, 'w')
         f.write(tmp)
         f.close()
+
+
+
+
 
       if reloadPostfix or args['force']:
         output += brandt.syslog("Rebuilding Postmaps\n", options=['pid'])      
