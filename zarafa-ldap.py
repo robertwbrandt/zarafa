@@ -344,12 +344,10 @@ if __name__ == "__main__":
       if same:
         for mail in oldFile.keys():
           same = bool( oldFile[mail] == newFile[mail] )
-          if not same: break
-      print same
-      sys.exit(0)
-
-
-
+          if not same: 
+            print oldFile[mail]
+            print newFile[mail]
+            break
       # if same or args['force']:
       #   reloadPostfix = True
       #   tmp = "Changes detected: Rebuilding Postfix vTransport file for Smarthost\n"
@@ -364,9 +362,9 @@ if __name__ == "__main__":
       #     tmp += mail + "\t" + re.sub('@opw.ie$','@dublinnotes.opw.ie',mail)
       #     if emails[mail]['zarafa']: tmp += "\t" + mail
       #     tmp += "\n"
-      #   # f = open(postfixVTrans, 'w')
-      #   # f.write(tmp)
-      #   # f.close()
+        # f = open(postfixVTrans, 'w')
+        # f.write(tmp)
+        # f.close()
 
       # if reloadPostfix or args['force']:
       #   output += brandt.syslog("Rebuilding Postmaps\n", options=['pid'])      
