@@ -395,3 +395,4 @@ if __name__ == "__main__":
       xml.append(xmldata)
       print '<?xml version="1.0" encoding="' + encoding + '"?>\n' + ElementTree.tostring(xml, encoding=encoding, method="xml")
     sys.exit(exitcode)
+
