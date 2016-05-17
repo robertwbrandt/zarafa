@@ -322,7 +322,7 @@ if __name__ == "__main__":
         tmp = "# /etc/postfix/bcc - OPW Postfix BCC Mapping for Zarafa Only users\n"
         for mail in sorted(newFile):
           tmp += mail + "\tarchive@mailmeter.opw.ie\n"
-        f = open(postfixBCC + ".bob", 'w')
+        f = open(postfixBCC, 'w')
         f.write(tmp)
         f.close()
 
@@ -347,30 +347,30 @@ if __name__ == "__main__":
         tmp += "# and for Zarafa & Lotus notes accounts (users & groups accounts, no aliases exist)\n"
         for mail in sorted(newFile):
           tmp += mail + "\t" + re.sub('@opw.ie$','@dublinnotes.opw.ie',mail) + "\n"
-        f = open(postfixVTrans + ".bob", 'w')
+        f = open(postfixVTrans, 'w')
         f.write(tmp)
         f.close()
 
       if reloadPostfix or args['force']:
         output += brandt.syslog("Rebuilding Postmaps\n", options=['pid'])      
-      #   command = '/usr/sbin/postmap ' + postfixBCC 
-      #   p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-      #   out, err = p.communicate()
-      #   if err: raise IOError(err)
-      #   output += out + "\n"
+        command = '/usr/sbin/postmap ' + postfixBCC 
+        p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = p.communicate()
+        if err: raise IOError(err)
+        output += out + "\n"
 
-      #   command = '/usr/sbin/postmap ' + postfixVTrans 
-      #   p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-      #   out, err = p.communicate()
-      #   if err: raise IOError(err)
-      #   output += out + "\n"
+        command = '/usr/sbin/postmap ' + postfixVTrans 
+        p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = p.communicate()
+        if err: raise IOError(err)
+        output += out + "\n"
 
         output += brandt.syslog("Reloading Postfix\n", options=['pid'])      
-      #   command = 'service postfix reload'
-      #   p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-      #   out, err = p.communicate()
-      #   if err: raise IOError(err)
-      #   output += out + "\n"
+        command = 'service postfix reload'
+        p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = p.communicate()
+        if err: raise IOError(err)
+        output += out + "\n"
 
   except SystemExit as err:
     pass
