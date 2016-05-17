@@ -339,14 +339,18 @@ if __name__ == "__main__":
           newFile[mail] = [ re.sub('@opw.ie$','@dublinnotes.opw.ie',mail) ]
           if emails[mail]['zarafa']: newFile[mail].append(mail)
           newFile[mail] = sorted(newFile[mail])
-
-      print oldFile
+      output += "Checking Postfix vTransport entries\n"          
+      same = bool( set(oldFile.keys()) == set(newFile.keys()) )
+      if same:
+        for mail in oldFile.keys():
+          same = bool( oldFile[mail] == newFile[mail] )
+          if not same: break
+      print same
       sys.exit(0)
 
 
 
-      # output += "Checking Postfix vTransport entries\n"
-      # if len(oldFile ^ newFile) or args['force']:
+      # if same or args['force']:
       #   reloadPostfix = True
       #   tmp = "Changes detected: Rebuilding Postfix vTransport file for Smarthost\n"
       #   tmp += "Removed vTransport emails:" + ", ".join(sorted(oldFile - newFile)) + "\n"
