@@ -311,7 +311,7 @@ if __name__ == "__main__":
           oldFile.add(line.split()[0].lower())
       newFile = set([ k for k in emails.keys() if (emails[k]['type'] == "User") and emails[k]['zarafa'] and ( emails[k]['domino'] == emails[k]['forward'] ) ])
       output += "Checking Postfix BCC entries\n"
-      if len(oldFile ^ newFile):
+      if len(oldFile ^ newFile) or args['force']:
         reloadPostfix = True
         tmp = "Changes detected: Rebuilding Postfix BCC file for Mailmeter\n"
         tmp += "Removed BCC emails:" + ", ".join(sorted(oldFile - newFile)) + "\n"
@@ -334,7 +334,7 @@ if __name__ == "__main__":
           oldFile.add(line.split()[0].lower())
       newFile = set([ k for k in emails.keys() if emails[k]['domino'] and not emails[k]['forward'] ])
       output += "Checking Postfix vTransport entries\n"
-      if len(oldFile ^ newFile):
+      if len(oldFile ^ newFile) or args['force']:
         reloadPostfix = True
         tmp = "Changes detected: Rebuilding Postfix vTransport file for Smarthost\n"
         tmp += "Removed vTransport emails:" + ", ".join(sorted(oldFile - newFile)) + "\n"
@@ -346,17 +346,11 @@ if __name__ == "__main__":
         tmp += "# and for Zarafa & Lotus notes accounts (users & groups accounts, no aliases exist)\n"
         for mail in sorted(newFile):
           tmp += mail + "\t" + re.sub('@opw.ie$','@dublinnotes.opw.ie',mail)
-          if emails[mail]['zarafa']:
-            print emails[mail]
-            tmp += "\t" + mail
+          if emails[mail]['zarafa']: tmp += "\t" + mail
           tmp += "\n"
         f = open(postfixVTrans, 'w')
         f.write(tmp)
         f.close()
-
-
-
-
 
       if reloadPostfix or args['force']:
         output += brandt.syslog("Rebuilding Postmaps\n", options=['pid'])      
