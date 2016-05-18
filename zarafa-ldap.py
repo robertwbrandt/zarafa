@@ -249,8 +249,6 @@ def get_data():
         else:
           combinedEmails[mail]['type'] = ",".join(sorted(objectclass))
 
-    print combinedEmails["amanda.kelly@opw.ie"]
-
     for account in dominoLive.keys():
       for mail in dominoLive[account].get('mail',[]):
         objectclass = set([ str(x).lower() for x in dominoLive[account].get('objectclass',[]) ])
@@ -268,9 +266,6 @@ def get_data():
           combinedEmails[mail]['type'] = ",".join(sorted(objectclass))
         combinedEmails[mail]['domino'] = True
         combinedEmails[mail]['forward'] = dominoLive[account].has_key('mailaddress')
-
-
-    print combinedEmails["amanda.kelly@opw.ie"]
 
 
     write_cache_file(emailCacheFile,combinedEmails)
