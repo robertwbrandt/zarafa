@@ -236,8 +236,10 @@ def get_data():
     combinedEmails = {}
     for account in zarafaLive.keys():
       for mail in zarafaLive[account].get('mail',[]) + zarafaLive[account].get('othermailbox',[]):
-        if mail == "amanda.kelly@opw.ie": print zarafaLive[account]
         objectclass = set([ str(x).lower() for x in zarafaLive[account].get('objectclass',[]) ])
+        
+        if mail == "amanda.kelly@opw.ie": print objectclass
+
         combinedEmails[mail] = {'zarafa':True, 
                                 'domino':False, 
                                 'forward':False, 
