@@ -355,10 +355,8 @@ if __name__ == "__main__":
         tmp = "# /etc/postfix/vtransport - OPW Postfix virtual transport for Lotus Notes\n"
         tmp += "# this file configures virtual transport for Lotus Notes only accounts (users & groups accounts)\n"
         tmp += "# and for Zarafa & Lotus notes accounts (users & groups accounts, no aliases exist)\n"
-        for mail in sorted(newFile):
-          tmp += mail + "\t" + re.sub('@opw.ie$','@dublinnotes.opw.ie',mail)
-          if emails[mail]['zarafa']: tmp += "\t" + mail
-          tmp += "\n"
+        for mail in sorted(newFile.keys()):
+          tmp += mail + "\t" + "\t".join(newFile[mail]) + "\n"
         f = open(postfixVTrans, 'w')
         f.write(tmp)
         f.close()
