@@ -242,17 +242,14 @@ def get_data():
                                 'forward':False, 
                                 'type':'', 
                                 'username':str(zarafaLive[account].get('samaccountname',[''])[0])}
-        if mail == "amanda.kelly@opw.ie": 
-          print objectclass
-          print bool(set(["group","dominogroup","groupofnames"]) & objectclass)
-          print bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & objectclass)
-          
         if bool(set(["group","dominogroup","groupofnames"]) & objectclass):
           combinedEmails[mail]['type'] = "Group"
         elif bool(set(["person","user","dominoperson","inetorgperson","organizationalperson"]) & objectclass):
           combinedEmails[mail]['type'] = "User"
         else:
           combinedEmails[mail]['type'] = ",".join(sorted(objectclass))
+
+    print combinedEmails["amanda.kelly@opw.ie"]
 
     for account in dominoLive.keys():
       for mail in dominoLive[account].get('mail',[]):
@@ -271,6 +268,10 @@ def get_data():
           combinedEmails[mail]['type'] = ",".join(sorted(objectclass))
         combinedEmails[mail]['domino'] = True
         combinedEmails[mail]['forward'] = dominoLive[account].has_key('mailaddress')
+
+
+    print combinedEmails["amanda.kelly@opw.ie"]
+
 
     write_cache_file(emailCacheFile,combinedEmails)
 
