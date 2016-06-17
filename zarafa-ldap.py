@@ -162,12 +162,12 @@ def get_zarafa_LDAPURI():
   return zarafaLDAPURI
 
 def get_ldap(LDAPURI):
-  try:
+  # try:
     return brandt.LDAPSearch(LDAPURI).resultsDict(functDN=lambda dn: brandt.strXML(brandt.formatDN(dn)),
                                                   functAttr=lambda a: brandt.strXML(str(a).lower()), 
                                                   functValue=lambda *v:brandt.strXML(brandt.formatDN(v[-1])))
-  except:
-    return {}
+  # except:
+  #   return {}
 
 def write_cache_file(filename, data):
   json.dump(data, open(filename, 'w'), sort_keys=True, indent=2)
