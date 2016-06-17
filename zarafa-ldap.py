@@ -218,9 +218,12 @@ def get_data():
 
   if not combinedEmails or not args['web']:
     date = datetime.datetime.now()
-    zarafaLive = get_ldap(get_zarafa_LDAPURI())
+    zarafaURI = get_zarafa_LDAPURI()
+    zarafaLive = get_ldap(zarafaURI)
     if len(zarafaLive) < args['minObjects']:
-      raise IOError, "Unable to get reliable Zarafa Download. Only " + str(len(zarafaLive)) + " objects."
+      tmp = "Unable to get reliable Zarafa Download. Only " + str(len(zarafaLive)) + " objects."
+      tmp += '\n' + str(zarafaURI)
+      raise IOError, tmp
     zarafaCache = read_cache_file(zarafaCacheFile)
     output += "Checking Zarafa entries\n"
     if not cmpDict(zarafaLive, zarafaCache):
@@ -230,7 +233,9 @@ def get_data():
 
     dominoLive = get_ldap(dominoLDAPURI)
     if len(dominoLive) < args['minObjects']:
-      raise IOError, "Unable to get reliable Domino Download. Only " + str(len(dominoLive)) + " objects."
+      tmp = "Unable to get reliable Domino Download. Only " + str(len(dominoLive)) + " objects."
+      tmp += '\n' + str(dominoLDAPURI)
+      raise IOError, tmp
     write_cache_file(dominoCacheFile,dominoLive)
 
     combinedEmails = {}
