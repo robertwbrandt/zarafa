@@ -274,7 +274,7 @@ def get_data():
 
 # Start program
 if __name__ == "__main__":
-  try:
+  # try:
     output = ""
     error = ""
     exitcode = 0    
@@ -383,23 +383,23 @@ if __name__ == "__main__":
         if err: raise IOError(err)
         output += out + "\n"
 
-  except SystemExit as err:
-    pass
-  except Exception as err:
-    try:
-      exitcode = int(err[0])
-      errmsg = str(" ".join(err[1:]))
-    except:
-      exitcode = -1
-      errmsg = str(err)
+  # except SystemExit as err:
+  #   pass
+  # except Exception as err:
+  #   try:
+  #     exitcode = int(err[0])
+  #     errmsg = str(" ".join(err[1:]))
+  #   except:
+  #     exitcode = -1
+  #     errmsg = str(err)
 
-    if args['web']: 
-      error = "(" + str(exitcode) + ") " + str(errmsg) + "\nCommand: " + " ".join(sys.argv)
-    else:
-      xmldata = ElementTree.Element('error', code=brandt.strXML(exitcode), 
-                                             msg=brandt.strXML(errmsg), 
-                                             cmd=brandt.strXML(" ".join(sys.argv)))
-  finally:
+  #   if args['web']: 
+  #     error = "(" + str(exitcode) + ") " + str(errmsg) + "\nCommand: " + " ".join(sys.argv)
+  #   else:
+  #     xmldata = ElementTree.Element('error', code=brandt.strXML(exitcode), 
+  #                                            msg=brandt.strXML(errmsg), 
+  #                                            cmd=brandt.strXML(" ".join(sys.argv)))
+  # finally:
     if not args['web']: 
       if output: print str(output)
       if error:  sys.stderr.write( str(error) + "\n" )
