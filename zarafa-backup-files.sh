@@ -91,7 +91,7 @@ done
 if ! is_workday
 then
 	if [ -d "$_backup_source" ]; then
-		run-one rsync -a ${_backup_source}/* ${_backup_user}@${_backup_dest}
+		run-one rsync -a --delete ${_backup_source}/* ${_backup_user}@${_backup_dest}
 	else
 		echo "Unable to find source directory: $_backup_source" 1>&2
 	fi 
