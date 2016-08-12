@@ -95,8 +95,9 @@ then
     declare -i pid=0
     for dir in $( find ${_backup_source} -mindepth 1 -maxdepth 1 -type d ); do
       dir=$( basename $dir )
-      run-one rsync -aHS --delete ${_backup_source}/${dir}/ ${_backup_user}@${_backup_dest}/${dir}/ &
+      echo rsync -aHS --delete ${_backup_source}/${dir}/ ${_backup_user}@${_backup_dest}/${dir}/ &
       pids[$((var++))]=$!
+      echo $pids
     done
     echo ${pids[*]}
     wait ${pids[*]}
