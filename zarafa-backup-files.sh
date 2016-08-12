@@ -97,7 +97,6 @@ then
       dir=$( basename $dir )
       echo rsync -aHS --delete ${_backup_source}/${dir}/ ${_backup_user}@${_backup_dest}/${dir}/ &
       pids[$((var++))]=$!
-      echo $pids
     done
     echo ${pids[*]}
     wait ${pids[*]}
