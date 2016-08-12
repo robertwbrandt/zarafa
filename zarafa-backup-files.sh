@@ -93,7 +93,7 @@ then
 	if [ -d "$_backup_source" ]; then
     logger -st "zarafa-backup" "Beginning backup of Zarafa Files"
     for dir in $( find ${_backup_source} -mindepth 1 -maxdepth 1 -type d ); do
-      echo run-one rsync -aHS --delete ${_backup_source}/ ${_backup_user}@${_backup_dest}/
+      echo run-one rsync -aHS --delete ${_backup_source}/${dir}/ ${_backup_user}@${_backup_dest}/${dir}/
     done
 	else
 		logger -st "zarafa-backup" "Unable to find source directory: $_backup_source"
