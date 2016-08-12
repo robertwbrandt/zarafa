@@ -98,7 +98,8 @@ then
       echo rsync -aHS --delete ${_backup_source}/${dir}/ ${_backup_user}@${_backup_dest}/${dir}/ &
       pids[$((var++))]=$!
     done
-    echo ${pids[*]}
+    sleep 1
+    echo "Waiting for PIDs ${pids[*]}" 1>&2
     wait ${pids[*]}
     logger -st "zarafa-backup" "Finished backup of Zarafa Files"
 	else
