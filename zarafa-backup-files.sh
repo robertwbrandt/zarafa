@@ -93,7 +93,7 @@ then
 	if [ -d "$_backup_source" ]; then
     logger -st "zarafa-backup" "Beginning backup of Zarafa Files"
     declare -i pid=0
-    for dir in $( find ${_backup_source} -mindepth 1 -maxdepth 1 -type d ); do
+    for dir in $( echo '/etc/zarafa' ; find ${_backup_source} -mindepth 1 -maxdepth 1 -type d ); do
       dir=$( basename $dir )
       rsync -aHS --delete ${_backup_source}/${dir}/ ${_backup_user}@${_backup_dest}/${dir}/ &
       pids[$((var++))]=$!
