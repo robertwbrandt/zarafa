@@ -6,10 +6,8 @@
 #if nc -v -z activesync.opw.ie 443
 
 
-
-
 #if nc -v -z activesync.opw.ie 443
-if wget --timeout=10 --no-proxy --no-check-certificate -O /dev/null https://activesync.opw.ie/Microsoft-Server-ActiveSync
+if wget --timeout=10 --no-proxy --no-check-certificate -O /dev/null --http-user=castrof --http-password=cubacuba https://activesync.opw.ie/Microsoft-Server-ActiveSync
 then
 	logger -st 'activesync' 'Connection to activesync.opw.ie 443 port [tcp/https] succeeded!'
 else
@@ -17,3 +15,6 @@ else
 	/etc/init.d/apache2 restart
 fi
 exit $?
+
+
+       
