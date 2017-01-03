@@ -161,9 +161,7 @@ while /bin/true ; do
     shift
 done
 
-convertSeconds $1
-
-#MySQL_Server_Properties
+MySQL_Server_Properties
 
 
 exit $?
