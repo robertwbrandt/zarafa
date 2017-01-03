@@ -140,7 +140,7 @@ function performBackup() {
   local _status=0
   local _outputfile=/tmp/mysqldump.$$
 
-  mysqldump --defaults-file=$_backup_mysql_credentials $_backup_mysql_switches 2> "$_outputfile" > "$_backup_mysql_dest" &
+  mysqldump --defaults-file=$_backup_mysql_credentials $_backup_mysql_switches 2> "$_outputfile" > "$_backup_mysql_dest"
   _status=$?
 
   cat "$_outputfile"
