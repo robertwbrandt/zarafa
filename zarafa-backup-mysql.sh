@@ -18,6 +18,11 @@ if [ ! -r "$_this_conf" ]; then
       echo -e "_backup_mysql_type='SLAVE'"
       echo -e "_backup_mysql_max_slave_lag=82800"
       echo -e "_backup_mysql_credentials='/etc/mysql/debian.cnf'"
+      echo -e "_backup_mysql_switches=\"--single-transaction\""
+      echo -e "_backup_mysql_switches=\"$_backup_mysql_switches --flush-logs\""
+      echo -e "_backup_mysql_switches=\"$_backup_mysql_switches --net_buffer_length=4096\""
+      echo -e "_backup_mysql_switches=\"$_backup_mysql_switches --max_allowed_packet=512M\""
+      echo -e "_backup_mysql_switches=\"$_backup_mysql_switches --master-data=2 -A\""
       echo -e "_backup_mysql_dest='/srv/backup/sql-backup/zarafa-mysql-backup.sql'"
       echo -e "_backup_mysql_log='/srv/backup/sql-backup/zarafa-mysql-backup.log'" ) > "$_this_conf"
     echo "Unable to find required file: $_this_conf" 1>&2
@@ -130,6 +135,10 @@ function convertSeconds() {
   return 0
 }
 
+function performBackup() {
+  ( mysqldump --defaults-file=$_backup_mysql_credentials $_backup_mysql_switches > "$_backup_mysql_dest" ) 2>&1
+  return $?
+}
 
 function usage() {
     local _exitcode=${1-0}
@@ -172,7 +181,7 @@ if [ $( lower "$_servertype" ) == $( lower "$_backup_mysql_type" ) ]; then
   declare -i _starttime=$( date +%s )
   printLog '\n-----------------------------------------------------------'
   printLog "Backup Started at $( date )"
-  printLog "Server Properties:\n$_properties"
+  printLog "$_properties"
 
   if [ $( lower "$_servertype" ) == "slave" ]; then
     declare -i _serverlag=$( echo "$_properties" | sed -n 's|Seconds_Behind_Master:\s*||p' )
@@ -183,8 +192,7 @@ if [ $( lower "$_servertype" ) == $( lower "$_backup_mysql_type" ) ]; then
     fi
   fi
 
-  printLog "Performing Backup"
-  _output= $( sleep 10 )
+  _output= $( performBackup ) 
   declare -i _status=$?
 
   declare -i _endtime=$( date +%s )
