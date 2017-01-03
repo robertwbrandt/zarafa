@@ -140,10 +140,11 @@ function performBackup() {
   local _status=0
   local _outputfile=/tmp/mysqldump.$$
 
-  mysqldump --defaults-file=$_backup_mysql_credentials $_backup_mysql_switches 2> "$_outputfile" > "$_backup_mysql_dest"
+  mysqldump --defaults-file=$_backup_mysql_credentials $_backup_mysql_switches > "$_backup_mysql_dest" 2>&1
   _status=$?
 
   cat "$_outputfile"
+  # Clean up
   #rm "$_outputfile"
   return $_status
 }
@@ -200,7 +201,7 @@ if [ $( lower "$_servertype" ) == $( lower "$_backup_mysql_type" ) ]; then
     fi
   fi
 
-  _output= $( performBackup 2>&1 ) 
+  _output= $( performBackup ) 
   declare -i _status=$?
 
   declare -i _endtime=$( date +%s )
