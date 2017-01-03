@@ -86,8 +86,11 @@ function MySQL_Server_Properties() {
 }
 
 function printLog() {
-	echo -e "$1"
-	echo -e "$(date +%Y/%m/%d-%H:%m:%S)\t$1" >> "$_backup_mysql_log"
+  echo -e "$1"
+  IFS=$'\n'
+  for _line in $( echo -e "$1" ); do
+    [ -n "$_line" ] && echo -e "$(date +%Y/%m/%d-%H:%m:%S)\t$_line" >> "$_backup_mysql_log"
+  done
 }
 
 function convertSeconds() {
