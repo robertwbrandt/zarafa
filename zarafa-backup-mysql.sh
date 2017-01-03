@@ -199,7 +199,7 @@ if [ $( lower "$_servertype" ) == $( lower "$_backup_mysql_type" ) ]; then
     fi
   fi
 
-  _output= $( performBackup ) 
+  _output=$( performBackup ) 
   declare -i _status=$?
 
   declare -i _endtime=$( date +%s )
