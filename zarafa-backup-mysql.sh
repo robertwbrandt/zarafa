@@ -18,11 +18,11 @@ if [ ! -r "$_this_conf" ]; then
       echo -e "_backup_mysql_type='SLAVE'"
       echo -e "_backup_mysql_max_slave_lag=82800"
       echo -e "_backup_mysql_credentials='/etc/mysql/debian.cnf'"
-      echo -e "_backup_mysql_switches=\"--single-transaction\""
-      echo -e "_backup_mysql_switches=\"\$_backup_mysql_switches --flush-logs\""
-      echo -e "_backup_mysql_switches=\"\$_backup_mysql_switches --net_buffer_length=4096\""
-      echo -e "_backup_mysql_switches=\"\$_backup_mysql_switches --max_allowed_packet=512M\""
-      echo -e "_backup_mysql_switches=\"\$_backup_mysql_switches --master-data=2 -A\""
+      echo -e "_backup_mysql_switches='--single-transaction'"
+      echo -e "_backup_mysql_switches=\$_backup_mysql_switches' --flush-logs'"
+      echo -e "_backup_mysql_switches=\$_backup_mysql_switches' --net_buffer_length=4096'"
+      echo -e "_backup_mysql_switches=\$_backup_mysql_switches' --max_allowed_packet=512M'"
+      echo -e "_backup_mysql_switches=\$_backup_mysql_switches' --master-data=2 -A'"
       echo -e "_backup_mysql_dest='/srv/backup/sql-backup/zarafa-mysql-backup.sql'"
       echo -e "_backup_mysql_log='/srv/backup/sql-backup/zarafa-mysql-backup.log'" ) > "$_this_conf"
     echo "Unable to find required file: $_this_conf" 1>&2
@@ -139,9 +139,9 @@ function convertSeconds() {
 function performBackup() {
   local _status=0
 
-  #echo mysqldump --defaults-file=$_backup_mysql_credentials $_backup_mysql_switches
-
-  ( mysqldump --defaults-file=$_backup_mysql_credentials --single-transaction --flush-logs --net_buffer_length=4096 --max_allowed_packet=512M --master-data=2 -A > "$_backup_mysql_dest" ) 2>&1
+  #( mysqldump --defaults-file=$_backup_mysql_credentials --single-transaction --flush-logs --net_buffer_length=4096 --max_allowed_packet=512M --master-data=2 -A > "$_backup_mysql_dest" ) 2>&1
+  echo $_backup_mysql_switches
+  #( mysqldump --defaults-file=$_backup_mysql_credentials $_backup_mysql_switches > "$_backup_mysql_dest" ) 2>&1
   _status=$?
 
   return $_status
@@ -210,7 +210,7 @@ if [ $( lower "$_servertype" ) == $( lower "$_backup_mysql_type" ) ]; then
     printLog "Backup Failed at $(date) ($_timediff)"
   else
     [ -n "$_output" ] && printLog "$_output"
-    printLog "Backup Ended at $(date) ($_timediff)"
+    printLog "Backup Successfully Ended at $(date) ($_timediff)"
   fi
 else
   echo -e "This server is of the wrong type!\n$_properties" >&2
