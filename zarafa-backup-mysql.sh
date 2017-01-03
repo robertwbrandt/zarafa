@@ -170,6 +170,7 @@ _servertype=$( echo "$_properties" | sed -n 's|Server_Type:\s*||p' | sed 's|\s.*
 if [ $( lower "$_servertype" ) == $( lower "$_backup_mysql_type" ) ]; then
 
   declare -i _starttime=$( date +%s )
+  printLog '\n-----------------------------------------------------------'
   printLog "Backup Started at $( date )"
   printLog "Server Properties:\n$_properties"
 
