@@ -206,10 +206,10 @@ if [ $( lower "$_servertype" ) == $( lower "$_backup_mysql_type" ) ]; then
   _timediff=$(( _endtime - _starttime ))
   _timediff=$( convertSeconds $_timediff )
   if [ "$_status" -ne "0" ]; then
-    [ -z "$_output" ] && printLog "$_output"
+    [ -n "$_output" ] && printLog "$_output"
     printLog "Backup Failed at $(date) ($_timediff)"
   else
-    [ -z "$_output" ] && printLog "$_output"
+    [ -n "$_output" ] && printLog "$_output"
     printLog "Backup Ended at $(date) ($_timediff)"
   fi
 else
