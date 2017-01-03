@@ -181,7 +181,6 @@ if [ $( lower "$_servertype" ) == $( lower "$_backup_mysql_type" ) ]; then
 
   printLog "Performing Backup"
   _output= $( sleep 10 )
-  _output="test"
   declare -i _status=$?
 
   declare -i _endtime=$( date +%s )
