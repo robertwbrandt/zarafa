@@ -143,7 +143,9 @@ function performBackup() {
   ( mysqldump --defaults-file=$_backup_mysql_credentials $_backup_mysql_switches > "$_backup_mysql_dest" ) 2>&1 > "$_outputfile"
   _status=$?
 
+  echo "temp1"
   cat "$_outputfile"
+  echo "temp2"
   # Clean up
   #rm "$_outputfile"
   return $_status
