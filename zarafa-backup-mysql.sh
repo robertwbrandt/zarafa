@@ -94,7 +94,8 @@ function printLog() {
   echo -e "$1"
   IFS=$'\n'
   for _line in $( echo -e "$1" ); do
-    [ -n "$_line" ] && echo -e "$(date +%Y/%m/%d-%H:%m:%S)\t$_line" >> "$_backup_mysql_log"
+    _currentdate=$( date +%Y/%m/%d-%H:%M:%S )
+    [ -n "$_line" ] && echo -e "$_currentdate\t$_line" >> "$_backup_mysql_log"
   done
 }
 
@@ -137,12 +138,13 @@ function convertSeconds() {
 
 function performBackup() {
   local _status=0
+  local _outputpipe=/tmp/mysqldump.$$
 
-  mkfifo output
-  mysqldump "--defaults-file=$_backup_mysql_credentials" $_backup_mysql_switches 2> output > "$_backup_mysql_dest" &
+  mkfifo $_outputpipe
+  echo mysqldump --defaults-file=$_backup_mysql_credentials $_backup_mysql_switches 2> "$_outputpipe" > "$_backup_mysql_dest" &
   _status=$?
 
-  cat output
+  cat < "$_outputpipe"
   return $_status
 }
 
