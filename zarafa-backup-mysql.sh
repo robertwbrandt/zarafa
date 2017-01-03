@@ -141,7 +141,7 @@ function performBackup() {
 
   #echo mysqldump --defaults-file=$_backup_mysql_credentials $_backup_mysql_switches
 
-  ( exec mysqldump --defaults-file=$_backup_mysql_credentials $_backup_mysql_switches > "$_backup_mysql_dest" ) 2>&1
+  ( mysqldump --defaults-file=$_backup_mysql_credentials --single-transaction --flush-logs --net_buffer_length=4096 --max_allowed_packet=512M --master-data=2 -A > "$_backup_mysql_dest" ) 2>&1
   _status=$?
 
   return $_status
