@@ -16,7 +16,7 @@ if [ ! -r "$_this_conf" ]; then
     ( echo -e "#     Configuration file for script to backup Zarafa MySQL databases."
       echo -e "#     Bob Brandt <projects@brandt.ie>\n#"
       echo -e "_backup_mysql_type='SLAVE'"
-      echo -e "_backup_mysql_slave='SLAVE'"
+      echo -e "_backup_mysql_max_slave_lag=82800"
       echo -e "_backup_mysql_credentials='/etc/mysql/debian.cnf'"
       echo -e "_backup_mysql_dest='/srv/backup/sql-backup/zarafa-mysql-backup.sql'"
       echo -e "_backup_mysql_log='/srv/backup/sql-backup/zarafa-mysql-backup.log'" ) > "$_this_conf"
@@ -44,7 +44,8 @@ function setup() {
 }
 
 function MySQL_Server_Properties() {
-	_SlaveThreadCount=$( mysql --defaults-file=$_backup_mysql_credentials -e "SELECT COUNT(1) SlaveThreadCount FROM information_schema.processlist WHERE user='system user'\G" | sed -n "s|SlaveThreadCount:\s*||p" )
+  local _status=0
+	local _SlaveThreadCount=$( mysql --defaults-file=$_backup_mysql_credentials -e "SELECT COUNT(1) SlaveThreadCount FROM information_schema.processlist WHERE user='system user'\G" | sed -n "s|SlaveThreadCount:\s*||p" )
 
 	if [ "$_SlaveThreadCount" == "0" ]; then
 		echo "Server_Type: MASTER"
@@ -86,14 +87,14 @@ function MySQL_Server_Properties() {
 
 function printLog() {
 	echo -e "$1"
-	echo -e "$(date +%Y/%m/%d-%H:%m:%S)\t$1"
+	echo -e "$(date +%Y/%m/%d-%H:%m:%S)\t$1" >> "$_backup_mysql_log"
 }
 
 function convertSeconds() {
-	declare -i _seconds=$1
-  declare -i _minutes=0
-  declare -i _hours=0
-  declare -i _days=0
+	local -i _seconds=$1
+  local -i _minutes=0
+  local -i _hours=0
+  local -i _days=0
 
   [[ "$_seconds" -ne "$1" ]] && _seconds=-1
 	
@@ -161,7 +162,39 @@ while /bin/true ; do
     shift
 done
 
-MySQL_Server_Properties
+_properties=$( MySQL_Server_Properties )
+_servertype=$( echo "$_properties" | sed -n 's|Server_Type:\s*||p' | sed 's|\s.*||' )
+if [ $( lower "$_servertype" ) == $( lower "$_backup_mysql_type" ) ]; then
 
+  declare -i _starttime=$( date +%s )
+  printLog "Backup Started at $( date )"
+  printLog "Server Properties:\n$_properties"
+
+  if [ $( lower "$_servertype" ) == "slave" ]; then
+    declare -i _serverlag=$( echo "$_properties" | sed -n 's|Seconds_Behind_Master:\s*||p' )
+    if (( _serverlag > _backup_mysql_max_slave_lag )); then
+      printLog "Backup failed since the server it too far out of sync with master! $( convertSeconds $_serverlag ) "
+      printLog "Backup Failed at $(date)"
+      exit 1
+    fi
+  fi
+
+  printLog "Performing Backup"
+  _output= $( sleep 10 )
+  declare -i _status=$?
+
+  declare -i _endtime=$( date +%s )
+  _timediff=$(( _endtime - _starttime ))
+  _timediff=$( convertSeconds $_timediff )
+  if [ "$_status" -ne "0" ]; then
+    [ -z "$_output" ] && printLog "$_output"
+    printLog "Backup Failed at $(date) - $_timediff"
+  else
+    [ -z "$_output" ] && printLog "$_output"
+    printLog "Backup Ended at $(date) - $_timediff"
+  fi
+else
+  echo -e "This server is of the wrong type!\n$_properties" >&2
+fi
 
 exit $?
