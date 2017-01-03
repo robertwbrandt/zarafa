@@ -138,16 +138,12 @@ function convertSeconds() {
 
 function performBackup() {
   local _status=0
-  local _outputfile=/tmp/mysqldump.$$
 
-  ( mysqldump --defaults-file=$_backup_mysql_credentials $_backup_mysql_switches > "$_backup_mysql_dest" ) 2>&1 > "$_outputfile"
+  echo mysqldump --defaults-file=$_backup_mysql_credentials $_backup_mysql_switches
+
+  ( mysqldump --defaults-file=$_backup_mysql_credentials $_backup_mysql_switches > "$_backup_mysql_dest" ) 2>&1
   _status=$?
 
-  echo "temp1"
-  cat "$_outputfile"
-  echo "temp2"
-  # Clean up
-  #rm "$_outputfile"
   return $_status
 }
 
