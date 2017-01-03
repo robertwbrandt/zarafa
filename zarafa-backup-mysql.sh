@@ -181,6 +181,7 @@ if [ $( lower "$_servertype" ) == $( lower "$_backup_mysql_type" ) ]; then
 
   printLog "Performing Backup"
   _output= $( sleep 10 )
+  _output="test"
   declare -i _status=$?
 
   declare -i _endtime=$( date +%s )
@@ -188,10 +189,10 @@ if [ $( lower "$_servertype" ) == $( lower "$_backup_mysql_type" ) ]; then
   _timediff=$( convertSeconds $_timediff )
   if [ "$_status" -ne "0" ]; then
     [ -z "$_output" ] && printLog "$_output"
-    printLog "Backup Failed at $(date) - $_timediff"
+    printLog "Backup Failed at $(date) ($_timediff)"
   else
     [ -z "$_output" ] && printLog "$_output"
-    printLog "Backup Ended at $(date) - $_timediff"
+    printLog "Backup Ended at $(date) ($_timediff)"
   fi
 else
   echo -e "This server is of the wrong type!\n$_properties" >&2
