@@ -136,13 +136,14 @@ function convertSeconds() {
 }
 
 function performBackup() {
-  mysqldump "--defaults-file=$_backup_mysql_credentials" $_backup_mysql_switches > "$_backup_mysql_dest"
-  if [ ${PIPESTATUS[0]} -ne "0" ]; then
-    echo "${PIPESTATUS[0]}";
-    return 1;
-  else
-    return 0
-  fi
+  local _status=0
+
+  mkfifo output
+  mysqldump "--defaults-file=$_backup_mysql_credentials" $_backup_mysql_switches 2> output > "$_backup_mysql_dest" &
+  _status=$?
+
+  cat output
+  return $_status
 }
 
 function usage() {
