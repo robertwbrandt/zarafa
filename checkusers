@@ -33,7 +33,7 @@ getdata() {
 	base="$2"
 	filter="$3"
 	attr="$4"
-	tmp=$( ldapsearch -LLL -b "$base" -s sub -x -z max -l none -H "$host" "$filter" "$attr" | perl -p0e "s/\n //g" | grep "^$attr:" )
+	tmp=$( ldapsearch -LLL -b "$base" -s sub -x -z max -E pr=1000/noprompt -l none -H "$host" "$filter" "$attr" | perl -p0e "s/\n //g" | grep "^$attr:" )
 	if [ -z "$tmp" ]; then
 		logger -s "Error! No Data returned for ($host) ($filter) ($attr)"
 		exit 1
