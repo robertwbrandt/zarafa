@@ -2,8 +2,7 @@
 #
 #     Script for postfix smarthost maps and resyncing Zarafa
 #     Bob Brandt <projects@brandt.ie>
-#     Zentyal <info@zentyal.com>
-#          
+#
 
 ZARAFAHOST="ldaps://i.opw.ie"
 ZARAFABASE="dc=i,dc=opw,dc=ie"
@@ -33,6 +32,7 @@ getdata() {
 	base="$2"
 	filter="$3"
 	attr="$4"
+
 	tmp=$( ldapsearch -LLL -b "$base" -s sub -x -z max -E pr=1000/noprompt -l none -H "$host" "$filter" "$attr" | perl -p0e "s/\n //g" | grep "^$attr:" )
 	if [ -z "$tmp" ]; then
 		logger -s "Error! No Data returned for ($host) ($filter) ($attr)"
@@ -41,7 +41,7 @@ getdata() {
 
 	base64=$( echo "$tmp" | sed -n "s|^$attr::\s\+||p" )
 	tmp=$( echo "$tmp" | sed -n "s|^$attr:\s\+||p" )
-	
+
 	for line in $base64
 	do
 		decodedline=$( echo "$line" | openssl base64 -d | sed "s|\s*||g" )
@@ -123,4 +123,3 @@ rm -f "$ZARAFAONLYFILE"
 rm -f "$DOMINOZARAFAFILE"
 rm -f "$POSTFIX_TEMP"
 rm -f "$BCC_TEMP"
-
