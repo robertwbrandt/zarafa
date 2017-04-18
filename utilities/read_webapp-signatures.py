@@ -70,7 +70,8 @@ if __name__ == '__main__':
             data = json.loads(str(raw_data)).get('settings',{}).get('zarafa',{}).get('v1',{}).get('contexts',{}).get('mail',{}).get('signatures',{})
             output = {}
             output['signatures'] = {}
-            print data.get('all',{}).keys()
+            for key in data.get('all',{}).keys():
+                print keys
             output['new_message'] = data.get('new_message','')
             output['replyforward_message'] = data.get('replyforward_message','')
 
