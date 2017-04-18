@@ -68,5 +68,9 @@ if __name__ == '__main__':
 
         if raw_data:
             data = json.loads(str(raw_data))
-            pprint data['settings']['zarafa']['v1']['contexts']['mail']['signatures']
+            data = data.get('settings',{}).get('zarafa',{}).get('v1',{}).get('contexts',{}).get('mail',{}).get('signatures',{}).get('all',{})
+
+            pprint( data )
+
+            
 
