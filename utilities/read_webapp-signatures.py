@@ -2,7 +2,7 @@
 
 from MAPI import *
 from MAPI.Util import *
-import sys
+import sys, json
 
 def check_input():
         if len(sys.argv) < 2:
@@ -20,11 +20,7 @@ def read_settings(username):
                 data = settings.Read(40960)
         except:
                 print 'User has not used WebApp yet, no settings property exists.'
-
-        if not data:
-                data = 'No settings present.'
-        else:
-                print data
+        return data
 
 
 # def check_input():
@@ -67,4 +63,8 @@ def write_settings(username):
 if __name__ == '__main__':
         check_input()
         username = sys.argv[1]
-        read_settings(username)
+        raw_data = read_settings(username)
+
+        if raw_data:
+            data = json.loads(str(raw_data))
+            print data
