@@ -71,10 +71,9 @@ if __name__ == '__main__':
             output = {}
             output['signatures'] = {}
             for key in data.get('all',{}).keys():
-                print keys
+                output['signatures'][data['all',key].get('name','')] = data['all',key].get('content','')
             output['new_message'] = data.get('new_message','')
             output['replyforward_message'] = data.get('replyforward_message','')
-
 
             pprint( output )
 
