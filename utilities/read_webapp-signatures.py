@@ -3,6 +3,7 @@
 from MAPI import *
 from MAPI.Util import *
 import sys, json
+from pprint import pprint
 
 def check_input():
         if len(sys.argv) < 2:
@@ -67,4 +68,5 @@ if __name__ == '__main__':
 
         if raw_data:
             data = json.loads(str(raw_data))
-            print data
+            pprint data['settings']['zarafa']['v1']['contexts']['mail']['signatures']
+
