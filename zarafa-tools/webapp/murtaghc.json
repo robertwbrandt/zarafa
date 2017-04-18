@@ -1,0 +1,1335 @@
+{
+    "settings": {
+        "zarafa": {
+            "v1": {
+                "contexts": {
+                    "files": {
+                        "iconid": 1558
+                    }, 
+                    "mail": {
+                        "readflag_time": 0, 
+                        "dialogs": {
+                            "mailcreate": {
+                                "use_html_editor": true
+                            }
+                        }, 
+                        "always_request_readreceipt": false, 
+                        "signatures": {
+                            "all": {
+                                "1415363097703": {
+                                    "content": "<font face=\"tahoma\" size=\"2\">Ciar\u00e1n Murtagh</font><div><font face=\"tahoma\" size=\"2\">ICT Unit</font></div><div><font face=\"tahoma\" size=\"2\">OPW</font></div><div><font face=\"tahoma\" size=\"2\">086 8364675</font></div><div><font face=\"tahoma\" size=\"2\">01 6476108</font></div>", 
+                                    "isHTML": true, 
+                                    "name": "New signature"
+                                }
+                            }
+                        }, 
+                        "close_on_respond": true, 
+                        "readreceipt_handling": "ask", 
+                        "readflag_time_enable": true, 
+                        "autosave_time": 60
+                    }, 
+                    "calendar": {
+                        "default_zoom_level": 30, 
+                        "datepicker_show_busy": true, 
+                        "default_reminder_time": 15, 
+                        "default_allday_reminder_time": 1080, 
+                        "default_merge_state": false, 
+                        "default_reminder": true
+                    }, 
+                    "hierarchy": {
+                        "shared_stores": {
+                            "brennanp": {
+                                "calendar": {
+                                    "folder_type": "calendar", 
+                                    "show_subfolders": false
+                                }
+                            }, 
+                            "duffyj": {
+                                "calendar": {
+                                    "folder_type": "calendar", 
+                                    "show_subfolders": false
+                                }
+                            }, 
+                            "applebyp": {
+                                "calendar": {
+                                    "folder_type": "calendar", 
+                                    "show_subfolders": false
+                                }
+                            }, 
+                            "malonem": {
+                                "calendar": {
+                                    "folder_type": "calendar", 
+                                    "show_subfolders": false
+                                }
+                            }, 
+                            "stewartl": {
+                                "calendar": {
+                                    "folder_type": "calendar", 
+                                    "show_subfolders": false
+                                }
+                            }, 
+                            "obrienf": {
+                                "calendar": {
+                                    "folder_type": "calendar", 
+                                    "show_subfolders": false
+                                }
+                            }, 
+                            "devereuf": {
+                                "calendar": {
+                                    "folder_type": "calendar", 
+                                    "show_subfolders": false
+                                }
+                            }, 
+                            "hunterg": {
+                                "calendar": {
+                                    "folder_type": "calendar", 
+                                    "show_subfolders": false
+                                }
+                            }
+                        }
+                    }, 
+                    "today": {
+                        "sidebar": {
+                            "guids": ""
+                        }, 
+                        "guids": "1U18XUi3phHOtlbHcXZSH8DqK10efnI8 8fQ5LkMO0XrddVqA2P0pHkfK4EPiBUeO h3NEflwsLe9z5xazeNHKZjL8BuEwJseh"
+                    }
+                }, 
+                "widgets": {
+                    "h3NEflwsLe9z5xazeNHKZjL8BuEwJseh": {
+                        "__name": "tasks"
+                    }, 
+                    "1U18XUi3phHOtlbHcXZSH8DqK10efnI8": {
+                        "__name": "mail"
+                    }, 
+                    "8fQ5LkMO0XrddVqA2P0pHkfK4EPiBUeO": {
+                        "__name": "appointments"
+                    }
+                }, 
+                "state": {
+                    "folders": {
+                        "00000000ae2dfa8d228c47e28de6b841c0fd22920100000003000000a312da82d4934780a555ebbbaddb83e400000000": {
+                            "list": {
+                                "sort": {
+                                    "field": "message_delivery_time", 
+                                    "direction": "DESC"
+                                }, 
+                                "default": {
+                                    "columns": [
+                                        {
+                                            "width": 24, 
+                                            "id": 0
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": "column_icon"
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": 2
+                                        }, 
+                                        {
+                                            "width": 211, 
+                                            "id": 3
+                                        }, 
+                                        {
+                                            "width": 676, 
+                                            "hidden": true, 
+                                            "id": 4
+                                        }, 
+                                        {
+                                            "width": 845, 
+                                            "id": 5
+                                        }, 
+                                        {
+                                            "width": 338, 
+                                            "hidden": true, 
+                                            "id": 6
+                                        }, 
+                                        {
+                                            "width": 338, 
+                                            "id": 7
+                                        }, 
+                                        {
+                                            "width": 338, 
+                                            "hidden": true, 
+                                            "id": 8
+                                        }, 
+                                        {
+                                            "width": 338, 
+                                            "hidden": true, 
+                                            "id": 9
+                                        }, 
+                                        {
+                                            "width": 169, 
+                                            "id": 10
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": "column_flag"
+                                        }
+                                    ]
+                                }
+                            }
+                        }, 
+                        "0000000022a807fd14e048a9b7a291cb40519d1101000000030000000000000000000000000000000000000100000000": {
+                            "tree": {
+                                "is_open": true
+                            }
+                        }, 
+                        "00000000ae2dfa8d228c47e28de6b841c0fd2292010000000300000084a7f38b6c144219a08f27723a2a326500000000": {
+                            "tree": {
+                                "is_open": false
+                            }
+                        }, 
+                        "00000000ae2dfa8d228c47e28de6b841c0fd229201000000030000009f3f1e421cad410c9f76dbd4adb6570000000000": {
+                            "list": {
+                                "sort": {
+                                    "field": "complete", 
+                                    "direction": "ASC"
+                                }, 
+                                "default": {
+                                    "columns": [
+                                        {
+                                            "width": 25, 
+                                            "id": 0
+                                        }, 
+                                        {
+                                            "width": 40, 
+                                            "id": 1
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": 2
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": 3
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "hidden": true, 
+                                            "id": 4
+                                        }, 
+                                        {
+                                            "width": 112, 
+                                            "hidden": true, 
+                                            "id": 5
+                                        }, 
+                                        {
+                                            "width": 112, 
+                                            "id": 6
+                                        }, 
+                                        {
+                                            "width": 916, 
+                                            "id": "subject"
+                                        }, 
+                                        {
+                                            "width": 112, 
+                                            "id": 8
+                                        }, 
+                                        {
+                                            "width": 112, 
+                                            "id": 9
+                                        }, 
+                                        {
+                                            "width": 112, 
+                                            "id": 10
+                                        }, 
+                                        {
+                                            "width": 112, 
+                                            "id": 11
+                                        }, 
+                                        {
+                                            "width": 112, 
+                                            "id": 12
+                                        }, 
+                                        {
+                                            "width": 112, 
+                                            "hidden": true, 
+                                            "id": 13
+                                        }, 
+                                        {
+                                            "width": 112, 
+                                            "hidden": true, 
+                                            "id": 14
+                                        }, 
+                                        {
+                                            "width": 112, 
+                                            "hidden": true, 
+                                            "id": 15
+                                        }, 
+                                        {
+                                            "width": 112, 
+                                            "hidden": true, 
+                                            "id": 16
+                                        }, 
+                                        {
+                                            "width": 112, 
+                                            "hidden": true, 
+                                            "id": 17
+                                        }, 
+                                        {
+                                            "width": 112, 
+                                            "hidden": true, 
+                                            "id": 18
+                                        }, 
+                                        {
+                                            "width": 112, 
+                                            "hidden": true, 
+                                            "id": 19
+                                        }, 
+                                        {
+                                            "width": 112, 
+                                            "hidden": true, 
+                                            "id": 20
+                                        }, 
+                                        {
+                                            "width": 112, 
+                                            "hidden": true, 
+                                            "id": 21
+                                        }, 
+                                        {
+                                            "width": 112, 
+                                            "hidden": true, 
+                                            "id": 22
+                                        }, 
+                                        {
+                                            "width": 112, 
+                                            "hidden": true, 
+                                            "id": 23
+                                        }, 
+                                        {
+                                            "width": 112, 
+                                            "hidden": true, 
+                                            "id": 24
+                                        }
+                                    ]
+                                }
+                            }
+                        }, 
+                        "00000000ae2dfa8d228c47e28de6b841c0fd229201000000030000002d52faf29997458592bb52d1a0d901f600000000": {
+                            "list": {
+                                "sort": {
+                                    "field": "message_delivery_time", 
+                                    "direction": "DESC"
+                                }, 
+                                "default": {
+                                    "columns": [
+                                        {
+                                            "width": 24, 
+                                            "id": 0
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": "column_icon"
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": 2
+                                        }, 
+                                        {
+                                            "width": 188, 
+                                            "id": 3
+                                        }, 
+                                        {
+                                            "width": 715, 
+                                            "hidden": true, 
+                                            "id": 4
+                                        }, 
+                                        {
+                                            "width": 941, 
+                                            "id": 5
+                                        }, 
+                                        {
+                                            "width": 336, 
+                                            "hidden": true, 
+                                            "id": 6
+                                        }, 
+                                        {
+                                            "width": 336, 
+                                            "id": 7
+                                        }, 
+                                        {
+                                            "width": 336, 
+                                            "hidden": true, 
+                                            "id": 8
+                                        }, 
+                                        {
+                                            "width": 336, 
+                                            "hidden": true, 
+                                            "id": 9
+                                        }, 
+                                        {
+                                            "width": 143, 
+                                            "id": 10
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": "column_flag"
+                                        }
+                                    ]
+                                }
+                            }, 
+                            "tree": {
+                                "is_open": true
+                            }
+                        }, 
+                        "00000000ae2dfa8d228c47e28de6b841c0fd229201000000030000000baf93de88b04f6d96ad00ade929ec4900000000": {
+                            "list": {
+                                "sort": {
+                                    "field": "client_submit_time", 
+                                    "direction": "DESC"
+                                }, 
+                                "default": {
+                                    "columns": [
+                                        {
+                                            "width": 24, 
+                                            "id": 0
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": "column_icon"
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": 2
+                                        }, 
+                                        {
+                                            "width": 157, 
+                                            "hidden": true, 
+                                            "id": 3
+                                        }, 
+                                        {
+                                            "width": 503, 
+                                            "id": 4
+                                        }, 
+                                        {
+                                            "width": 629, 
+                                            "id": 5
+                                        }, 
+                                        {
+                                            "width": 251, 
+                                            "hidden": true, 
+                                            "id": 6
+                                        }, 
+                                        {
+                                            "width": 251, 
+                                            "hidden": true, 
+                                            "id": 7
+                                        }, 
+                                        {
+                                            "width": 251, 
+                                            "id": 8
+                                        }, 
+                                        {
+                                            "width": 251, 
+                                            "hidden": true, 
+                                            "id": 9
+                                        }, 
+                                        {
+                                            "width": 125, 
+                                            "id": 10
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": "column_flag"
+                                        }
+                                    ]
+                                }
+                            }
+                        }, 
+                        "00000000ae2dfa8d228c47e28de6b841c0fd22920100000003000000cd4dec9ac1de44b4a0ab4162901c3e7b00000000": {
+                            "list": {
+                                "sort": {
+                                    "field": "sent_representing_name", 
+                                    "direction": "ASC"
+                                }, 
+                                "default": {
+                                    "columns": [
+                                        {
+                                            "width": 24, 
+                                            "id": 0
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": "column_icon"
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": 2
+                                        }, 
+                                        {
+                                            "width": 124, 
+                                            "id": 3
+                                        }, 
+                                        {
+                                            "width": 401, 
+                                            "hidden": true, 
+                                            "id": 4
+                                        }, 
+                                        {
+                                            "width": 503, 
+                                            "id": 5
+                                        }, 
+                                        {
+                                            "width": 199, 
+                                            "hidden": true, 
+                                            "id": 6
+                                        }, 
+                                        {
+                                            "width": 199, 
+                                            "id": 7
+                                        }, 
+                                        {
+                                            "width": 199, 
+                                            "hidden": true, 
+                                            "id": 8
+                                        }, 
+                                        {
+                                            "width": 199, 
+                                            "hidden": true, 
+                                            "id": 9
+                                        }, 
+                                        {
+                                            "width": 98, 
+                                            "id": 10
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": "column_flag"
+                                        }
+                                    ]
+                                }
+                            }, 
+                            "tree": {
+                                "is_open": false
+                            }
+                        }, 
+                        "00000000ae2dfa8d228c47e28de6b841c0fd22920100000003000000f6063ec2146546f0a93798001b9326f900000000": {
+                            "list": {
+                                "sort": {
+                                    "field": "message_delivery_time", 
+                                    "direction": "ASC"
+                                }, 
+                                "default": {
+                                    "columns": [
+                                        {
+                                            "width": 24, 
+                                            "id": 0
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": "column_icon"
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": 2
+                                        }, 
+                                        {
+                                            "width": 120, 
+                                            "id": 3
+                                        }, 
+                                        {
+                                            "width": 386, 
+                                            "hidden": true, 
+                                            "id": 4
+                                        }, 
+                                        {
+                                            "width": 483, 
+                                            "id": 5
+                                        }, 
+                                        {
+                                            "width": 192, 
+                                            "hidden": true, 
+                                            "id": 6
+                                        }, 
+                                        {
+                                            "width": 192, 
+                                            "id": 7
+                                        }, 
+                                        {
+                                            "width": 192, 
+                                            "hidden": true, 
+                                            "id": 8
+                                        }, 
+                                        {
+                                            "width": 192, 
+                                            "hidden": true, 
+                                            "id": 9
+                                        }, 
+                                        {
+                                            "width": 96, 
+                                            "id": 10
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": "column_flag"
+                                        }
+                                    ]
+                                }
+                            }
+                        }, 
+                        "00000000ae2dfa8d228c47e28de6b841c0fd22920100000003000000e40fb35fbc434d9c836289687280115400000000": {
+                            "tree": {
+                                "is_open": true
+                            }
+                        }, 
+                        "00000000ae2dfa8d228c47e28de6b841c0fd229201000000030000002e3bddbda60e400fa3127893babe8ded00000000": {
+                            "list": {
+                                "sort": {
+                                    "field": "sent_representing_name", 
+                                    "direction": "ASC"
+                                }, 
+                                "default": {
+                                    "columns": [
+                                        {
+                                            "width": 24, 
+                                            "id": 0
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": "column_icon"
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": 2
+                                        }, 
+                                        {
+                                            "width": 124, 
+                                            "id": 3
+                                        }, 
+                                        {
+                                            "width": 401, 
+                                            "hidden": true, 
+                                            "id": 4
+                                        }, 
+                                        {
+                                            "width": 501, 
+                                            "id": 5
+                                        }, 
+                                        {
+                                            "width": 200, 
+                                            "hidden": true, 
+                                            "id": 6
+                                        }, 
+                                        {
+                                            "width": 200, 
+                                            "id": 7
+                                        }, 
+                                        {
+                                            "width": 200, 
+                                            "hidden": true, 
+                                            "id": 8
+                                        }, 
+                                        {
+                                            "width": 200, 
+                                            "hidden": true, 
+                                            "id": 9
+                                        }, 
+                                        {
+                                            "width": 99, 
+                                            "id": 10
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": "column_flag"
+                                        }
+                                    ]
+                                }
+                            }, 
+                            "tree": {
+                                "is_open": false
+                            }
+                        }, 
+                        "00000000ae2dfa8d228c47e28de6b841c0fd2292010000000300000098db1d57292f4bcf9260450ead00023d00000000": {
+                            "list": {
+                                "sort": {
+                                    "field": "last_modification_time", 
+                                    "direction": "DESC"
+                                }, 
+                                "default": {
+                                    "columns": [
+                                        {
+                                            "width": 24, 
+                                            "id": 0
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": "column_icon"
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": 2
+                                        }, 
+                                        {
+                                            "width": 158, 
+                                            "hidden": true, 
+                                            "id": 3
+                                        }, 
+                                        {
+                                            "width": 539, 
+                                            "id": 4
+                                        }, 
+                                        {
+                                            "width": 681, 
+                                            "id": 5
+                                        }, 
+                                        {
+                                            "width": 264, 
+                                            "hidden": true, 
+                                            "id": 6
+                                        }, 
+                                        {
+                                            "width": 264, 
+                                            "hidden": true, 
+                                            "id": 7
+                                        }, 
+                                        {
+                                            "width": 264, 
+                                            "hidden": true, 
+                                            "id": 8
+                                        }, 
+                                        {
+                                            "width": 264, 
+                                            "id": 9
+                                        }, 
+                                        {
+                                            "width": 123, 
+                                            "id": 10
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": "column_flag"
+                                        }
+                                    ]
+                                }
+                            }
+                        }, 
+                        "00000000ae2dfa8d228c47e28de6b841c0fd22920100000003000000f5d82d1d7be74a71850cbc1e1667156d00000000": {
+                            "list": {
+                                "sort": {
+                                    "field": "message_delivery_time", 
+                                    "direction": "DESC"
+                                }, 
+                                "default": {
+                                    "columns": [
+                                        {
+                                            "width": 24, 
+                                            "id": 0
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": "column_icon"
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": 2
+                                        }, 
+                                        {
+                                            "width": 120, 
+                                            "id": 3
+                                        }, 
+                                        {
+                                            "width": 386, 
+                                            "hidden": true, 
+                                            "id": 4
+                                        }, 
+                                        {
+                                            "width": 482, 
+                                            "id": 5
+                                        }, 
+                                        {
+                                            "width": 193, 
+                                            "hidden": true, 
+                                            "id": 6
+                                        }, 
+                                        {
+                                            "width": 193, 
+                                            "id": 7
+                                        }, 
+                                        {
+                                            "width": 193, 
+                                            "hidden": true, 
+                                            "id": 8
+                                        }, 
+                                        {
+                                            "width": 193, 
+                                            "hidden": true, 
+                                            "id": 9
+                                        }, 
+                                        {
+                                            "width": 96, 
+                                            "id": 10
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": "column_flag"
+                                        }
+                                    ]
+                                }
+                            }
+                        }, 
+                        "00000000ae2dfa8d228c47e28de6b841c0fd22920100000003000000e1ed65af2159485bbb58fad1ddbd0dc400000000": {
+                            "list": {
+                                "sort": {
+                                    "field": "message_delivery_time", 
+                                    "direction": "ASC"
+                                }, 
+                                "default": {
+                                    "columns": [
+                                        {
+                                            "width": 24, 
+                                            "id": 0
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": "column_icon"
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": 2
+                                        }, 
+                                        {
+                                            "width": 209, 
+                                            "id": 3
+                                        }, 
+                                        {
+                                            "width": 670, 
+                                            "hidden": true, 
+                                            "id": 4
+                                        }, 
+                                        {
+                                            "width": 838, 
+                                            "id": 5
+                                        }, 
+                                        {
+                                            "width": 334, 
+                                            "hidden": true, 
+                                            "id": 6
+                                        }, 
+                                        {
+                                            "width": 334, 
+                                            "id": 7
+                                        }, 
+                                        {
+                                            "width": 334, 
+                                            "hidden": true, 
+                                            "id": 8
+                                        }, 
+                                        {
+                                            "width": 334, 
+                                            "hidden": true, 
+                                            "id": 9
+                                        }, 
+                                        {
+                                            "width": 166, 
+                                            "id": 10
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": "column_flag"
+                                        }
+                                    ]
+                                }
+                            }
+                        }, 
+                        "00000000ae2dfa8d228c47e28de6b841c0fd229201000000030000005e6e9481e64c4a389a97b798174de7bb00000000": {
+                            "tree": {
+                                "is_open": false
+                            }
+                        }, 
+                        "00000000ae2dfa8d228c47e28de6b841c0fd2292010000000300000045501ee621284f0cbb83c869db6ac01900000000": {
+                            "list": {
+                                "sort": {
+                                    "field": "message_delivery_time", 
+                                    "direction": "DESC"
+                                }, 
+                                "default": {
+                                    "columns": [
+                                        {
+                                            "width": 24, 
+                                            "id": 0
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": "column_icon"
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": 2
+                                        }, 
+                                        {
+                                            "width": 204, 
+                                            "id": 3
+                                        }, 
+                                        {
+                                            "width": 661, 
+                                            "hidden": true, 
+                                            "id": 4
+                                        }, 
+                                        {
+                                            "width": 829, 
+                                            "id": 5
+                                        }, 
+                                        {
+                                            "width": 328, 
+                                            "hidden": true, 
+                                            "id": 6
+                                        }, 
+                                        {
+                                            "width": 328, 
+                                            "id": 7
+                                        }, 
+                                        {
+                                            "width": 328, 
+                                            "hidden": true, 
+                                            "id": 8
+                                        }, 
+                                        {
+                                            "width": 328, 
+                                            "hidden": true, 
+                                            "id": 9
+                                        }, 
+                                        {
+                                            "width": 162, 
+                                            "id": 10
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": "column_flag"
+                                        }
+                                    ]
+                                }
+                            }, 
+                            "tree": {
+                                "is_open": false
+                            }
+                        }, 
+                        "00000000ae2dfa8d228c47e28de6b841c0fd229201000000030000001da0b6293fee48528ef3c1d84218d36400000000": {
+                            "list": {
+                                "sort": {
+                                    "field": "sent_representing_name", 
+                                    "direction": "ASC"
+                                }, 
+                                "default": {
+                                    "columns": [
+                                        {
+                                            "width": 24, 
+                                            "id": 0
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": "column_icon"
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": 2
+                                        }, 
+                                        {
+                                            "width": 127, 
+                                            "id": 3
+                                        }, 
+                                        {
+                                            "width": 406, 
+                                            "hidden": true, 
+                                            "id": 4
+                                        }, 
+                                        {
+                                            "width": 508, 
+                                            "id": 5
+                                        }, 
+                                        {
+                                            "width": 203, 
+                                            "hidden": true, 
+                                            "id": 6
+                                        }, 
+                                        {
+                                            "width": 203, 
+                                            "id": 7
+                                        }, 
+                                        {
+                                            "width": 203, 
+                                            "hidden": true, 
+                                            "id": 8
+                                        }, 
+                                        {
+                                            "width": 203, 
+                                            "hidden": true, 
+                                            "id": 9
+                                        }, 
+                                        {
+                                            "width": 101, 
+                                            "id": 10
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": "column_flag"
+                                        }
+                                    ]
+                                }
+                            }
+                        }, 
+                        "00000000ae2dfa8d228c47e28de6b841c0fd22920100000003000000b068198b664647959768905ee638622400000000": {
+                            "list": {
+                                "sort": {
+                                    "field": "client_submit_time", 
+                                    "direction": "DESC"
+                                }, 
+                                "default": {
+                                    "columns": [
+                                        {
+                                            "width": 24, 
+                                            "id": 0
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": "column_icon"
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": 2
+                                        }, 
+                                        {
+                                            "width": 159, 
+                                            "hidden": true, 
+                                            "id": 3
+                                        }, 
+                                        {
+                                            "width": 531, 
+                                            "id": 4
+                                        }, 
+                                        {
+                                            "width": 669, 
+                                            "id": 5
+                                        }, 
+                                        {
+                                            "width": 262, 
+                                            "hidden": true, 
+                                            "id": 6
+                                        }, 
+                                        {
+                                            "width": 262, 
+                                            "hidden": true, 
+                                            "id": 7
+                                        }, 
+                                        {
+                                            "width": 262, 
+                                            "id": 8
+                                        }, 
+                                        {
+                                            "width": 262, 
+                                            "hidden": true, 
+                                            "id": 9
+                                        }, 
+                                        {
+                                            "width": 126, 
+                                            "id": 10
+                                        }, 
+                                        {
+                                            "width": 24, 
+                                            "id": "column_flag"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }, 
+                    "dialogs": {
+                        "remindercontentpanel": {
+                            "width": 0.45, 
+                            "height": 0.31
+                        }, 
+                        "mailcreatecontentpanel": {
+                            "width": 0.88, 
+                            "showbcc": false, 
+                            "showfrom": false, 
+                            "height": 0.87
+                        }, 
+                        "filesplugin.accounteditcontentpanel": {
+                            "width": 0.21, 
+                            "height": 0.35
+                        }, 
+                        "sendmeetingrequestconfirmcontentpanel": {
+                            "width": 0.18, 
+                            "height": 0.26
+                        }, 
+                        "copymovecontentpanel": {
+                            "width": 0.25, 
+                            "last_selected_folder": "00000000ae2dfa8d228c47e28de6b841c0fd22920100000003000000e00c9db3c61f400f9eca08319fd8ff9100000000", 
+                            "height": 0.36
+                        }, 
+                        "checknamescontentpanel": {
+                            "width": 0.26, 
+                            "height": 0.4
+                        }
+                    }, 
+                    "models": {
+                        "files": {
+                            "last_used_folders": {
+                                "files": [
+                                    "#R#"
+                                ]
+                            }
+                        }, 
+                        "search": {
+                            "current_data_mode": 0, 
+                            "last_used_folders": {
+                                "0000000038a1bb1005e5101aa1bb08002b2a56c200007a617261666136636c69656e742e646c6c0000000000ae2dfa8d228c47e28de6b841c0fd22920100000001000000c3bef59deb704caaa61298e38901401970736575646f3a2f2f5a617261666100": [
+                                    "00000000ae2dfa8d228c47e28de6b841c0fd229201000000030000002d52faf29997458592bb52d1a0d901f600000000"
+                                ]
+                            }
+                        }, 
+                        "stickynote": {
+                            "current_data_mode": 0, 
+                            "last_used_folders": {
+                                "0000000038a1bb1005e5101aa1bb08002b2a56c200007a617261666136636c69656e742e646c6c0000000000ae2dfa8d228c47e28de6b841c0fd22920100000001000000c3bef59deb704caaa61298e389014019687474703a2f2f7a61726166612d636f72652e692e6f70772e69653a3233362f7a617261666100": [
+                                    "00000000ae2dfa8d228c47e28de6b841c0fd229201000000030000002ed5f80c27c54bb286643b0809f9db3500000000"
+                                ]
+                            }
+                        }, 
+                        "appointment": {
+                            "colorMap": {
+                                "00000000b38c43ee412b42f1ab97d4e1d4b9cc260100000003000000410aeb23802f4a89baa79f143b97dc5800000000": "zarafablue", 
+                                "000000007b1172995a554431b0d6666d3002aa0c010000000300000004ecdcf815ee4cc3a61a78be94e0184200000000": "green", 
+                                "000000008e4d67709bbc40fa90d49dae4922b8fa0100000003000000343e0d18daec47cd87ee08fee833227200000000": "california", 
+                                "000000009547185cbb59480ba241c1c4813654d00100000003000000fe48f8dda3e34cd38080d68bc55a743e00000000": "yellow", 
+                                "000000005ff3fcae66b04e9ea628ef756837d4be01000000030000003fcff1ba204c439eaa0ab90d862ee1b900000000": "zarafablue", 
+                                "00000000ae2dfa8d228c47e28de6b841c0fd22920100000003000000e9d85c07b0ad4f4c873c4d5e679e2d1100000000": "green", 
+                                "00000000a9c14ba8d0dd4b01a4d9d7482718416a010000000300000003220b9f6e974fff8f4a749c9699f4b100000000": "zarafablue", 
+                                "00000000b80231fccc5e46cf97d6cc85a762cec10100000003000000498c278296534fddbfa638a8a84a2bf600000000": "softgreen", 
+                                "0000000007befb9687b245b589488ca3568c263701000000030000006772cda618f14ab99ac854fcc466d3f900000000": "pearlaqua"
+                            }, 
+                            "groupings": {
+                                "group-1275": {
+                                    "folders": [
+                                        "00000000b80231fccc5e46cf97d6cc85a762cec10100000003000000498c278296534fddbfa638a8a84a2bf600000000"
+                                    ], 
+                                    "active": "00000000b80231fccc5e46cf97d6cc85a762cec10100000003000000498c278296534fddbfa638a8a84a2bf600000000"
+                                }, 
+                                "group-2628": {
+                                    "folders": [
+                                        "00000000ae2dfa8d228c47e28de6b841c0fd22920100000003000000e9d85c07b0ad4f4c873c4d5e679e2d1100000000"
+                                    ], 
+                                    "active": "00000000ae2dfa8d228c47e28de6b841c0fd22920100000003000000e9d85c07b0ad4f4c873c4d5e679e2d1100000000"
+                                }, 
+                                "group-1445": {
+                                    "folders": [
+                                        "0000000007befb9687b245b589488ca3568c263701000000030000006772cda618f14ab99ac854fcc466d3f900000000"
+                                    ], 
+                                    "active": "0000000007befb9687b245b589488ca3568c263701000000030000006772cda618f14ab99ac854fcc466d3f900000000"
+                                }, 
+                                "group-2726": {
+                                    "folders": [
+                                        "00000000b38c43ee412b42f1ab97d4e1d4b9cc260100000003000000410aeb23802f4a89baa79f143b97dc5800000000"
+                                    ], 
+                                    "active": "00000000b38c43ee412b42f1ab97d4e1d4b9cc260100000003000000410aeb23802f4a89baa79f143b97dc5800000000"
+                                }, 
+                                "group-2723": {
+                                    "folders": [
+                                        "000000007b1172995a554431b0d6666d3002aa0c010000000300000004ecdcf815ee4cc3a61a78be94e0184200000000"
+                                    ], 
+                                    "active": "000000007b1172995a554431b0d6666d3002aa0c010000000300000004ecdcf815ee4cc3a61a78be94e0184200000000"
+                                }, 
+                                "group-2717": {
+                                    "folders": [
+                                        "000000005ff3fcae66b04e9ea628ef756837d4be01000000030000003fcff1ba204c439eaa0ab90d862ee1b900000000"
+                                    ], 
+                                    "active": "000000005ff3fcae66b04e9ea628ef756837d4be01000000030000003fcff1ba204c439eaa0ab90d862ee1b900000000"
+                                }, 
+                                "group-2714": {
+                                    "folders": [
+                                        "000000009547185cbb59480ba241c1c4813654d00100000003000000fe48f8dda3e34cd38080d68bc55a743e00000000"
+                                    ], 
+                                    "active": "000000009547185cbb59480ba241c1c4813654d00100000003000000fe48f8dda3e34cd38080d68bc55a743e00000000"
+                                }, 
+                                "group-2729": {
+                                    "folders": [
+                                        "000000008e4d67709bbc40fa90d49dae4922b8fa0100000003000000343e0d18daec47cd87ee08fee833227200000000"
+                                    ], 
+                                    "active": "000000008e4d67709bbc40fa90d49dae4922b8fa0100000003000000343e0d18daec47cd87ee08fee833227200000000"
+                                }
+                            }, 
+                            "current_data_mode": 3, 
+                            "active_group": "group-2628", 
+                            "last_used_folders": {
+                                "0000000038a1bb1005e5101aa1bb08002b2a56c200007a617261666136636c69656e742e646c6c0000000000b38c43ee412b42f1ab97d4e1d4b9cc2601000000010000004b11599661b944e58143d1afc03c673870736575646f3a2f2f5a617261666100": [
+                                    "00000000b38c43ee412b42f1ab97d4e1d4b9cc260100000003000000410aeb23802f4a89baa79f143b97dc5800000000"
+                                ], 
+                                "0000000038a1bb1005e5101aa1bb08002b2a56c200007a617261666136636c69656e742e646c6c0000000000b80231fccc5e46cf97d6cc85a762cec10100000001000000d2fd1bcb7d45487a9aba510de9bcaf9b70736575646f3a2f2f5a617261666100": [
+                                    "00000000b80231fccc5e46cf97d6cc85a762cec10100000003000000498c278296534fddbfa638a8a84a2bf600000000"
+                                ], 
+                                "0000000038a1bb1005e5101aa1bb08002b2a56c200007a617261666136636c69656e742e646c6c00000000005ff3fcae66b04e9ea628ef756837d4be010000000100000092d2591338ca4b8e8a5cc85b71d4ce9570736575646f3a2f2f5a617261666100": [
+                                    "000000005ff3fcae66b04e9ea628ef756837d4be01000000030000003fcff1ba204c439eaa0ab90d862ee1b900000000"
+                                ], 
+                                "0000000038a1bb1005e5101aa1bb08002b2a56c200007a617261666136636c69656e742e646c6c00000000007b1172995a554431b0d6666d3002aa0c010000000100000090094f0ec167458dbd0452a16532890d70736575646f3a2f2f5a617261666100": [
+                                    "000000007b1172995a554431b0d6666d3002aa0c010000000300000004ecdcf815ee4cc3a61a78be94e0184200000000"
+                                ], 
+                                "0000000038a1bb1005e5101aa1bb08002b2a56c200007a617261666136636c69656e742e646c6c0000000000ae2dfa8d228c47e28de6b841c0fd22920100000001000000c3bef59deb704caaa61298e38901401970736575646f3a2f2f5a617261666100": [
+                                    "00000000ae2dfa8d228c47e28de6b841c0fd22920100000003000000e9d85c07b0ad4f4c873c4d5e679e2d1100000000"
+                                ], 
+                                "0000000038a1bb1005e5101aa1bb08002b2a56c200007a617261666136636c69656e742e646c6c000000000007befb9687b245b589488ca3568c263701000000010000009d08f83e20124c54b79887f7a14c7e1f70736575646f3a2f2f5a617261666100": [
+                                    "0000000007befb9687b245b589488ca3568c263701000000030000006772cda618f14ab99ac854fcc466d3f900000000"
+                                ], 
+                                "0000000038a1bb1005e5101aa1bb08002b2a56c200007a617261666136636c69656e742e646c6c00000000009547185cbb59480ba241c1c4813654d00100000001000000e3a5c2a741a24068a93d54b79eeca3a870736575646f3a2f2f5a617261666100": [
+                                    "000000009547185cbb59480ba241c1c4813654d00100000003000000fe48f8dda3e34cd38080d68bc55a743e00000000"
+                                ], 
+                                "0000000038a1bb1005e5101aa1bb08002b2a56c200007a617261666136636c69656e742e646c6c00000000008e4d67709bbc40fa90d49dae4922b8fa0100000001000000e783fa6b97544f0d82061e3aa652e4aa70736575646f3a2f2f5a617261666100": [
+                                    "000000008e4d67709bbc40fa90d49dae4922b8fa0100000003000000343e0d18daec47cd87ee08fee833227200000000"
+                                ]
+                            }
+                        }, 
+                        "task": {
+                            "current_data_mode": 0, 
+                            "last_used_folders": {
+                                "0000000038a1bb1005e5101aa1bb08002b2a56c200007a617261666136636c69656e742e646c6c0000000000ae2dfa8d228c47e28de6b841c0fd22920100000001000000c3bef59deb704caaa61298e389014019687474703a2f2f7a61726166612d636f72652e692e6f70772e69653a3233362f7a617261666100": [
+                                    "00000000ae2dfa8d228c47e28de6b841c0fd229201000000030000009f3f1e421cad410c9f76dbd4adb6570000000000"
+                                ]
+                            }
+                        }, 
+                        "note": {
+                            "current_data_mode": 0, 
+                            "last_used_folders": {
+                                "0000000038a1bb1005e5101aa1bb08002b2a56c200007a617261666136636c69656e742e646c6c0000000000ae2dfa8d228c47e28de6b841c0fd22920100000001000000c3bef59deb704caaa61298e389014019687474703a2f2f7a61726166612d636f72652e692e6f70772e69653a3233362f7a617261666100": [
+                                    "00000000ae2dfa8d228c47e28de6b841c0fd229201000000030000002d52faf29997458592bb52d1a0d901f600000000"
+                                ]
+                            }
+                        }, 
+                        "contact": {
+                            "current_character": "a", 
+                            "current_data_mode": 0, 
+                            "last_used_folders": {
+                                "0000000038a1bb1005e5101aa1bb08002b2a56c200007a617261666136636c69656e742e646c6c0000000000ae2dfa8d228c47e28de6b841c0fd22920100000001000000c3bef59deb704caaa61298e389014019687474703a2f2f7a61726166612d636f72652e692e6f70772e69653a3233362f7a617261666100": [
+                                    "00000000ae2dfa8d228c47e28de6b841c0fd22920100000003000000edee5011bec3449cb1c127c0c6578bd400000000"
+                                ]
+                            }
+                        }
+                    }, 
+                    "sidebars": {
+                        "hierarchybar": {
+                            "width": 157
+                        }, 
+                        "hierarchytree": {
+                            "showallcheckbox": false
+                        }, 
+                        "todaybar": {
+                            "collapsed": true
+                        }
+                    }, 
+                    "contexts": {
+                        "task": {
+                            "current_view_mode": 0, 
+                            "current_view": 0
+                        }, 
+                        "advancesearch": {
+                            "current_view_mode": 1, 
+                            "current_view": 0
+                        }, 
+                        "filescontext": {
+                            "current_view_mode": 1, 
+                            "current_view": 0
+                        }, 
+                        "note": {
+                            "current_view_mode": 0, 
+                            "current_view": 1
+                        }, 
+                        "contact": {
+                            "current_view_mode": 0, 
+                            "current_view": 1
+                        }, 
+                        "mail": {
+                            "current_view_mode": 2, 
+                            "current_view": 0
+                        }, 
+                        "calendar": {
+                            "current_view_mode": 1, 
+                            "current_view": 0
+                        }
+                    }, 
+                    "preview": {
+                        "mailpreviewpanel": {
+                            "height": 0.36
+                        }
+                    }
+                }, 
+                "main": {
+                    "end_working_hour": 1050, 
+                    "language": "en_GB", 
+                    "show_welcome": false, 
+                    "week_start": 1, 
+                    "default_context": "mail", 
+                    "start_working_hour": 510
+                }, 
+                "plugins": {
+                    "files": {
+                        "accounts": {
+                            "152eb2201fbf2298873253947fe4d75a": {
+                                "status": "ok", 
+                                "backend_config": {
+                                    "server_path": "dZg5G2w05ODKJ8yVPz+b5Q==", 
+                                    "workgroup": "vcZphuau8VU=", 
+                                    "server_address": "hHFlaTAAIpNBuM7jOr/HyQ==", 
+                                    "current_account_id": "kON7H2FOwZ/L9sImUfj0t2NhTPSSvgrjeGo3EgFlj6vtr2wvjMhCxQ==", 
+                                    "use_zarafa_credentials": true, 
+                                    "user": "dZg5G2w05ODKJ8yVPz+b5Q==", 
+                                    "password": "EMndOryQRWj0YgRiqjMjmA=="
+                                }, 
+                                "name": "G Drive", 
+                                "status_description": "Account is ready to use.", 
+                                "id": "152eb2201fbf2298873253947fe4d75a", 
+                                "backend_features": {
+                                    "Streaming": true, 
+                                    "VersionInfo": true, 
+                                    "Quota": true
+                                }, 
+                                "backend": "SMB"
+                            }, 
+                            "0f0b3c2cbf153217bfaf8f1f9d6879b7": {
+                                "status": "ok", 
+                                "backend_config": {
+                                    "server_path": "O25zxpMhXjF9YDZgJ9Y8VQ==", 
+                                    "workgroup": "vcZphuau8VU=", 
+                                    "server_address": "O25zxpMhXjHblx+fmUc1BQ==", 
+                                    "current_account_id": "Eye2uITYnqasAOAEi7y2dqkHwoU7VEUkg27GhhDb1qcnaUDb7irE1A==", 
+                                    "use_zarafa_credentials": true, 
+                                    "user": "dZg5G2w05ODKJ8yVPz+b5Q==", 
+                                    "password": "EMndOryQRWj0YgRiqjMjmA=="
+                                }, 
+                                "name": "Alfresco", 
+                                "status_description": "Account is ready to use.", 
+                                "id": "0f0b3c2cbf153217bfaf8f1f9d6879b7", 
+                                "backend_features": {
+                                    "Streaming": true, 
+                                    "VersionInfo": true, 
+                                    "Quota": true
+                                }, 
+                                "backend": "SMB"
+                            }, 
+                            "994d1307e3c866ee20263d7d70ed69c3": {
+                                "status": "ok", 
+                                "backend_config": {
+                                    "server_path": "7ROw2DuK2yS+gI5C/V50KQ==", 
+                                    "workgroup": "vcZphuau8VU=", 
+                                    "server_address": "hHFlaTAAIpPp35u025BmQg==", 
+                                    "current_account_id": "XVTfXa6WQ0ZZe6v9CrO9RfsoI2sWkWQZ7/P+76fOL9vaeE53ODUiWg==", 
+                                    "use_zarafa_credentials": true, 
+                                    "user": "dZg5G2w05ODKJ8yVPz+b5Q==", 
+                                    "password": "EMndOryQRWj0YgRiqjMjmA=="
+                                }, 
+                                "name": "F Drive", 
+                                "status_description": "Account is ready to use.", 
+                                "id": "994d1307e3c866ee20263d7d70ed69c3", 
+                                "backend_features": {
+                                    "Streaming": true, 
+                                    "VersionInfo": true, 
+                                    "Quota": true
+                                }, 
+                                "backend": "SMB"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
