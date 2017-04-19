@@ -5,7 +5,7 @@ from MAPI.Util import *
 import sys, json, textwrap
 import pprint
 
-sys.path.append( os.path.realpath( os.path.join( os.path.dirname(__file__), "../common" ) ) )
+sys.path.append( os.path.realpath( os.path.join( os.path.dirname(__file__), "../../common" ) ) )
 import brandt
 sys.path.pop()
 
