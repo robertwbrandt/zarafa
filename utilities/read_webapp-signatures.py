@@ -38,8 +38,8 @@ class customUsageVersion(argparse.Action):
       print textwrap.fill(version, self.__row)
       print "\nWritten by Bob Brandt <projects@brandt.ie>."
     else:
-      print "Usage: " + self.__prog + " [options] -n \"NAME\" -u \"USER\""
-      print "Script used to Add Signatures to Users Zarafa WebApp.\n"
+      print "Usage: " + self.__prog + " -u \"USER\""
+      print "Script used to Read WebApp Signatures of Zarafa Users Zarafa.\n"
       print "Options:"
       options = []
       options.append(("-h, --help",          "Show this help message and exit"))
