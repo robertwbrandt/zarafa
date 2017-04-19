@@ -82,15 +82,12 @@ def command_line_args():
                     action='store')  
   parser.add_argument('-t', '--text',
                     required=False,
-                    type=bool,
                     action='store_false')  
   parser.add_argument('--new',
                     required=False,
-                    type=str,
                     action='store_false')  
   parser.add_argument('--reply',
                     required=False,
-                    type=str,
                     action='store_false')    
   args.update(vars(parser.parse_args()))
 
