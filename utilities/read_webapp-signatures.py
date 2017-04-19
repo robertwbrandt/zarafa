@@ -30,11 +30,6 @@ def getTerminalSize():
     if not cr:
         cr = (env.get('LINES', 25), env.get('COLUMNS', 80))
 
-        ### Use get(key[, default]) instead of a try/catch
-        #try:
-        #    cr = (env['LINES'], env['COLUMNS'])
-        #except:
-        #    cr = (25, 80)
     return int(cr[1]), int(cr[0])
 
 def read_settings(username):
@@ -122,9 +117,10 @@ if __name__ == '__main__':
                     print " Reply/Forward Message: %s (%s - %s)" % ( output[key]['all'][str(output[key]['replyforward_message'])]['name'] , html, output[key]['replyforward_message'] )
                 else:
                     print " Reply/Forward Message: None"
+
+                preferredWidth = getTerminalSize()[0]
                 for sig in output[key]['all']:
                     prefix = " %s: " % output[key]['all'][sig]['name']
-                    preferredWidth = 70
                     wrapper = textwrap.TextWrapper(initial_indent=prefix, width=preferredWidth, subsequent_indent=' '*len(prefix))
                     print wrapper.fill(output[key]['all'][sig]['content'])
 
