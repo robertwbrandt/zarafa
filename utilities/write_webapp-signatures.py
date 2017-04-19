@@ -2,7 +2,7 @@
 
 from MAPI import *
 from MAPI.Util import *
-import sys, json, textwrap
+import sys, json, argparse, textwrap
 import pprint
 
 sys.path.append( os.path.realpath( os.path.join( os.path.dirname(__file__), "../../common" ) ) )
