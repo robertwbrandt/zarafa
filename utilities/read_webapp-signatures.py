@@ -62,17 +62,18 @@ def write_settings(username):
         settings.Commit(0)
 
 if __name__ == '__main__':
+        output = {}
         check_input()
         username = sys.argv[1]
         raw_data = read_settings(username)
 
         if raw_data:
             data = json.loads(str(raw_data)).get('settings',{}).get('zarafa',{}).get('v1',{}).get('contexts',{}).get('mail',{}).get('signatures',{})
-            if data.has_hey('all'):
-                data[username] = data.pop('all')
+            if 'all' in data:
+                output[username] = data.pop('all')
             else:
-                data[username] = {}
-            pprint( data )
+                output[username] = {}
+            pprint( output )
 
             
 
