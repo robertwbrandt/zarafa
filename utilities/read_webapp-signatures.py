@@ -95,7 +95,7 @@ if __name__ == '__main__':
                 else:
                     print " Reply/Forward Message: None"
                 for sig in output[key]['all']:
-                    prefix = output[key]['all'][sig]['name']  + ": "
+                    prefix = " %s: " % output[key]['all'][sig]['name']
                     preferredWidth = 70
                     wrapper = textwrap.TextWrapper(initial_indent=prefix, width=preferredWidth, subsequent_indent=' '*len(prefix))
                     print wrapper.fill(output[key]['all'][sig]['content'])
