@@ -83,8 +83,10 @@ if __name__ == '__main__':
                     print "Signature for:", key                    
                 else:
                     print "Signatures for:", key
-                print " New Message signature:", output[key]['new_message']
+                print " New Message signature: %s (%s)" % ( output[key]['all'][output[key]['new_message']]['name'] , output[key]['new_message'] )
                 print " Reply/Forward Message signature:", output[key]['replyforward_message']
+                #for sig in output[key]['all']:
+
             print "\n"
 
 
