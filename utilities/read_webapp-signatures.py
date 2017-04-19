@@ -2,8 +2,8 @@
 
 from MAPI import *
 from MAPI.Util import *
-import sys, json
-from pprint import pprint
+import sys, json, textwrap
+import pprint
 
 def check_input():
         if len(sys.argv) < 2:
@@ -73,7 +73,7 @@ if __name__ == '__main__':
                 output[username] = data
             else:
                 output[username] = { 'all':{}, 'new_message':None, 'replyforward_message':None }
-            pprint( output )
+            pprint.pprint( output )
 
         for key in output:
             if len(output[key]['all']) == 0:
@@ -85,17 +85,17 @@ if __name__ == '__main__':
                     print "Signatures for:", key
                 if output[key]['new_message']:
                     html = ['Text','HTML'][bool(output[key]['all'][str(output[key]['new_message'])]['isHTML'])]
-                    print "           New Message signature: %s (%s) (%s)" % ( output[key]['all'][str(output[key]['new_message'])]['name'] , html , output[key]['new_message'] )
+                    print "           New Message: %s (%s - %s)" % ( output[key]['all'][str(output[key]['new_message'])]['name'] , html , output[key]['new_message'] )
                 else:
-                    print "           New Message signature: None"
+                    print "           New Message: None"
 
                 if output[key]['replyforward_message']:
                     html = ['Text','HTML'][bool(output[key]['all'][str(output[key]['replyforward_message'])]['isHTML'])]                    
-                    print " Reply/Forward Message signature: %s (%s) (%s)" % ( output[key]['all'][str(output[key]['replyforward_message'])]['name'] , html, output[key]['replyforward_message'] )
+                    print " Reply/Forward Message: %s (%s - %s)" % ( output[key]['all'][str(output[key]['replyforward_message'])]['name'] , html, output[key]['replyforward_message'] )
                 else:
-                    print " Reply/Forward Message signature: None"
+                    print " Reply/Forward Message: None"
                 for sig in output[key]['all']:
-                    print sig
+                    print output[key]['all'][sig]['name'] 
 
             print "\n"
 
