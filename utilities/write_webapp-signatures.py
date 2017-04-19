@@ -82,13 +82,13 @@ def command_line_args():
                     action='store')  
   parser.add_argument('-t', '--text',
                     required=False,
-                    action='store_false')  
+                    action='store_true')  
   parser.add_argument('--new',
                     required=False,
-                    action='store_false')  
+                    action='store_true')  
   parser.add_argument('--reply',
                     required=False,
-                    action='store_false')    
+                    action='store_true')    
   args.update(vars(parser.parse_args()))
 
 def getTerminalSize():
