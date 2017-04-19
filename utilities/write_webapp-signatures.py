@@ -3,10 +3,12 @@
 from MAPI import *
 from MAPI.Util import *
 import sys, json, textwrap
+import pprint
+
 
 def check_input():
         if len(sys.argv) < 2:
-            sys.exit('Usage: %s username' % sys.argv[0])
+            sys.exit('Usage: %s username < input_file' % sys.argv[0])
 
 def getTerminalSize():
     import os
@@ -47,9 +49,6 @@ def read_settings(username):
         return data
 
 
-# def check_input():
-#         if len(sys.argv) < 2:
-#             sys.exit('Usage: %s username < input_file' % sys.argv[0])
 
 def write_settings(username):
 
@@ -86,42 +85,8 @@ def write_settings(username):
 
 if __name__ == '__main__':
         output = {}
-        print getTerminalSize()
         check_input()
         username = sys.argv[1]
-        raw_data = read_settings(username)
+        orig_data = read_settings(username)
 
-        if raw_data:
-            data = json.loads(str(raw_data)).get('settings',{}).get('zarafa',{}).get('v1',{}).get('contexts',{}).get('mail',{}).get('signatures',{})
-            if 'all' in data:
-                output[username] = data
-            else:
-                output[username] = { 'all':{}, 'new_message':None, 'replyforward_message':None }
-
-        for key in output:
-            if len(output[key]['all']) == 0:
-                print "No signatures found for:", key
-            else:
-                if len(output[key]['all']) == 1:
-                    print "Email Signature for   : %s" % key
-                else:
-                    print "Email Signatures for  : %s" % key
-                if output[key]['new_message']:
-                    html = ['Text','HTML'][bool(output[key]['all'][str(output[key]['new_message'])]['isHTML'])]
-                    print "           New Message: %s (%s - %s)" % ( output[key]['all'][str(output[key]['new_message'])]['name'] , html , output[key]['new_message'] )
-                else:
-                    print "           New Message: None"
-
-                if output[key]['replyforward_message']:
-                    html = ['Text','HTML'][bool(output[key]['all'][str(output[key]['replyforward_message'])]['isHTML'])]                    
-                    print " Reply/Forward Message: %s (%s - %s)" % ( output[key]['all'][str(output[key]['replyforward_message'])]['name'] , html, output[key]['replyforward_message'] )
-                else:
-                    print " Reply/Forward Message: None"
-
-                preferredWidth = getTerminalSize()[0]
-                for sig in output[key]['all']:
-                    prefix = " %s: " % output[key]['all'][sig]['name']
-                    wrapper = textwrap.TextWrapper(initial_indent=prefix, width=preferredWidth, subsequent_indent=' '*len(prefix))
-                    print wrapper.fill(output[key]['all'][sig]['content'])
-
-            print "\n"
+        pprint(orig_data)
