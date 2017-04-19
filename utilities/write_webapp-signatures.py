@@ -9,7 +9,6 @@ sys.path.append( os.path.realpath( os.path.join( os.path.dirname(__file__), "../
 import brandt
 sys.path.pop()
 
-
 version = 0.3
 args = {}
 args['file'] = 'STDIN'
