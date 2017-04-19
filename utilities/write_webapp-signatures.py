@@ -44,8 +44,8 @@ class customUsageVersion(argparse.Action):
       print textwrap.fill(version, self.__row)
       print "\nWritten by Bob Brandt <projects@brandt.ie>."
     else:
-      print "Usage: " + self.__prog + " [options] {find | restore} USER"
-      print "Script used to restore items to Zarafa Mailboxes via brick-level-backup.\n"
+      print "Usage: " + self.__prog + " [options] -n \"NAME\" -u \"USER\""
+      print "Script used to Add Signatures to Users Zarafa WebApp.\n"
       print "Options:"
       options = []
       options.append(("-h, --help",          "Show this help message and exit"))
@@ -168,9 +168,5 @@ def write_settings(username):
 if __name__ == "__main__":
         output = {}
         command_line_args()
-
-        print args
-
-
-#        orig_data = read_settings(username)
-#        pprint.pprint(orig_data)
+        orig_data = read_settings(args['user'])
+        pprint.pprint(orig_data)
