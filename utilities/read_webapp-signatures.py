@@ -68,7 +68,10 @@ if __name__ == '__main__':
 
         if raw_data:
             data = json.loads(str(raw_data)).get('settings',{}).get('zarafa',{}).get('v1',{}).get('contexts',{}).get('mail',{}).get('signatures',{})
-            data[username] = data.pop('all')
+            if data.has_hey('all'):
+                data[username] = data.pop('all')
+            else:
+                data[username] = {}
             pprint( data )
 
             
