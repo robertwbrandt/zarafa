@@ -171,17 +171,26 @@ if __name__ == "__main__":
                  'mail' in data['settings']['zarafa']['v1']['contexts'] ):
                 if ( 'signatures' not in data['settings']['zarafa']['v1']['contexts']['mail'] or
                      not data['settings']['zarafa']['v1']['contexts']['mail']['signatures'] ):
-                    print "%s's signature information is empty." % args['user']
+                    print "User %s's signature information is empty." % args['user']
                     data['settings']['zarafa']['v1']['contexts']['mail']['signatures'] = {'all':{}, 'new_message':None, 'replyforward_message':None}
                 sig_data = data.get('settings',{}).get('zarafa',{}).get('v1',{}).get('contexts',{}).get('mail',{})
 
+                # get data
+                if args['file'] in ['STDIN','-'] or not args['file']:
+                    print "Get file from STDIN"
+                else:
+                    print "Upload file"
+
+                    
                 # check if name is new 
                 sigs = {}
                 for sig in data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all']:
-                    print sig
-                    sigs[sig] = data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all'][sig]['name']
+                    sigs[data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all'][sig]['name']] = sig
 
-
+                if args['name'] in sigs:
+                    print "User %s already has a signature named %s" % ( args['user'], args['name'] )
+                else:
+                    print "Adding new signature named %s to User %s" % ( args['name'], args['user'] )
 
 
 
