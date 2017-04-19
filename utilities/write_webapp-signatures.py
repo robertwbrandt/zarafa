@@ -181,21 +181,13 @@ if __name__ == "__main__":
                 else:
                     print "Upload file"
 
-                    
+
                 # check if name is new 
                 sigs = {}
                 for sig in data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all']:
                     sigs[data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all'][sig]['name']] = sig
 
                 if args['name'] in sigs:
-                    print "User %s already has a signature named %s" % ( args['user'], args['name'] )
+                    print 'User %s already has a signature named "%s"' % ( args['user'], args['name'] )
                 else:
-                    print "Adding new signature named %s to User %s" % ( args['name'], args['user'] )
-
-
-
-#                pprint.pprint(sig_data)
-#                pprint.pprint(sigs)
-
-
-
+                    print 'Adding new signature named "%s" to User %s' % ( args['name'], args['user'] )
