@@ -50,9 +50,9 @@ class customUsageVersion(argparse.Action):
       options = []
       options.append(("-h, --help",          "Show this help message and exit"))
       options.append(("-v, --version",       "Show program's version number and exit"))
-      options.append(("-f, --file FILENAME", "File containing the signature (Default: STDIN)"))
       options.append(("-n, --name NAME",     "Name of the Signature"))
       options.append(("-u, --user USER",     "Username"))
+      options.append(("-f, --file FILENAME", "File containing the signature (Default: STDIN)"))
       options.append(("-t, --text",          "Text only signature" ))
       options.append(("    --new",           "Use as default signature for New Messages"))
       options.append(("    --reply",         "Use as default signature for forward or Reply Messages"))
@@ -67,17 +67,17 @@ def command_line_args():
   parser = argparse.ArgumentParser(add_help=False)
   parser.add_argument('-v', '--version', action=customUsageVersion, version=version, max=80)
   parser.add_argument('-h', '--help', action=customUsageVersion)
-  parser.add_argument('-f', '--file',
-                    required=True,
-                    default=args['file'],
-                    type=str,
-                    action='store')
   parser.add_argument('-n', '--name',
                     required=True,
                     type=str,
                     action='store')
   parser.add_argument('-u', '--user',
                     required=True,
+                    type=str,
+                    action='store')
+  parser.add_argument('-f', '--file',
+                    required=False,
+                    default=args['file'],
                     type=str,
                     action='store')  
   parser.add_argument('-t', '--text',
