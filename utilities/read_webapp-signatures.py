@@ -83,7 +83,9 @@ if __name__ == '__main__':
                     print "Signature for:", key                    
                 else:
                     print "Signatures for:", key
-            print "  "
+                print " New Message signature:", output[key]['new_message']
+                print " Reply/Forward Message signature:", output[key]['replyforward_message']
+            print "\n"
 
 
             
