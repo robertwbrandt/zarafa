@@ -75,5 +75,10 @@ if __name__ == '__main__':
                 output[username] = {}
             pprint( output )
 
+
+        for key in output:
+            print key
+
+
             
 
