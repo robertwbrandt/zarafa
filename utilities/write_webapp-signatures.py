@@ -190,4 +190,4 @@ if __name__ == "__main__":
                 if args['name'] in sigs:
                     print 'User %s already has a signature named "%s"' % ( args['user'], args['name'] )
                 else:
-                    print 'Adding new signature named "%s" to User %s' % ( args['name'], args['user'] )
+                    print 'Adding new signature named "%s" to user %s' % ( args['name'], args['user'] )
