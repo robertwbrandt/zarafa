@@ -48,7 +48,6 @@ def read_settings(username):
 
 if __name__ == '__main__':
         output = {}
-        print getTerminalSize()
         check_input()
         username = sys.argv[1]
         raw_data = read_settings(username)
