@@ -150,12 +150,6 @@ def write_settings(username):
         if not newSettings:
                 newSettings = defaultSettings
 
-        ## Basic set of, leaves welcome screen:
-        # writesettings = settings.Write('{"settings":{"zarafa":{"v1":{"main":{"language":"nl_NL.UTF-8"},"contexts":{"mail":[]}}}}}')
-
-        ## Without the welcome screen, extended:
-        # writesettings = settings.Write('{"settings":{"zarafa":{"v1":{"main":{"language":"nl_NL.UTF-8","default_context":"mail","start_working_hour":540,"end_working_hour":1020,"week_start":1,"show_welcome":false},"contexts":{"mail":[],"calendar":{"default_zoom_level":30,"datepicker_show_busy":true}},"state":{"models":{"note":{"current_data_mode":0}},"contexts":{"mail":{"current_view":0,"current_view_mode":1}}}}}}}')
-
         writesettings = settings.Write(newSettings)
         if writesettings:
                 print "Settings for user '%s' were applied." % sys.argv[1]
@@ -175,6 +169,12 @@ if __name__ == "__main__":
                  'v1' in data['settings']['zarafa'] and 
                  'contexts' in data['settings']['zarafa']['v1'] and 
                  'mail' in data['settings']['zarafa']['v1']['contexts'] ):
-                sig_data = data.get('settings',{}).get('zarafa',{}).get('v1',{}).get('contexts',{}).get('mail',{}).get('signatures',{})
+                if 'signatures' not in data['settings']['zarafa']['v1']['contexts']['mail']:
+                    data['settings']['zarafa']['v1']['contexts']['mail']['signatures'] = {}
+                sig_data = data.get('settings',{}).get('zarafa',{}).get('v1',{}).get('contexts',{}).get('mail',{})
 
                 pprint.pprint(sig_data)
+
+
+
+{'all':{}, 'new_message':None, 'replyforward_message':None}
