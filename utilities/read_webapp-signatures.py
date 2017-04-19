@@ -80,9 +80,9 @@ if __name__ == '__main__':
                 print "No signatures found for:", key
             else:
                 if len(output[key]['all']) == 1:
-                    print "Signature for:", key                    
+                    print "Email Signature for   : %s" % key
                 else:
-                    print "Signatures for:", key
+                    print "Email Signatures for  : %s" % key
                 if output[key]['new_message']:
                     html = ['Text','HTML'][bool(output[key]['all'][str(output[key]['new_message'])]['isHTML'])]
                     print "           New Message: %s (%s - %s)" % ( output[key]['all'][str(output[key]['new_message'])]['name'] , html , output[key]['new_message'] )
@@ -95,10 +95,9 @@ if __name__ == '__main__':
                 else:
                     print " Reply/Forward Message: None"
                 for sig in output[key]['all']:
-                    print output[key]['all'][sig]['name'] 
+                    prefix = output[key]['all'][sig]['name']  + ": "
+                    preferredWidth = 70
+                    wrapper = textwrap.TextWrapper(initial_indent=prefix, width=preferredWidth, subsequent_indent=' '*len(prefix))
+                    print wrapper.fill(output[key]['all'][sig]['content'])
 
             print "\n"
-
-
-            
-
