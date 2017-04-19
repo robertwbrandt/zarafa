@@ -89,4 +89,4 @@ if __name__ == '__main__':
         username = sys.argv[1]
         orig_data = read_settings(username)
 
-        pprint(orig_data)
+        pprint.pprint(orig_data)
