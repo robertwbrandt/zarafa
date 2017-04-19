@@ -76,7 +76,13 @@ if __name__ == '__main__':
             pprint( output )
 
         for key in output:
-            print "Signatures for:", key
+            if len(output[key]['all']) == 0:
+                print "No signatures found for:", key
+            else:
+                if len(output[key]['all']) == 1:
+                    print "Signature for:", key                    
+                else:
+                    print "Signatures for:", key
             print "  "
 
 
