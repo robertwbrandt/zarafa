@@ -3,11 +3,39 @@
 from MAPI import *
 from MAPI.Util import *
 import sys, json, textwrap
-import pprint
 
 def check_input():
         if len(sys.argv) < 2:
             sys.exit('Usage: %s username' % sys.argv[0])
+
+def getTerminalSize():
+    import os
+    env = os.environ
+    def ioctl_GWINSZ(fd):
+        try:
+            import fcntl, termios, struct, os
+            cr = struct.unpack('hh', fcntl.ioctl(fd, termios.TIOCGWINSZ,
+        '1234'))
+        except:
+            return
+        return cr
+    cr = ioctl_GWINSZ(0) or ioctl_GWINSZ(1) or ioctl_GWINSZ(2)
+    if not cr:
+        try:
+            fd = os.open(os.ctermid(), os.O_RDONLY)
+            cr = ioctl_GWINSZ(fd)
+            os.close(fd)
+        except:
+            pass
+    if not cr:
+        cr = (env.get('LINES', 25), env.get('COLUMNS', 80))
+
+        ### Use get(key[, default]) instead of a try/catch
+        #try:
+        #    cr = (env['LINES'], env['COLUMNS'])
+        #except:
+        #    cr = (25, 80)
+    return int(cr[1]), int(cr[0])
 
 def read_settings(username):
         settings = None 
@@ -63,6 +91,7 @@ def write_settings(username):
 
 if __name__ == '__main__':
         output = {}
+        print getTerminalSize()
         check_input()
         username = sys.argv[1]
         raw_data = read_settings(username)
@@ -73,7 +102,6 @@ if __name__ == '__main__':
                 output[username] = data
             else:
                 output[username] = { 'all':{}, 'new_message':None, 'replyforward_message':None }
-            pprint.pprint( output )
 
         for key in output:
             if len(output[key]['all']) == 0:
