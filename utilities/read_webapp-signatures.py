@@ -92,7 +92,8 @@ if __name__ == '__main__':
                     print " Reply/Forward Message signature: %s (%s)" % ( output[key]['all'][str(output[key]['replyforward_message'])]['name'] , output[key]['replyforward_message'] )
                 else:
                     print " Reply/Forward Message signature: None"
-                #for sig in output[key]['all']:
+                for sig in output[key]['all']:
+                    print sig
 
             print "\n"
 
