@@ -168,4 +168,13 @@ if __name__ == "__main__":
         output = {}
         command_line_args()
         orig_data = read_settings(args['user'])
-        pprint.pprint(orig_data)
+        if orig_data:
+            data = json.loads(str(orig_data))
+            if 'settings' in data and 
+               'zarafa' in data['settings'] and 
+               'v1' in data['settings']['zarafa'] and 
+               'contexts' in data['settings']['zarafa']['v1'] and 
+               'mail' in data['settings']['zarafa']['v1']['contexts']:
+                sig_data = data.get('settings',{}).get('zarafa',{}).get('v1',{}).get('contexts',{}).get('mail',{}).get('signatures',{})
+
+                pprint.pprint(sig_data)

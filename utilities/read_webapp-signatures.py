@@ -39,7 +39,7 @@ class customUsageVersion(argparse.Action):
       print "\nWritten by Bob Brandt <projects@brandt.ie>."
     else:
       print "Usage: " + self.__prog + " -u \"USER\""
-      print "Script used to Read WebApp Signatures of Zarafa Users Zarafa.\n"
+      print "Script used to Read WebApp Signatures of Zarafa Users.\n"
       print "Options:"
       options = []
       options.append(("-h, --help",          "Show this help message and exit"))
