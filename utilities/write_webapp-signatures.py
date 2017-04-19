@@ -169,7 +169,7 @@ if __name__ == "__main__":
                  'v1' in data['settings']['zarafa'] and 
                  'contexts' in data['settings']['zarafa']['v1'] and 
                  'mail' in data['settings']['zarafa']['v1']['contexts'] ):
-                if ( 'signatures' not in data['settings']['zarafa']['v1']['contexts']['mail'] and
+                if ( 'signatures' not in data['settings']['zarafa']['v1']['contexts']['mail'] or
                      not data['settings']['zarafa']['v1']['contexts']['mail']['signatures'] ):
                     data['settings']['zarafa']['v1']['contexts']['mail'][u'signatures'] = {'all':{}, 'new_message':None, 'replyforward_message':None}
                 sig_data = data.get('settings',{}).get('zarafa',{}).get('v1',{}).get('contexts',{}).get('mail',{})
