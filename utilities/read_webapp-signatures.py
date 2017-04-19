@@ -84,13 +84,13 @@ if __name__ == '__main__':
                 else:
                     print "Signatures for:", key
                 if output[key]['new_message']:
-                    html = ['HTML','Text'][bool(output[key]['all'][str(output[key]['new_message'])]['isHTML'])]
+                    html = ['Text','HTML'][bool(output[key]['all'][str(output[key]['new_message'])]['isHTML'])]
                     print "           New Message signature: %s (%s) (%s)" % ( output[key]['all'][str(output[key]['new_message'])]['name'] , html , output[key]['new_message'] )
                 else:
                     print "           New Message signature: None"
 
                 if output[key]['replyforward_message']:
-                    html = ['HTML','Text'][bool(output[key]['all'][str(output[key]['replyforward_message'])]['isHTML'])]                    
+                    html = ['Text','HTML'][bool(output[key]['all'][str(output[key]['replyforward_message'])]['isHTML'])]                    
                     print " Reply/Forward Message signature: %s (%s) (%s)" % ( output[key]['all'][str(output[key]['replyforward_message'])]['name'] , html, output[key]['replyforward_message'] )
                 else:
                     print " Reply/Forward Message signature: None"
