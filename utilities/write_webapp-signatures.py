@@ -172,10 +172,21 @@ if __name__ == "__main__":
                 if ( 'signatures' not in data['settings']['zarafa']['v1']['contexts']['mail'] or
                      not data['settings']['zarafa']['v1']['contexts']['mail']['signatures'] ):
                     print "%s's signature information is empty." % args['user']
-                    data['settings']['zarafa']['v1']['contexts']['mail'][u'signatures'] = {'all':{}, 'new_message':None, 'replyforward_message':None}
+                    data['settings']['zarafa']['v1']['contexts']['mail']['signatures'] = {'all':{}, 'new_message':None, 'replyforward_message':None}
                 sig_data = data.get('settings',{}).get('zarafa',{}).get('v1',{}).get('contexts',{}).get('mail',{})
 
-                pprint.pprint(sig_data)
+                # check if name is new 
+                sigs = {}
+                for sig in data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all']:
+                    print sig
+                    sigs[sig] = data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all'][sig]['name']
+
+
+
+
+
+#                pprint.pprint(sig_data)
+#                pprint.pprint(sigs)
 
 
 
