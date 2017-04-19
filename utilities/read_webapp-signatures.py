@@ -70,14 +70,14 @@ if __name__ == '__main__':
         if raw_data:
             data = json.loads(str(raw_data)).get('settings',{}).get('zarafa',{}).get('v1',{}).get('contexts',{}).get('mail',{}).get('signatures',{})
             if 'all' in data:
-                output[username] = data.pop('all')
+                output[username] = data
             else:
-                output[username] = {}
+                output[username] = { 'all':{}, 'new_message':None, 'replyforward_message':None }
             pprint( output )
 
-
         for key in output:
-            print key
+            print "Signatures for:", key
+            print "  "
 
 
             
