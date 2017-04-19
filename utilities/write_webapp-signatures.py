@@ -5,10 +5,94 @@ from MAPI.Util import *
 import sys, json, textwrap
 import pprint
 
+sys.path.append( os.path.realpath( os.path.join( os.path.dirname(__file__), "../common" ) ) )
+import brandt
+sys.path.pop()
 
-def check_input():
-        if len(sys.argv) < 2:
-            sys.exit('Usage: %s username < input_file' % sys.argv[0])
+
+version = 0.3
+args = {}
+args['file'] = 'STDIN'
+args['name'] = ''
+args['user'] = ''
+args['text'] = False
+args['new'] = False
+args['reply'] = False
+
+class customUsageVersion(argparse.Action):
+  def __init__(self, option_strings, dest, **kwargs):
+    self.__version = str(kwargs.get('version', ''))
+    self.__prog = str(kwargs.get('prog', os.path.basename(__file__)))
+    self.__row = min(int(kwargs.get('max', 80)), brandt.getTerminalSize()[0])
+    self.__exit = int(kwargs.get('exit', 0))
+    super(customUsageVersion, self).__init__(option_strings, dest, nargs=0)
+  def __call__(self, parser, namespace, values, option_string=None):
+    # print('%r %r %r' % (namespace, values, option_string))
+    if self.__version:
+      print self.__prog + " " + self.__version
+      print "Copyright (C) 2013 Free Software Foundation, Inc."
+      print "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>."
+      version  = "This program is free software: you can redistribute it and/or modify "
+      version += "it under the terms of the GNU General Public License as published by "
+      version += "the Free Software Foundation, either version 3 of the License, or "
+      version += "(at your option) any later version."
+      print textwrap.fill(version, self.__row)
+      version  = "This program is distributed in the hope that it will be useful, "
+      version += "but WITHOUT ANY WARRANTY; without even the implied warranty of "
+      version += "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
+      version += "GNU General Public License for more details."
+      print textwrap.fill(version, self.__row)
+      print "\nWritten by Bob Brandt <projects@brandt.ie>."
+    else:
+      print "Usage: " + self.__prog + " [options] {find | restore} USER"
+      print "Script used to restore items to Zarafa Mailboxes via brick-level-backup.\n"
+      print "Options:"
+      options = []
+      options.append(("-h, --help",          "Show this help message and exit"))
+      options.append(("-v, --version",       "Show program's version number and exit"))
+      options.append(("-f, --file FILENAME", "File containing the signature (Default: STDIN)"))
+      options.append(("-n, --name NAME",     "Name of the Signature"))
+      options.append(("-u, --user USER",     "Username"))
+      options.append(("-t, --text",          "Text only signature" ))
+      options.append(("    --new",           "Use as default signature for New Messages"))
+      options.append(("    --reply",         "Use as default signature for forward or Reply Messages"))
+      length = max( [ len(option[0]) for option in options ] )
+      for option in options:
+        description =  textwrap.wrap(option[1], (self.__row - length - 5))
+        print "  " + option[0].ljust(length) + "   " + description[0]
+        for n in range(1,len(description)): print " " * (length + 5) + description[n]
+    exit(self.__exit)
+def command_line_args():
+  global args, version
+  parser = argparse.ArgumentParser(add_help=False)
+  parser.add_argument('-v', '--version', action=customUsageVersion, version=version, max=80)
+  parser.add_argument('-h', '--help', action=customUsageVersion)
+  parser.add_argument('-f', '--file',
+                    required=True,
+                    default=args['file'],
+                    type=str,
+                    action='store')
+  parser.add_argument('-n', '--name',
+                    required=True,
+                    type=str,
+                    action='store')
+  parser.add_argument('-u', '--user',
+                    required=True,
+                    type=str,
+                    action='store')  
+  parser.add_argument('-t', '--text',
+                    required=False,
+                    type=bool,
+                    action='store_false')  
+  parser.add_argument('--new',
+                    required=False,
+                    type=str,
+                    action='store_false')  
+  parser.add_argument('--reply',
+                    required=False,
+                    type=str,
+                    action='store_false')    
+  args.update(vars(parser.parse_args()))
 
 def getTerminalSize():
     import os
@@ -83,10 +167,13 @@ def write_settings(username):
                 print "Settings for user '%s' failed to be applied." % sys.argv[1]
         settings.Commit(0)
 
-if __name__ == '__main__':
+# Start program
+if __name__ == "__main__":
         output = {}
-        check_input()
-        username = sys.argv[1]
-        orig_data = read_settings(username)
+        command_line_args()
 
-        pprint.pprint(orig_data)
+        print args
+
+
+#        orig_data = read_settings(username)
+#        pprint.pprint(orig_data)
