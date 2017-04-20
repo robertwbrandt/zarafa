@@ -178,8 +178,14 @@ if __name__ == "__main__":
                 # get data
                 if args['file'] in ['STDIN','-'] or not args['file']:
                     print "Get file from STDIN"
+                    args['file'] = sys.stdin.readlines()
                 else:
-                    print "Upload file"
+                    print "Get file from %s" % args['file']
+                    f = open(args['file'], 'r')
+                    args['file'] = f.read()
+                    f.close()
+
+                print args['file']
 
 
                 # check if name is new 
