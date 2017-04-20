@@ -186,15 +186,15 @@ if __name__ == "__main__":
                     f.close()
                 args['file'] = "".join(args['file']).strip()
 
-                print args['file']
-
-
-                # check if name is new 
-                sigs = {}
-                for sig in data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all']:
-                    sigs[data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all'][sig]['name']] = sig
-
-                if args['name'] in sigs:
-                    print 'User %s already has a signature named "%s"' % ( args['user'], args['name'] )
+                if not args['file']:
+                    print "Error: No Signature Found!!"
                 else:
-                    print 'Adding new signature named "%s" to user %s' % ( args['name'], args['user'] )
+                    # check if name is new 
+                    sigs = {}
+                    for sig in data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all']:
+                        sigs[data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all'][sig]['name']] = sig
+
+                    if args['name'] in sigs:
+                        print 'User %s already has a signature named "%s"' % ( args['user'], args['name'] )
+                    else:
+                        print 'Adding new signature named "%s" to user %s' % ( args['name'], args['user'] )
