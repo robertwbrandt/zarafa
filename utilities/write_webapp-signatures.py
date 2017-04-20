@@ -184,7 +184,7 @@ if __name__ == "__main__":
                     f = open(args['file'], 'r')
                     args['file'] = f.read()
                     f.close()
-                args['file'] = "".join(args['file']).split()
+                #args['file'] = "".join(args['file']).split()
 
 
                 print args['file']
