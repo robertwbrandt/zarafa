@@ -195,6 +195,7 @@ if __name__ == "__main__":
                     # Get Milliseconds since Epoch
                     epoch = int(time.time() * 1000)
                     data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all'][str(epoch)] = {'content': str(args['file']), 'isHTML': not bool(args['text']), 'name': str(args['name'])}
+                    
                 	if args['new']:
                         data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['new_message'] = epoch
                 	if args['reply']:
