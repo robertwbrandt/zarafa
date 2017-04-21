@@ -201,8 +201,8 @@ if __name__ == "__main__":
                     if args['reply']: options += 'as default for reply/forwarded messages'
 
                     if args['name'] in sigs:
-                        print 'User %s already has a signature named "%s" %s' % ( args['user'], args['name'], " and ".join[options] )
+                        print 'User %s already has a signature named "%s" %s' % ( args['user'], args['name'], " and ".join(options) )
                     else:
-                        print 'Adding new signature named "%s" to user %s %s' % ( args['name'], args['user'], " and ".join[options] )
+                        print 'Adding new signature named "%s" to user %s %s' % ( args['name'], args['user'], " and ".join(options) )
 
 
