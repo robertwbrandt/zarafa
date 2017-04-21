@@ -139,4 +139,8 @@ if __name__ == '__main__':
                     wrapper = textwrap.TextWrapper(initial_indent=prefix, width=preferredWidth, subsequent_indent=' '*len(prefix))
                     print wrapper.fill(output[key]['all'][sig]['content'])
 
+                pprint.pprint(raw_data)
+
+
+
             print "\n"
