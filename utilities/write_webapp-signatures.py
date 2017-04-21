@@ -138,7 +138,7 @@ def write_settings(username, newsettings):
 	settings.SetSize(0)
 	settings.Seek(0, STREAM_SEEK_END)
 
-	writesettings = settings.Write(str(newSettings))
+	writesettings = settings.Write(str(newsettings))
 	if writesettings:
 		print "Settings for user '%s' were applied." % username
 	else:
