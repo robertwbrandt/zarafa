@@ -204,8 +204,8 @@ if __name__ == "__main__":
                         print 'User %s already has a signature named "%s" %s' % ( args['user'], args['name'], " and ".join(options) )
                     else:
                         print 'Adding new signature named "%s" to user %s %s' % ( args['name'], args['user'], " and ".join(options) )
-                        print "Epoch is %s" % time.gmtime()
-                        #data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all']
+                        epoch = str(int(time.time()))
+                        print data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all']
 
 
 
