@@ -194,7 +194,15 @@ if __name__ == "__main__":
                     for sig in data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all']:
                         sigs[data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all'][sig]['name']] = sig
 
+
+                    options=[]
+                    if args['text']: options += 'as a text signature'
+                    if args['new']: options += 'as default for new messages'
+                    if args['reply']: options += 'as default for reply/forwarded messages'
+
                     if args['name'] in sigs:
-                        print 'User %s already has a signature named "%s"' % ( args['user'], args['name'] )
+                        print 'User %s already has a signature named "%s" %s' % ( args['user'], args['name'], " and ".join[options] )
                     else:
-                        print 'Adding new signature named "%s" to user %s' % ( args['name'], args['user'] )
+                        print 'Adding new signature named "%s" to user %s %s' % ( args['name'], args['user'], " and ".join[options] )
+
+
