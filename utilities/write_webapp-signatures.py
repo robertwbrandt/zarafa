@@ -115,104 +115,90 @@ def getTerminalSize():
     return int(cr[1]), int(cr[0])
 
 def read_settings(username):
-        settings = None 
-        data = None
+    settings = None 
+    data = None
 
-        PR_EC_WEBACCESS_SETTINGS_JSON = PROP_TAG(PT_STRING8, PR_EC_BASE+0x72)
-        st = GetDefaultStore( OpenECSession(username, '', 'file:///var/run/zarafa') )
+    PR_EC_WEBACCESS_SETTINGS_JSON = PROP_TAG(PT_STRING8, PR_EC_BASE+0x72)
+    st = GetDefaultStore( OpenECSession(username, '', 'file:///var/run/zarafa') )
 
-        try:
-                settings = st.OpenProperty(PR_EC_WEBACCESS_SETTINGS_JSON, IID_IStream, 0, 0)
-                data = settings.Read(40960)
-        except:
-                print 'User has not used WebApp yet, no settings property exists.'
-        return data
-
-
-
-def write_settings(username):
-
-        PR_EC_WEBACCESS_SETTINGS_JSON = PROP_TAG(PT_STRING8, PR_EC_BASE+0x72)
-        st = GetDefaultStore( OpenECSession(username, '', 'file:///var/run/zarafa') )
+    try:
+        settings = st.OpenProperty(PR_EC_WEBACCESS_SETTINGS_JSON, IID_IStream, 0, 0)
+        data = settings.Read(40960)
+    except:
+        print 'User has not used WebApp yet, no settings property exists.'
+    return data
 
 
-        settings = st.OpenProperty(PR_EC_WEBACCESS_SETTINGS_JSON, IID_IStream, 0, MAPI_MODIFY|MAPI_CREATE)
-        settings.SetSize(0)
-        settings.Seek(0, STREAM_SEEK_END)
 
-        defaultSettings='{"settings":{"zarafa":{"v1":{"main":{"language":"en_GB","default_context":"mail","start_working_hour":540,"end_working_hour":1020,"week_start":1,"show_welcome":false},"contexts":{"mail":[],"calendar":{"default_zoom_level":30,"datepicker_show_busy":true}},"state":{"models":{"note":{"current_data_mode":0}},"contexts":{"mail":{"current_view":0,"current_view_mode":1}}}}}}}'
+def write_settings(username, newsettings):
+    PR_EC_WEBACCESS_SETTINGS_JSON = PROP_TAG(PT_STRING8, PR_EC_BASE+0x72)
+    st = GetDefaultStore( OpenECSession(username, '', 'file:///var/run/zarafa') )
 
-        newSettings = ''
-        try:
-                newSettings = sys.stdin.read()
-        except:
-                newSettings = defaultSettings
-        if not newSettings:
-                newSettings = defaultSettings
+    settings = st.OpenProperty(PR_EC_WEBACCESS_SETTINGS_JSON, IID_IStream, 0, MAPI_MODIFY|MAPI_CREATE)
+    settings.SetSize(0)
+    settings.Seek(0, STREAM_SEEK_END)
 
-        writesettings = settings.Write(newSettings)
-        if writesettings:
-                print "Settings for user '%s' were applied." % sys.argv[1]
-        else:
-                print "Settings for user '%s' failed to be applied." % sys.argv[1]
-        settings.Commit(0)
+    writesettings = settings.Write(str(newSettings))
+    if writesettings:
+        print "Settings for user '%s' were applied." % username
+    else:
+        print "Settings for user '%s' failed to be applied." % username
+    settings.Commit(0)
 
 # Start program
 if __name__ == "__main__":
-        output = {}
-        command_line_args()
-        orig_data = read_settings(args['user'])
-        if orig_data:
-            data = json.loads(str(orig_data))
-            if ( 'settings' in data  and 
-                 'zarafa' in data['settings'] and 
-                 'v1' in data['settings']['zarafa'] and 
-                 'contexts' in data['settings']['zarafa']['v1'] and 
-                 'mail' in data['settings']['zarafa']['v1']['contexts'] ):
-                if ( 'signatures' not in data['settings']['zarafa']['v1']['contexts']['mail'] or
-                     not data['settings']['zarafa']['v1']['contexts']['mail']['signatures'] ):
-                    print "User %s's signature information is empty." % args['user']
-                    data['settings']['zarafa']['v1']['contexts']['mail']['signatures'] = {'all':{}, 'new_message':None, 'replyforward_message':None}
-                sig_data = data.get('settings',{}).get('zarafa',{}).get('v1',{}).get('contexts',{}).get('mail',{})
+    output = {}
+    command_line_args()
+    orig_data = read_settings(args['user'])
+    if orig_data:
+        data = json.loads(str(orig_data))
+        if ( 'settings' in data  and 
+             'zarafa' in data['settings'] and 
+             'v1' in data['settings']['zarafa'] and 
+             'contexts' in data['settings']['zarafa']['v1'] and 
+             'mail' in data['settings']['zarafa']['v1']['contexts'] ):
+            if ( 'signatures' not in data['settings']['zarafa']['v1']['contexts']['mail'] or
+                 not data['settings']['zarafa']['v1']['contexts']['mail']['signatures'] ):
+                print "User %s's signature information is empty." % args['user']
+                data['settings']['zarafa']['v1']['contexts']['mail']['signatures'] = {'all':{}, 'new_message':None, 'replyforward_message':None}
+            sig_data = data.get('settings',{}).get('zarafa',{}).get('v1',{}).get('contexts',{}).get('mail',{})
 
-                # get data
-                if args['file'] in ['STDIN','-'] or not args['file']:
-                    print "Get file from STDIN"
-                    args['file'] = sys.stdin.readlines()
+            # get data
+            if args['file'] in ['STDIN','-'] or not args['file']:
+                print "Get file from STDIN"
+                args['file'] = sys.stdin.readlines()
+            else:
+                print "Get file from %s" % args['file']
+                f = open(args['file'], 'r')
+                args['file'] = f.read()
+                f.close()
+            args['file'] = "".join(args['file']).strip()
+
+            if not args['file']:
+                print "Error: No Signature Found!!"
+            else:
+                # check if name is new 
+                sigs = {}
+                for sig in data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all']:
+                    sigs[data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all'][sig]['name']] = sig
+
+
+                options=[]
+                if args['text']:  options.append('as a text signature')
+                if args['new']:   options.append('as default for new messages')
+                if args['reply']: options.append('as default for reply/forwarded messages')
+
+                if args['name'] in sigs:
+                    print 'User %s already has a signature named "%s" %s' % ( args['user'], args['name'], " and ".join(options) )
                 else:
-                    print "Get file from %s" % args['file']
-                    f = open(args['file'], 'r')
-                    args['file'] = f.read()
-                    f.close()
-                args['file'] = "".join(args['file']).strip()
+                    print 'Adding new signature named "%s" to user %s %s' % ( args['name'], args['user'], " and ".join(options) )
+                    # Get Milliseconds since Epoch
+                    epoch = int(time.time() * 1000)
+                    data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all'][str(epoch)] = {'content': str(args['file']), 'isHTML': not bool(args['text']), 'name': str(args['name'])}
+                	if args['new']:
+                        data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['new_message'] = epoch
+                	if args['reply']:
+                        data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['replyforward_message'] = epoch
 
-                if not args['file']:
-                    print "Error: No Signature Found!!"
-                else:
-                    # check if name is new 
-                    sigs = {}
-                    for sig in data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all']:
-                        sigs[data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all'][sig]['name']] = sig
-
-
-                    options=[]
-                    if args['text']:  options.append('as a text signature')
-                    if args['new']:   options.append('as default for new messages')
-                    if args['reply']: options.append('as default for reply/forwarded messages')
-
-                    if args['name'] in sigs:
-                        print 'User %s already has a signature named "%s" %s' % ( args['user'], args['name'], " and ".join(options) )
-                    else:
-                        print 'Adding new signature named "%s" to user %s %s' % ( args['name'], args['user'], " and ".join(options) )
-                        # Get Milliseconds since Epoch
-                        epoch = int(time.time() * 1000)
-                        data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all'][str(epoch)] = {'content': str(args['file']), 'isHTML': not bool(args['text']), 'name': str(args['name'])}
-                    	if args['new']:
-	                        data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['new_message'] = epoch
-                    	if args['reply']:
-	                        data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['replyforward_message'] = epoch
-
-                        pprint.pprint( data['settings']['zarafa']['v1']['contexts']['mail']['signatures'] )
-
-
-
+                    #pprint.pprint( data['settings']['zarafa']['v1']['contexts']['mail']['signatures'] )
+					write_settings(args['user'], data):
