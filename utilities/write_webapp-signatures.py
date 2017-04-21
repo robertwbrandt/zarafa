@@ -204,10 +204,15 @@ if __name__ == "__main__":
                         print 'User %s already has a signature named "%s" %s' % ( args['user'], args['name'], " and ".join(options) )
                     else:
                         print 'Adding new signature named "%s" to user %s %s' % ( args['name'], args['user'], " and ".join(options) )
-                        epoch = str(int(time.time()))
-                        data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all'][epoch] = {'content': str(args['file']), 'isHTML': not bool(args['text']), 'name': str(args['name'])}}
+                        # Get Milliseconds since Epoch
+                        epoch = int(time.time() * 1000)
+                        data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all'][str(epoch)] = {'content': str(args['file']), 'isHTML': not bool(args['text']), 'name': str(args['name'])}
+                    	if args['new']:
+	                        data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['new_message'] = epoch
+                    	if args['reply']:
+	                        data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['replyforward_message'] = epoch
 
-                        pprint.pprint( data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all'][epoch] )
+                        pprint.pprint( data['settings']['zarafa']['v1']['contexts']['mail']['signatures'] )
 
 
 
