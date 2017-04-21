@@ -107,6 +107,9 @@ if __name__ == '__main__':
         raw_data = read_settings(args['user'])
 
         if raw_data:
+        	pprint.pprint(raw_data)
+        	pprint.pprint(json.loads(str(raw_data)))
+        	
             data = json.loads(str(raw_data)).get('settings',{}).get('zarafa',{}).get('v1',{}).get('contexts',{}).get('mail',{}).get('signatures',{})
             if 'all' in data:
                 output[args['user']] = data
