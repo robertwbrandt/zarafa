@@ -201,5 +201,5 @@ if __name__ == "__main__":
 					if args['reply']:
 						data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['replyforward_message'] = epoch
 
-					#pprint.pprint( data['settings']['zarafa']['v1']['contexts']['mail']['signatures'] )
-					write_settings(args['user'], data)
+					pprint.pprint( data['settings']['zarafa']['v1']['contexts']['mail']['signatures'] )
+					#write_settings(args['user'], data)
