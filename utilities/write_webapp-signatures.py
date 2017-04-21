@@ -205,7 +205,14 @@ if __name__ == "__main__":
                     else:
                         print 'Adding new signature named "%s" to user %s %s' % ( args['name'], args['user'], " and ".join(options) )
                         epoch = str(int(time.time()))
-                        print data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all']
+
+                        data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all'][epoch] =
+                        	{'content': str(args['file']), 'isHTML': not bool(args['text']), 'name': str(args['name'])}}
+
+
+
+
+                        pprint.pprint( data['settings']['zarafa']['v1']['contexts']['mail']['signatures']['all'][epoch] )
 
 
 
